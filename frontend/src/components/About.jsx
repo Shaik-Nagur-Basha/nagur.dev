@@ -26,13 +26,13 @@ function About() {
       id="about"
       className={`py-20 px-4 transition-all duration-300 relative overflow-hidden`}
     >
- {/* ${
+      {/* ${
         darkMode
           ? "bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
           : "bg-linear-to-br from-blue-50 via-white to-purple-50"
       } */}
 
-      {/* <style>{overlayStyle}</style> */}
+      <style>{overlayStyle}</style>
       {/* Radial gradient overlay - Top Right */}
       {/* <div
         className={`absolute top-0 right-0 w-96 h-96 pointer-events-none blur-3xl ${

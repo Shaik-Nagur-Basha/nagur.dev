@@ -46,7 +46,7 @@ function Hero() {
       id="home"
       className={`pt-32 pb-20 px-4 min-h-screen flex items-center transition-all duration-500 relative overflow-hidden`}
     >
- {/* ${
+      {/* ${
         darkMode
           ? "bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
           : "bg-linear-to-br from-blue-50 via-white to-purple-50"
@@ -103,14 +103,14 @@ function Hero() {
           animation: "float-glow 7s ease-in-out infinite reverse",
         }}
       /> */}
-      {/* <style>{floatingStyle}</style> */}
+      <style>{floatingStyle}</style>
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
           {/* Right - Profile Image (Shows first on mobile) */}
           <div className="flex items-center justify-center order-first md:order-last">
             <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 group">
               {/* Animated background blur circles */}
-              <div className="absolute -inset-6 bg-linear-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full blur-3xl opacity-30 group-hover:opacity-50 animate-pulse transition-all duration-500"></div>
+              {/* <div className="absolute -inset-6 bg-linear-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full blur-3xl opacity-30 group-hover:opacity-50 animate-pulse transition-all duration-500"></div> */}
               <div
                 className="absolute -inset-4 bg-linear-to-r from-blue-500 to-purple-600 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"
                 style={{ animationDelay: "0.5s" }}
