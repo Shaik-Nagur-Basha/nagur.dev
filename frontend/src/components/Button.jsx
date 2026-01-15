@@ -8,8 +8,6 @@ export function ButtonPrimary({ children, className = "", ...props }) {
         hover:shadow-xl hover:scale-105 hover:shadow-blue-500/50
         active:scale-95
         transition-all duration-300 ease-out
-        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-        dark:focus:ring-offset-gray-900
         disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
         ${className}
       `}
@@ -33,8 +31,6 @@ export function ButtonSecondary({ children, className = "", ...props }) {
         hover:shadow-lg
         active:scale-95
         transition-all duration-300 ease-out
-        focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2
-        dark:focus:ring-offset-gray-900
         disabled:opacity-50 disabled:cursor-not-allowed
         ${className}
       `}
@@ -57,8 +53,6 @@ export function ButtonOutline({ children, className = "", ...props }) {
         hover:border-blue-500 dark:hover:border-blue-400
         active:scale-95
         transition-all duration-300 ease-out
-        focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-        dark:focus:ring-offset-gray-900
         disabled:opacity-50 disabled:cursor-not-allowed
         ${className}
       `}
@@ -80,7 +74,6 @@ export function ButtonSmall({ children, className = "", ...props }) {
         hover:shadow-md
         active:scale-95
         transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-blue-400
         disabled:opacity-50 disabled:cursor-not-allowed
         ${className}
       `}

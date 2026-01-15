@@ -83,7 +83,7 @@ function Footer() {
                   <a
                     key={idx}
                     href={social.link}
-                    className="p-3 bg-gray-800 hover:bg-linear-to-r hover:from-blue-600 hover:to-purple-600 rounded-lg hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="p-3 bg-gray-800 hover:bg-linear-to-r hover:from-blue-600 hover:to-purple-600 rounded-lg hover:scale-110 active:scale-95 transition-all duration-300"
                     aria-label={social.label}
                     title={social.label}
                   >

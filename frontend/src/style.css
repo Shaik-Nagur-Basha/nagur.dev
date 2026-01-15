@@ -14,47 +14,19 @@
     @apply bg-white dark:bg-gray-950 text-gray-900 dark:text-white;
   }
 
-  /* Remove default scrollbar styling for custom look */
+  /* Hide scrollbar while keeping scroll functionality */
   ::-webkit-scrollbar {
-    width: 10px;
+    display: none;
   }
 
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  html {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 5px;
-    border: 2px solid #f1f1f1;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
-  }
-
-  /* Light mode scrollbar - refined */
-  ::-webkit-scrollbar-track {
-    background: #f8f9fa;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #3b82f6 0%, #9333ea 100%);
-    border-radius: 5px;
-  }
-
-  /* Dark mode scrollbar */
-  html.dark ::-webkit-scrollbar-track {
-    background: #111827;
-  }
-
-  html.dark ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #2563eb 0%, #7c3aed 100%);
-    border-radius: 5px;
-  }
-
-  html.dark ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 100%);
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   /* Selection styling */
@@ -85,15 +57,15 @@
   }
 
   .btn-primary {
-    @apply px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/30 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-950;
+    @apply px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/30 active:scale-95 transition-all duration-300 focus:outline-none;
   }
 
   .btn-secondary {
-    @apply px-8 py-3 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400;
+    @apply px-8 py-3 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-all duration-300 focus:outline-none;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-all duration-200;
   }
 
   /* Smooth animations */

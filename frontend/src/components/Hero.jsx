@@ -20,7 +20,7 @@ function Hero() {
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
               Hi, I'm{" "}
               <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
-                Your Name
+                Shaik Nagur Basha
               </span>
             </h1>
 
@@ -42,7 +42,7 @@ function Hero() {
             <div className="flex gap-4 pt-6">
               <a
                 href="#"
-                className="p-3 bg-gray-200 dark:bg-gray-800 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="p-3 bg-gray-200 dark:bg-gray-800 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300"
                 aria-label="GitHub"
                 title="GitHub"
               >
@@ -50,7 +50,7 @@ function Hero() {
               </a>
               <a
                 href="#"
-                className="p-3 bg-gray-200 dark:bg-gray-800 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="p-3 bg-gray-200 dark:bg-gray-800 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300"
                 aria-label="LinkedIn"
                 title="LinkedIn"
               >
@@ -58,7 +58,7 @@ function Hero() {
               </a>
               <a
                 href="#"
-                className="p-3 bg-gray-200 dark:bg-gray-800 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="p-3 bg-gray-200 dark:bg-gray-800 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300"
                 aria-label="Email"
                 title="Email"
               >
