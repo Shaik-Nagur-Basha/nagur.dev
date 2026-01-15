@@ -5,7 +5,7 @@ function Hero() {
   return (
     <section
       id="home"
-      className="pt-32 pb-20 px-4 bg-gradient-to-br from-white via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 min-h-screen flex items-center transition-colors duration-300"
+      className="pt-32 pb-20 px-4 bg-linear-to-br from-white via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 min-h-screen flex items-center transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -19,7 +19,7 @@ function Hero() {
 
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
               Hi, I'm{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
+              <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
                 Your Name
               </span>
             </h1>
@@ -70,8 +70,8 @@ function Hero() {
           {/* Right - Illustration/Image */}
           <div className="hidden md:flex items-center justify-center">
             <div className="relative w-full h-96">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 rounded-3xl blur-3xl opacity-30 animate-glow"></div>
-              <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl h-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl hover:scale-105 transition-transform duration-300">
+              <div className="absolute inset-0 bg-linear-to-br from-blue-400 to-purple-600 rounded-3xl blur-3xl opacity-30 animate-glow"></div>
+              <div className="relative bg-linear-to-br from-blue-500 to-purple-600 rounded-3xl h-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl hover:scale-105 transition-transform duration-300">
                 {"</>"}
                 <br />
                 <span className="text-2xl">Dev</span>

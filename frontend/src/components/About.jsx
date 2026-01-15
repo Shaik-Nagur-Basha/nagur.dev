@@ -55,7 +55,7 @@ function About() {
                   className="flex items-start gap-3 p-3 rounded-lg hover:bg-purple-50 dark:hover:bg-gray-800/50 transition-colors duration-200"
                 >
                   <CheckCircle
-                    className="text-green-500 flex-shrink-0 mt-1 hover:scale-110 transition-transform duration-200"
+                    className="text-green-500 shrink-0 mt-1 hover:scale-110 transition-transform duration-200"
                     size={20}
                   />
                   <span className="text-gray-700 dark:text-gray-300 font-medium">
@@ -76,9 +76,9 @@ function About() {
             ].map((stat, idx) => (
               <div
                 key={idx}
-                className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl text-center hover:shadow-lg dark:hover:shadow-purple-900/20 transition-all duration-300 transform hover:-translate-y-1 border border-blue-100 dark:border-gray-700"
+                className="p-6 bg-linear-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl text-center hover:shadow-lg dark:hover:shadow-purple-900/20 transition-all duration-300 transform hover:-translate-y-1 border border-blue-100 dark:border-gray-700"
               >
-                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
+                <p className="text-3xl md:text-4xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
                   {stat.number}
                 </p>
                 <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium">

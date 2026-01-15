@@ -56,7 +56,7 @@ function Projects() {
               className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
             >
               {/* Image Section */}
-              <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-300">
+              <div className="h-48 bg-linear-to-br from-blue-400 to-purple-600 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-300">
                 {project.image}
               </div>
 

@@ -37,7 +37,7 @@ function Skills() {
   return (
     <section
       id="skills"
-      className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 transition-colors duration-300"
+      className="py-20 px-4 bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
@@ -58,7 +58,7 @@ function Skills() {
           {skillCategories.map((category, categoryIdx) => (
             <div
               key={categoryIdx}
-              className="p-8 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl hover:shadow-xl dark:hover:shadow-purple-900/20 transition-all duration-300 transform hover:-translate-y-1 border border-blue-100 dark:border-gray-600"
+              className="p-8 bg-linear-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl hover:shadow-xl dark:hover:shadow-purple-900/20 transition-all duration-300 transform hover:-translate-y-1 border border-blue-100 dark:border-gray-600"
             >
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-3xl">{category.icon}</span>
@@ -80,7 +80,7 @@ function Skills() {
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5 overflow-hidden">
                       <div
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 h-2.5 rounded-full transition-all duration-700 ease-out shadow-lg"
+                        className="bg-linear-to-r from-blue-600 to-purple-600 h-2.5 rounded-full transition-all duration-700 ease-out shadow-lg"
                         style={{ width: `${skill.level}%` }}
                       ></div>
                     </div>

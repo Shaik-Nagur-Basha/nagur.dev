@@ -9,7 +9,7 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            <h3 className="text-2xl font-bold bg-linear-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               Portfolio
             </h3>
             <p className="text-gray-400 leading-relaxed">
@@ -21,7 +21,7 @@ function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-1 h-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full"></span>
+              <span className="w-1 h-1 bg-linear-to-r from-blue-400 to-purple-500 rounded-full"></span>
               Quick Links
             </h4>
             <ul className="space-y-2">
@@ -43,7 +43,7 @@ function Footer() {
           {/* Services */}
           <div>
             <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-1 h-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full"></span>
+              <span className="w-1 h-1 bg-linear-to-r from-blue-400 to-purple-500 rounded-full"></span>
               Services
             </h4>
             <ul className="space-y-2">
@@ -68,7 +68,7 @@ function Footer() {
           {/* Social Links */}
           <div>
             <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-1 h-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full"></span>
+              <span className="w-1 h-1 bg-linear-to-r from-blue-400 to-purple-500 rounded-full"></span>
               Follow Me
             </h4>
             <div className="flex gap-3">
@@ -83,7 +83,7 @@ function Footer() {
                   <a
                     key={idx}
                     href={social.link}
-                    className="p-3 bg-gray-800 hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 rounded-lg hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="p-3 bg-gray-800 hover:bg-linear-to-r hover:from-blue-600 hover:to-purple-600 rounded-lg hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     aria-label={social.label}
                     title={social.label}
                   >
