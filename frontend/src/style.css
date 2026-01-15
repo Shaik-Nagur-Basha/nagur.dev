@@ -68,6 +68,56 @@
     @apply w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-all duration-200;
   }
 
+  /* Education & Hobbies Section Styles */
+  .education-card {
+    @apply bg-white dark:bg-gray-900 border-2 border-blue-100 dark:border-gray-700 rounded-xl p-6 hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-md dark:shadow-lg dark:shadow-purple-900/10 hover:shadow-lg hover:shadow-blue-400/20;
+  }
+
+  .education-card-light {
+    @apply bg-white dark:bg-gray-900 border-l-4 border-blue-500 dark:border-purple-500 rounded-r-lg p-6 shadow-md dark:shadow-lg dark:shadow-purple-900/20 hover:shadow-lg hover:shadow-blue-300/30 transition-all duration-300;
+  }
+
+  .hobbies-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  .hobby-card {
+    @apply bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 border-2 border-blue-200 dark:border-gray-700 rounded-xl p-6 hover:border-blue-400 dark:hover:border-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-300/30 dark:hover:shadow-purple-900/30 hover:-translate-y-1;
+  }
+
+  .hobby-icon {
+    @apply w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white mb-4 shadow-md;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold gradient-text mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-gray-600 dark:text-gray-400 text-lg mb-12;
+  }
+
+  /* Light Mode Specific Styles */
+  .light-mode-nav {
+    @apply shadow-sm shadow-blue-300/10;
+  }
+
+  .light-mode-card {
+    @apply bg-white border-gray-200;
+  }
+
+  .light-mode-text {
+    @apply text-gray-800;
+  }
+
+  .light-mode-text-secondary {
+    @apply text-gray-600;
+  }
+
+  .light-mode-hover {
+    @apply hover:bg-blue-50 hover:border-blue-300;
+  }
+
   /* Smooth animations */
   @keyframes float {
     0%,
