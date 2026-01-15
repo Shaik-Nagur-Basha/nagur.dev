@@ -11,7 +11,13 @@ function HomePage() {
   const { darkMode } = useTheme();
 
   return (
-    <div className={`${darkMode ? "dark" : ""}`}>
+    <div
+      className={`${darkMode ? "dark" : ""}  ${
+        darkMode
+          ? "bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
+          : "bg-linear-to-br from-blue-50 via-white to-purple-50"
+      }`}
+    >
       <Navigation />
       <Hero />
       <About />
