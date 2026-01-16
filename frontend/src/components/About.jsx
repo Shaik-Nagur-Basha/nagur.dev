@@ -98,14 +98,14 @@ function About() {
             </span>
           </div>
           <h2
-            className={`text-4xl md:text-5xl font-bold mb-4 transition-colors duration-300 ${
+            className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 transition-colors duration-300 ${
               darkMode ? "text-white" : "text-gray-900"
             }`}
           >
             Crafting Digital Solutions
           </h2>
           <p
-            className={`text-xl transition-colors duration-300 ${
+            className={`text-base md:text-lg transition-colors duration-300 ${
               darkMode ? "text-gray-400" : "text-gray-600"
             }`}
           >

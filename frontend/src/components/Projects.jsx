@@ -1,13 +1,34 @@
 import { Code2, ExternalLink, Github, MoveRightIcon, Plus } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Projects() {
   const { darkMode } = useTheme();
   const [expandedId, setExpandedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [ripples, setRipples] = useState({});
-  const projectsPerPage = 3;
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024,
+  );
+
+  // Calculate projectsPerPage based on screen width
+  const getProjectsPerPage = (width) => {
+    if (width < 1024) return 1;
+    if (width < 1536) return 2;
+    return 3;
+  };
+
+  const projectsPerPage = getProjectsPerPage(windowWidth);
+
+  // Detect window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const projectCardStyle = `
     @property --gradient-angle {
@@ -276,14 +297,14 @@ function Projects() {
             Featured Work
           </span>
           <h2
-            className={`text-4xl md:text-5xl font-bold mb-4 transition-colors duration-300 ${
+            className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 transition-colors duration-300 ${
               darkMode ? "text-white" : "text-gray-900"
             }`}
           >
             Showcase Projects
           </h2>
           <p
-            className={`text-xl transition-colors duration-300 ${
+            className={`text-base md:text-lg transition-colors duration-300 ${
               darkMode ? "text-gray-400" : "text-gray-600"
             }`}
           >
@@ -300,14 +321,14 @@ function Projects() {
               setCurrentPage((prev) => Math.max(1, prev - 1));
             }}
             disabled={currentPage === 1}
-            className={`absolute -left-16 lg:-left-20 top-1/2 -translate-y-1/2 z-50 shrink-0 cursor-pointer group p-3 md:p-4 rounded-full transition-all duration-300 transform active:scale-90 overflow-hidden ${
+            className={`absolute max-sm:left-1 max-lg:left-20 max-md:left-10 xl:-left-10 2xl:-left-20 max-xl:-left-0.5 top-1/2 -translate-y-1/2 z-50 shrink-0 cursor-pointer group p-3 md:p-4 rounded-full transition-all duration-300 transform active:scale-90 overflow-hidden ${
               currentPage === 1
                 ? darkMode
                   ? "backdrop-blur-2xl bg-gray-900/20 border border-gray-700/30 text-gray-600 cursor-not-allowed opacity-50"
                   : "backdrop-blur-2xl bg-gray-100/20 border border-gray-300/30 text-gray-400 cursor-not-allowed opacity-50"
                 : darkMode
-                ? "backdrop-blur-2xl bg-linear-to-br from-blue-700/30 via-blue-800/20 to-cyan-900/30 border border-blue-500/40 hover:border-blue-400/70 text-blue-200 hover:text-blue-100 shadow-lg shadow-blue-900/30 hover:shadow-blue-600/50 drop-shadow-md drop-shadow-blue-900/40"
-                : "backdrop-blur-2xl bg-linear-to-br from-blue-500/30 via-blue-400/20 to-cyan-600/30 border border-blue-400/50 hover:border-blue-300/80 text-black/60 hover:text-black/65 shadow-lg shadow-blue-400/30 hover:shadow-blue-400/50 drop-shadow-md drop-shadow-blue-300/30"
+                  ? "backdrop-blur-2xl bg-linear-to-br from-blue-700/30 via-blue-800/20 to-cyan-900/30 border border-blue-500/40 hover:border-blue-400/70 text-blue-200 hover:text-blue-100 shadow-lg shadow-blue-900/30 hover:shadow-blue-600/50 drop-shadow-md drop-shadow-blue-900/40"
+                  : "backdrop-blur-2xl bg-linear-to-br from-blue-500/30 via-blue-400/20 to-cyan-600/30 border border-blue-400/50 hover:border-blue-300/80 text-black/60 hover:text-black/65 shadow-lg shadow-blue-400/30 hover:shadow-blue-400/50 drop-shadow-md drop-shadow-blue-300/30"
             }`}
             aria-label="Previous projects"
           >
@@ -316,8 +337,8 @@ function Projects() {
                 currentPage === 1
                   ? ""
                   : darkMode
-                  ? "bg-linear-to-r from-blue-400/0 via-blue-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-blue-400/15 group-hover:to-blue-400/0"
-                  : "bg-linear-to-r from-blue-300/0 via-blue-300/0 to-blue-300/0 group-hover:from-blue-300/25 group-hover:via-blue-300/20 group-hover:to-blue-300/0"
+                    ? "bg-linear-to-r from-blue-400/0 via-blue-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-blue-400/15 group-hover:to-blue-400/0"
+                    : "bg-linear-to-r from-blue-300/0 via-blue-300/0 to-blue-300/0 group-hover:from-blue-300/25 group-hover:via-blue-300/20 group-hover:to-blue-300/0"
               }`}
             ></div>
             <svg
@@ -338,8 +359,8 @@ function Projects() {
                 currentPage === 1
                   ? ""
                   : darkMode
-                  ? "shadow-inset-lg shadow-blue-400/20"
-                  : "shadow-inset-lg shadow-blue-300/20"
+                    ? "shadow-inset-lg shadow-blue-400/20"
+                    : "shadow-inset-lg shadow-blue-300/20"
               }`}
             ></div>
           </button>
@@ -360,7 +381,7 @@ function Projects() {
                   key={project.id}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
-                  className={`project-gallery scale-x-90 relative h-60 rounded-3xl aspect-video group overflow-hidden isolate z-0`}
+                  className={`project-gallery max-sm:scale-x-100 2xl:scale-x-90 max-2xl:scale-x-75 max-xl:scale-x-65 max-lg:scale-x-50 max-md:scale-x-65 relative h-60 rounded-3xl aspect-video group overflow-hidden isolate z-0`}
                   style={{
                     flex: `0 0 calc(100% / ${projectsPerPage})`,
                   }}
@@ -406,8 +427,8 @@ function Projects() {
                             ? "bg-black/80"
                             : "bg-black/60"
                           : darkMode
-                          ? ""
-                          : ""
+                            ? ""
+                            : ""
                       }`}
                     />
 
@@ -499,14 +520,14 @@ function Projects() {
               setCurrentPage((prev) => Math.min(totalSteps, prev + 1));
             }}
             disabled={currentPage === totalSteps}
-            className={`absolute -right-16 lg:-right-20 top-1/2 -translate-y-1/2 z-50 shrink-0 cursor-pointer group p-3 md:p-4 rounded-full transition-all duration-300 transform active:scale-90 overflow-hidden ${
+            className={`absolute max-sm:right-1 max-md:right-10 max-lg:right-20 max-xl:-right-0.5 xl:-right-10 2xl:-right-20 top-1/2 -translate-y-1/2 z-50 shrink-0 cursor-pointer group p-3 md:p-4 rounded-full transition-all duration-300 transform active:scale-90 overflow-hidden ${
               currentPage === totalSteps
                 ? darkMode
                   ? "backdrop-blur-2xl bg-gray-900/20 border border-gray-700/30 text-gray-600 cursor-not-allowed opacity-50"
                   : "backdrop-blur-2xl bg-gray-100/20 border border-gray-300/30 text-gray-400 cursor-not-allowed opacity-50"
                 : darkMode
-                ? "backdrop-blur-2xl bg-linear-to-br from-purple-700/30 via-purple-800/20 to-pink-900/30 border border-purple-500/40 hover:border-purple-400/70 text-purple-200 hover:text-purple-100 shadow-lg shadow-purple-900/30 hover:shadow-purple-600/50 drop-shadow-md drop-shadow-purple-900/40"
-                : "backdrop-blur-2xl bg-linear-to-br from-purple-500/30 via-purple-400/20 to-pink-600/30 border border-purple-400/50 hover:border-purple-300/80 text-black/60 hover:text-black/65 shadow-lg shadow-purple-400/60 hover:shadow-purple-400/65 drop-shadow-md drop-shadow-purple-300/30"
+                  ? "backdrop-blur-2xl bg-linear-to-br from-purple-700/30 via-purple-800/20 to-pink-900/30 border border-purple-500/40 hover:border-purple-400/70 text-purple-200 hover:text-purple-100 shadow-lg shadow-purple-900/30 hover:shadow-purple-600/50 drop-shadow-md drop-shadow-purple-900/40"
+                  : "backdrop-blur-2xl bg-linear-to-br from-purple-500/30 via-purple-400/20 to-pink-600/30 border border-purple-400/50 hover:border-purple-300/80 text-black/60 hover:text-black/65 shadow-lg shadow-purple-400/60 hover:shadow-purple-400/65 drop-shadow-md drop-shadow-purple-300/30"
             }`}
             aria-label="Next projects"
           >
@@ -515,8 +536,8 @@ function Projects() {
                 currentPage === totalSteps
                   ? ""
                   : darkMode
-                  ? "bg-linear-to-r from-purple-400/0 via-purple-400/0 to-purple-400/0 group-hover:from-purple-400/20 group-hover:via-purple-400/15 group-hover:to-purple-400/0"
-                  : "bg-linear-to-r from-purple-300/0 via-purple-300/0 to-purple-300/0 group-hover:from-purple-300/25 group-hover:via-purple-300/20 group-hover:to-purple-300/0"
+                    ? "bg-linear-to-r from-purple-400/0 via-purple-400/0 to-purple-400/0 group-hover:from-purple-400/20 group-hover:via-purple-400/15 group-hover:to-purple-400/0"
+                    : "bg-linear-to-r from-purple-300/0 via-purple-300/0 to-purple-300/0 group-hover:from-purple-300/25 group-hover:via-purple-300/20 group-hover:to-purple-300/0"
               }`}
             ></div>
             <svg
@@ -537,8 +558,8 @@ function Projects() {
                 currentPage === totalSteps
                   ? ""
                   : darkMode
-                  ? "shadow-inset-lg shadow-purple-400/20"
-                  : "shadow-inset-lg shadow-purple-300/20"
+                    ? "shadow-inset-lg shadow-purple-400/20"
+                    : "shadow-inset-lg shadow-purple-300/20"
               }`}
             ></div>
           </button>
