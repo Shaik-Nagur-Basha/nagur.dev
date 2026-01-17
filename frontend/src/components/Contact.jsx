@@ -62,7 +62,7 @@ function Contact() {
         {/* Main Grid */}
         <div className="grid justify-items-center place-self-baseline lg:grid-cols-2 gap-8 lg:gap-16 mb-8">
           {/* Contact Info Section */}
-          <div className="space-y-6 place-content-start mt-10 mr-10">
+          <div className="lg:space-y-6 lg:place-content-start max-lg:w-full max-lg:flex items-center justify-center md:gap-8 gap-4 flex-wrap lg:mt-10 lg:mr-10">
             {[
               {
                 icon: Mail,
@@ -170,7 +170,7 @@ function Contact() {
           </div>
 
           {/* Contact Form Section */}
-          <div className="w-full max-w-2xl mr-44">
+          <div className="w-full max-w-2xl lg:mr-44">
             <form
               onSubmit={handleSubmit}
               className={`transition-all duration-500 animate-fade-in`}
