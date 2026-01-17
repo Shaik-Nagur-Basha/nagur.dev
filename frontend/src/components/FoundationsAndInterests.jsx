@@ -1,4 +1,4 @@
-import { Zap, GraduationCap, Heart } from "lucide-react";
+import { Zap, GraduationCap, Heart, Code } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 function FoundationsAndInterests() {
@@ -6,16 +6,27 @@ function FoundationsAndInterests() {
 
   const education = [
     {
-      degree: "Master of Computer Applications (MCA)",
-      institution: "Biju Patnaik University of Technology, Rourkela",
-      year: "2021 - 2023",
-      details: "Focused on advanced software engineering, data structures, and web development. Completed a thesis on machine learning applications in web security.",
+      degree: "B. Tech in Computer Science & Engineering",
+      institution: "Andhra University, Visakhapatnam",
+      year: "2020 - 2024",
+      cgpa: "7.02/10",
+      details: "Web development, cloud computing, and software engineering.",
     },
     {
-      degree: "Bachelor of Science in Physics",
-      institution: "Fakir Mohan University, Balasore",
-      year: "2018 - 2021",
-      details: "Gained a strong analytical and problem-solving foundation. Developed a passion for technology and its application to scientific problems.",
+      degree: "12th Grade (MPC - Intermediate/IPE)",
+      institution: "Sri Chaitanya Junior College, Vijayawada",
+      year: "2018 - 2020",
+      cgpa: "9.4/10",
+      details:
+        "Mathematics, Physics, and Chemistry stream with strong STEM foundation.",
+    },
+    {
+      degree: "10th Grade (SSC Board)",
+      institution: "Vikas Public School, Vijayawada",
+      year: "2017 - 2018",
+      cgpa: "9/10",
+      details:
+        "Secondary education with excellent performance in core subjects.",
     },
   ];
 
@@ -53,14 +64,32 @@ function FoundationsAndInterests() {
   ];
 
   const interests = [
-    { name: "Open Source", icon: "🌐" },
-    { name: "AI & Machine Learning", icon: "🤖" },
-    { name: "UI/UX Design", icon: "✨" },
-    { name: "Photography", icon: "📷" },
+    {
+      name: "Researching",
+      icon: "🔬",
+      description:
+        "Engaging in technical research and exploring emerging technologies.",
+    },
+    {
+      name: "Note-Making",
+      icon: "📝",
+      description: "Documenting innovative thoughts for future exploration.",
+    },
+    {
+      name: "Gaming",
+      icon: "🎮",
+      description: "Strategizing and engaging in interactive gameplay.",
+    },
+    {
+      name: "Movies",
+      icon: "🎬",
+      description:
+        "Enjoying diverse films, especially Sci-Fi and adventure genres.",
+    },
   ];
 
   return (
-    <section id="foundations" className="py-24 px-4">
+    <section id="foundations" className="mt-10 mb-20 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <span
@@ -75,7 +104,7 @@ function FoundationsAndInterests() {
           </span>
 
           <h2
-            className={`mt-6 text-3xl md:text-4xl font-extrabold tracking-tight ${
+            className={`mt-6 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight ${
               darkMode ? "text-white/85" : "text-black/85"
             }`}
           >
@@ -83,28 +112,67 @@ function FoundationsAndInterests() {
           </h2>
 
           <p className="mt-4 text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            A blend of formal education, self-taught skills, and personal interests that shape my work.
+            A blend of formal education, self-taught skills, and personal
+            interests that shape my work.
           </p>
         </div>
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           {/* Education Section (takes 1 column) */}
           <div className="lg:col-span-1 space-y-8">
             <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-full ${darkMode ? 'bg-purple-900/40' : 'bg-blue-100/60'}`}>
-                    <GraduationCap size={24} className={darkMode ? 'text-purple-300' : 'text-blue-700'} />
-                </div>
-                <h3 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-black'}`}>Education</h3>
+              <div
+                className={`p-3 rounded-full ${darkMode ? "bg-purple-900/40" : "bg-blue-100/60"}`}
+              >
+                <GraduationCap
+                  size={24}
+                  className={darkMode ? "text-purple-300" : "text-blue-700"}
+                />
+              </div>
+              <h3
+                className={`text-2xl font-bold ${darkMode ? "text-white/90" : "text-black/90"}`}
+              >
+                Education
+              </h3>
             </div>
             <div className="space-y-6 border-l-2 border-dashed border-gray-300 dark:border-gray-700 ml-5">
               {education.map((edu, index) => (
-                <div key={index} className="pl-8 relative before:content-[''] before:w-4 before:h-4 before:bg-blue-500 before:rounded-full before:absolute before:-left-2 before:top-1.5 before:border-4 before:border-solid before:border-white dark:before:border-gray-900">
-                  <h4 className={`text-lg font-semibold ${darkMode ? 'text-blue-300' : 'text-blue-600'}`}>{edu.degree}</h4>
-                  <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{edu.institution}</p>
-                  <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{edu.year}</p>
-                  <p className={`mt-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{edu.details}</p>
+                <div
+                  key={index}
+                  className="pl-8 relative before:content-[''] before:w-4 before:h-4 before:bg-blue-500 before:rounded-full before:absolute before:-left-2 before:top-1.5 before:border-4 before:border-solid before:border-white dark:before:border-gray-900"
+                >
+                  <h4
+                    className={`text-lg font-semibold ${darkMode ? "text-blue-300" : "text-blue-600"}`}
+                  >
+                    {edu.degree}
+                  </h4>
+                  <p
+                    className={`text-sm font-medium ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                  >
+                    {edu.institution}
+                  </p>
+                  <div className="flex items-center gap-3 mt-2 mb-3">
+                    <p
+                      className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-500"}`}
+                    >
+                      {edu.year}
+                    </p>
+                    <span
+                      className={`text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap inline-block transition-all duration-300 ${
+                        darkMode
+                          ? "bg-linear-to-r from-amber-900/60 to-yellow-800/60 text-amber-200 border border-amber-700/40"
+                          : "bg-linear-to-r from-amber-100/80 to-yellow-100/80 text-amber-700 border border-amber-300/60"
+                      }`}
+                    >
+                      CGPA: {edu.cgpa}
+                    </span>
+                  </div>
+                  <p
+                    className={`mt-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    {edu.details}
+                  </p>
                 </div>
               ))}
             </div>
@@ -112,6 +180,23 @@ function FoundationsAndInterests() {
 
           {/* Skills & Interests Section (takes 2 columns) */}
           <div className="lg:col-span-2">
+            {/* Skills Header */}
+            <div className="flex items-center gap-4 mb-8">
+              <div
+                className={`p-3 rounded-full ${darkMode ? "bg-purple-900/40" : "bg-blue-100/60"}`}
+              >
+                <Code
+                  size={24}
+                  className={darkMode ? "text-purple-300" : "text-blue-700"}
+                />
+              </div>
+              <h3
+                className={`text-2xl font-bold ${darkMode ? "text-white/90" : "text-black/90"}`}
+              >
+                Skills
+              </h3>
+            </div>
+
             {/* Skills */}
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-16">
               {skillCategories.map((category, idx) => (
@@ -168,23 +253,89 @@ function FoundationsAndInterests() {
                 </div>
               ))}
             </div>
-            
-            {/* Interests */}
+
+            {/* Interests / Hobbies */}
             <div>
-                <div className="flex items-center gap-4 mb-6">
-                    <div className={`p-3 rounded-full ${darkMode ? 'bg-purple-900/40' : 'bg-blue-100/60'}`}>
-                        <Heart size={24} className={darkMode ? 'text-purple-300' : 'text-blue-700'} />
+              <div className="flex items-center gap-4 mb-6">
+                <div
+                  className={`p-3 rounded-full ${darkMode ? "bg-purple-900/40" : "bg-blue-100/60"}`}
+                >
+                  <Heart
+                    size={24}
+                    className={darkMode ? "text-purple-300" : "text-blue-700"}
+                  />
+                </div>
+                <h3
+                  className={`text-2xl font-bold ${darkMode ? "text-white/90" : "text-black/90"}`}
+                >
+                  Hobbies
+                </h3>
+              </div>
+              <div className="flex flex-wrap gap-3 sm:gap-4">
+                {interests.map((interest, index) => {
+                  const gradients = [
+                    {
+                      dark: "from-cyan-500/40 to-blue-500/40",
+                      light: "from-cyan-400/40 to-blue-400/40",
+                      border: "hover:border-cyan-500/60",
+                      shadow: "hover:shadow-cyan-500/40",
+                    },
+                    {
+                      dark: "from-orange-500/40 to-amber-500/40",
+                      light: "from-orange-400/40 to-amber-400/40",
+                      border: "hover:border-orange-500/60",
+                      shadow: "hover:shadow-orange-500/40",
+                    },
+                    {
+                      dark: "from-pink-500/40 to-rose-500/40",
+                      light: "from-pink-400/40 to-rose-400/40",
+                      border: "hover:border-pink-500/60",
+                      shadow: "hover:shadow-pink-500/40",
+                    },
+                    {
+                      dark: "from-purple-500/40 to-violet-500/40",
+                      light: "from-purple-400/40 to-violet-400/40",
+                      border: "hover:border-purple-500/60",
+                      shadow: "hover:shadow-purple-500/40",
+                    },
+                  ];
+                  const gradient = gradients[index];
+                  return (
+                    <div
+                      key={index}
+                      className={`group relative flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-3xl transition-all duration-300 transform active:scale-90 overflow-hidden backdrop-blur-md ${
+                        darkMode
+                          ? `bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 ${gradient.border} shadow-lg shadow-gray-900/50 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30`
+                          : `bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 ${gradient.border} shadow-lg shadow-blue-200/40 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20`
+                      }`}
+                    >
+                      <div
+                        className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 bg-linear-to-br ${
+                          darkMode ? gradient.dark : gradient.light
+                        }`}
+                      ></div>
+                      <span
+                        className={`relative z-10 -translate-y-0.5 text-lg sm:text-xl transition-all duration-300 group-hover:scale-110 ${
+                          darkMode
+                            ? "drop-shadow-lg group-hover:drop-shadow-2xl"
+                            : "drop-shadow-md group-hover:drop-shadow-lg"
+                        }`}
+                      >
+                        {interest.icon}
+                      </span>
+                      <span
+                        className={`relative z-10 text-xs sm:text-sm font-semibold transition-colors duration-300 ${
+                          darkMode
+                            ? "text-gray-300 group-hover:text-white"
+                            : "text-gray-700 group-hover:text-gray-900"
+                        }`}
+                      >
+                        {interest.name}
+                      </span>
                     </div>
-                    <h3 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-black'}`}>Interests</h3>
-                </div>
-                <div className="flex flex-wrap gap-4">
-                    {interests.map((interest, index) => (
-                        <div key={index} className={`flex items-center gap-3 px-4 py-2 rounded-full border backdrop-blur-sm transition-all duration-300 hover:shadow-lg ${darkMode ? 'bg-gray-800/50 border-gray-700 text-gray-300 hover:border-blue-500 hover:text-white' : 'bg-white/60 border-gray-300/80 text-gray-700 hover:border-blue-500 hover:text-gray-900'}`}>
-                            <span className="text-xl">{interest.icon}</span>
-                            <span className="font-semibold">{interest.name}</span>
-                        </div>
-                    ))}
-                </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
