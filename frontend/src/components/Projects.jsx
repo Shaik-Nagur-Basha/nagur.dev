@@ -410,7 +410,7 @@ function Projects() {
 
                     {/* Video Background */}
                     <video
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-fill"
                       autoPlay
                       loop
                       muted
