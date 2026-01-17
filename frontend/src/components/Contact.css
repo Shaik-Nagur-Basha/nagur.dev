@@ -1,0 +1,257 @@
+/* ===== ANIMATIONS ===== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes successPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bounceSoft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ===== ANIMATION CLASSES ===== */
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.7s ease-out forwards;
+  opacity: 0;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animate-success-pop {
+  animation: successPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-bounce-soft {
+  animation: bounceSoft 1.5s ease-in-out infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ===== FORM STYLES ===== */
+
+input,
+textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 100, 100, 0.3) transparent;
+}
+
+input::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+input::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+input::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.3);
+  border-radius: 3px;
+}
+
+input::-webkit-scrollbar-thumb:hover,
+textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.5);
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+@media (max-width: 640px) {
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  input,
+  textarea {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== FOCUS VISIBLE ===== */
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* ===== SELECTION ===== */
+
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.dark ::selection {
+  background: rgba(147, 51, 234, 0.4);
+}
+
+/* ===== HOVER STATE FOR SMALL SCREENS ===== */
+
+@media (hover: none) and (pointer: coarse) {
+  
+
+  button:active {
+    transform: scale(0.97);
+  }
+}
+
+/* ===== LABEL STYLES ===== */
+
+label {
+  display: block;
+  transition: all 0.3s ease;
+}
+
+input:focus + label,
+textarea:focus + label {
+  font-weight: 700;
+}
+
+/* ===== SMOOTH SCROLLING ===== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== GRADIENT TEXT ===== */
+
+.gradient-text {
+  background: linear-gradient(135deg, #ffffff, #c4b5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, #ffffff, #c4b5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
