@@ -71,7 +71,7 @@ function Skills() {
           {skillCategories.map((category, idx) => (
             <div
               key={idx}
-              className={`group relative rounded-3xl p-[1px]
+              className={`group relative rounded-3xl p-px
                  ${
                    darkMode
                      ? "bg-linear-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30"

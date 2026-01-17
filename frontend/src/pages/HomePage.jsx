@@ -3,9 +3,12 @@ import Navigation from "../components/Navigation";
 import Hero from "../components/Hero";
 import About from "../components/About";
 import Projects from "../components/Projects";
-import Skills from "../components/Skills";
-import Contact from "../components/Contact";
+import Foundations from "../components/Foundations";
+import FoundationsInterests from "../components/FoundationsInterests";
+import FoundationsAndInterests from "../components/FoundationsAndInterests";
+import { Contact } from "lucide-react";
 import Footer from "../components/Footer";
+import Skills from "../components/Skills";
 
 function HomePage() {
   const { darkMode } = useTheme();
@@ -22,7 +25,10 @@ function HomePage() {
       <Hero />
       <About />
       <Projects />
-      <Skills />
+      <Skills/>
+      <FoundationsInterests />
+      <Foundations />
+      <FoundationsAndInterests />
       <Contact />
       <Footer />
     </div>
