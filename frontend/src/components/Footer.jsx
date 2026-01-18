@@ -510,8 +510,12 @@ function Footer() {
           <div className="bottom-row">
             <p className="copyright">
               &copy; {currentYear} Made with
-              <Heart size={14} className="text-red-500 animate-pulse" /> by{" "}
-              <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
+              <Heart
+                size={14}
+                className="text-red-500 cursor-pointer animate-pulse"
+              />{" "}
+              by{" "}
+              <span className="bg-linear-to-r from-blue-600 to-purple-600 cursor-pointer bg-clip-text text-transparent animate-pulse">
                 Sk Nagur Basha
               </span>
             </p>
