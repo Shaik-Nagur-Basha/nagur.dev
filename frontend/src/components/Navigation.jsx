@@ -92,7 +92,7 @@ function Navigation() {
     <nav
       className={`fixed z-50 transition-all duration-500 ${
         isScrolled
-          ? "rounded-3xl mx-4 mt-4 w-[calc(100%-32px)] left-0 backdrop-blur-md shadow-md transition-all duration-500 group-hover:shadow-md group-hover:scale-105"
+          ? "rounded-3xl mx-4 mt-4 w-[calc(100%-32px)] left-0 shadow-md transition-all duration-500 group-hover:shadow-md group-hover:scale-105"
           : "w-full top-0 border-b-0"
       } ${
         isScrolled
@@ -100,12 +100,14 @@ function Navigation() {
             ? "border border-purple-700/30"
             : "border border-blue-300/30"
           : darkMode
-          ? "border-b border-gray-700/30"
-          : "border-b border-linear-to-r from-blue-200/40 to-cyan-200/40"
+            ? "border-b border-gray-700/30"
+            : "border-b border-linear-to-r from-blue-200/40 to-cyan-200/40"
       }`}
     >
       <style>{menuAnimationStyle}</style>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${isScrolled ? "backdrop-blur-md" : ""}`}
+      >
         <div className="flex justify-between items-center h-16">
           {/* Logo - Clickable Link to Home */}
           <a
@@ -224,51 +226,51 @@ function Navigation() {
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu - Tooltip Style */}
-        {isOpen && (
-          <div
-            className={`fixed md:hidden ${
-              isOpen ? "menu-enter" : "menu-exit"
-            } backdrop-blur-2xl rounded-xl border shadow-2xl ${
-              darkMode
-                ? "bg-linear-to-br from-gray-800/50 via-gray-900/40 to-purple-900/50 border-gray-600/60 shadow-purple-900/40"
-                : "bg-linear-to-br from-white/60 via-blue-50/50 to-cyan-50/60 border-blue-300/60 shadow-blue-300/30"
-            }`}
-            style={{
-              right: "1rem",
-              top: isScrolled ? "calc(100% + 0.5rem)" : "calc(64px + 0.5rem)",
-              width: "max-content",
-              minWidth: "200px",
-              zIndex: 40,
-            }}
-          >
-            <div className="px-3 py-2 space-y-1">
-              {navLinks.map((link) => {
-                const IconComponent = link.icon;
-                return (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
-                      darkMode
-                        ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
-                        : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <IconComponent
-                      size={18}
-                      className="transition-all duration-200"
-                    />
-                    {link.name}
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Menu - Tooltip Style */}
+      {isOpen && (
+        <div
+          className={`absolute md:hidden ${
+            isOpen ? "menu-enter" : "menu-exit"
+          } backdrop-blur-md rounded-xl border shadow-2xl ${
+            darkMode
+              ? "bg-linear-to-br from-gray-800/25 via-gray-900/20 to-purple-900/25 border-gray-600/30 shadow-purple-900/20"
+              : "bg-linear-to-br from-white/30 via-blue-50/25 to-cyan-50/30 border-blue-300/30 shadow-blue-300/15"
+          }`}
+          style={{
+            right: "1rem",
+            top: isScrolled ? "calc(100% + 0.5rem)" : "calc(64px + 0.5rem)",
+            width: "max-content",
+            minWidth: "200px",
+            zIndex: 40,
+          }}
+        >
+          <div className="px-3 py-2 space-y-1">
+            {navLinks.map((link) => {
+              const IconComponent = link.icon;
+              return (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
+                    darkMode
+                      ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
+                      : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <IconComponent
+                    size={18}
+                    className="transition-all duration-200"
+                  />
+                  {link.name}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
