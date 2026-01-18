@@ -1,89 +1,496 @@
-import { Github, Linkedin, Twitter, Mail, Heart } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Twitter,
+  Mail,
+  Heart,
+  ArrowUpRight,
+} from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
 function Footer() {
+  const { darkMode } = useTheme();
   const currentYear = new Date().getFullYear();
 
+  const styles = `
+    .footer-wrapper {
+      position: relative;
+      overflow: hidden;
+      background: ${
+        darkMode
+          ? "linear-gradient(180deg, #0f172a 0%, #020617 100%)"
+          : "linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)"
+      };
+      transition: all 0.3s ease;
+    }
+
+    .footer-wrapper::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(600px circle at 10% 10%, ${
+          darkMode ? "rgba(99,102,241,0.1)" : "rgba(99,102,241,0.08)"
+        }, transparent 40%),
+        radial-gradient(500px circle at 90% 80%, ${
+          darkMode ? "rgba(56,189,248,0.1)" : "rgba(56,189,248,0.08)"
+        }, transparent 45%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .footer-content {
+      position: relative;
+      z-index: 1;
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 3rem 1.25rem 2rem;
+    }
+
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .footer-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: ${darkMode ? "#f1f5f9" : "#0f172a"};
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-title::before {
+      content: "";
+      width: 3px;
+      height: 20px;
+      background: linear-gradient(180deg, #3b82f6, #a855f7);
+      border-radius: 2px;
+    }
+
+    .footer-description {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: ${darkMode ? "#cbd5e1" : "#64748b"};
+      max-width: 380px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: ${darkMode ? "#cbd5e1" : "#64748b"};
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .footer-link::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(180deg, #3b82f6, transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: ${darkMode ? "#f1f5f9" : "#0f172a"};
+      transform: translateX(4px);
+    }
+
+    .footer-link:hover::before {
+      opacity: 1;
+    }
+
+    .footer-link svg {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+    }
+
+    .footer-link:hover svg {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .social-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: ${
+        darkMode
+          ? "linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))"
+          : "linear-gradient(135deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01))"
+      };
+      color: ${darkMode ? "#cbd5e1" : "#475569"};
+      border: 2px solid ${
+        darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"
+      };
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: visible;
+    }
+
+    .social-btn::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+    }
+
+    .social-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: inherit;
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: -2;
+    }
+
+    .social-btn:nth-child(1) {
+      --icon-color: #333333;
+      --icon-color-hover: #ffffff;
+      --gradient-start: #1f2937;
+      --gradient-end: #374151;
+    }
+
+    .social-btn:nth-child(2) {
+      --icon-color: #0a66c2;
+      --icon-color-hover: #ffffff;
+      --gradient-start: #0a66c2;
+      --gradient-end: #054da6;
+    }
+
+    .social-btn:nth-child(3) {
+      --icon-color: #1da1f2;
+      --icon-color-hover: #ffffff;
+      --gradient-start: #1da1f2;
+      --gradient-end: #1a8cd8;
+    }
+
+    .social-btn:nth-child(4) {
+      --icon-color: #ea4335;
+      --icon-color-hover: #ffffff;
+      --gradient-start: #ea4335;
+      --gradient-end: #c5221f;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-8px) rotateZ(10deg) scale(1.05);
+      color: var(--icon-color-hover);
+      border-color: var(--gradient-start);
+      box-shadow: 
+        0 20px 50px rgba(0,0,0,0.2),
+        0 0 30px rgba(0,0,0,0.1),
+        inset 0 1px 2px rgba(255,255,255,0.1);
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    }
+
+    .social-btn:hover::before {
+      opacity: 0.3;
+      background: linear-gradient(
+        45deg,
+        var(--gradient-start),
+        var(--gradient-end),
+        var(--gradient-start)
+      );
+      animation: pulse-ring 1.5s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+      }
+    }
+
+    .social-btn:active {
+      transform: translateY(-4px) rotateZ(10deg) scale(1.05);
+    }
+
+    ${
+      darkMode
+        ? `
+      .social-btn {
+        background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+        border-color: rgba(99,102,241,0.2);
+      }
+      
+      .social-btn:hover {
+        background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        box-shadow: 
+          0 20px 50px rgba(99,102,241,0.4),
+          0 0 30px rgba(168,85,247,0.2),
+          inset 0 1px 2px rgba(255,255,255,0.2);
+      }
+    `
+        : `
+      .social-btn:hover {
+        background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        box-shadow: 
+          0 20px 50px rgba(59,130,246,0.25),
+          0 0 30px rgba(168,85,247,0.15),
+          inset 0 1px 2px rgba(255,255,255,0.3);
+      }
+    `
+    }
+
+    .footer-divider {
+      height: 1px;
+      margin: 2.5rem 0 1.75rem 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        ${darkMode ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.15)"},
+        transparent
+      );
+    }
+
+    .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+      color: ${darkMode ? "#94a3b8" : "#64748b"};
+    }
+
+    .bottom-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .copyright {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-links-bottom a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .footer-links-bottom a::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #a855f7);
+      transition: width 0.3s ease;
+    }
+
+    .footer-links-bottom a:hover {
+      color: ${darkMode ? "#f1f5f9" : "#0f172a"};
+    }
+
+    .footer-links-bottom a:hover::after {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .footer-content {
+        padding: 2.5rem 1rem 1.5rem;
+      }
+
+      .bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .footer-description {
+        max-width: 100%;
+      }
+
+      .footer-links-bottom {
+        gap: 1rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-content {
+        padding: 1.75rem 0.75rem 1.25rem;
+      }
+
+      .footer-title {
+        font-size: 1rem;
+      }
+
+      .footer-description {
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+
+      .footer-link {
+        font-size: 0.85rem;
+      }
+
+      .social-links {
+        margin-top: 0.75rem;
+      }
+
+      .social-btn {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  `;
+
+  const linkSections = [
+    {
+      title: "Quick Links",
+      links: [
+        { label: "Home", href: "#home" },
+        { label: "About", href: "#about" },
+        { label: "Projects", href: "#projects" },
+        { label: "Skills", href: "#skills" },
+      ],
+    },
+    {
+      title: "Projects",
+      links: [
+        { label: "E-Commerce Platform", href: "#" },
+        { label: "Task Management App", href: "#" },
+        { label: "Real Estate Portal", href: "#" },
+        { label: "Analytics Dashboard", href: "#" },
+      ],
+    },
+    {
+      title: "Services",
+      links: [
+        { label: "Web Development", href: "#" },
+        { label: "UI/UX Design", href: "#" },
+        { label: "Backend Development", href: "#" },
+        { label: "Consulting", href: "#" },
+      ],
+    },
+    {
+      title: "Contact",
+      links: [
+        { label: "hello@example.com", href: "mailto:hello@example.com" },
+        { label: "+1 (555) 123-4567", href: "tel:+15551234567" },
+        { label: "San Francisco, CA", href: "#location" },
+        { label: "Contact Form", href: "#contact" },
+      ],
+    },
+  ];
+
+  const socialLinks = [
+    { icon: Github, label: "GitHub", href: "#github" },
+    { icon: Linkedin, label: "LinkedIn", href: "#linkedin" },
+    { icon: Twitter, label: "Twitter", href: "#twitter" },
+    { icon: Mail, label: "Email", href: "#email" },
+  ];
+
   return (
-    <footer className="bg-gray-950 dark:bg-black text-gray-300 py-16 px-4 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-12">
-          {/* Brand */}
-          <div className="space-y-4">
-            <h3 className="text-2xl font-bold bg-linear-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Portfolio
-            </h3>
-            <p className="text-gray-400 leading-relaxed">
-              Creating beautiful digital experiences with modern technologies
-              and innovative solutions.
-            </p>
-          </div>
+    <footer className="footer-wrapper rounded-tl-2xl rounded-tr-2xl">
+      <div
+        className={`absolute top-0 w-full h-1 ${darkMode ? "bg-linear-to-r from-blue-800 via-purple-800 to-cyan-800" : "bg-linear-to-r from-blue-500 via-purple-500 to-cyan-500"}`}
+      ></div>
+      <style>{styles}</style>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-1 h-1 bg-linear-to-r from-blue-400 to-purple-500 rounded-full"></span>
-              Quick Links
-            </h4>
-            <ul className="space-y-2">
-              {["Home", "About", "Projects", "Skills", "Contact"].map(
-                (link) => (
-                  <li key={link}>
+      <div className="footer-content">
+        {/* Brand Section */}
+        <div className="w-full gap-14 max-[1072px]:flex-col flex">
+          <div className="flex flex-wrap gap-4 justify-between min-[1072px]:w-3/4">
+            {linkSections.map((section) => (
+              <div key={section.title} className="footer-section max-w-fit">
+                <h3 className="footer-title">{section.title}</h3>
+                <nav className="footer-links">
+                  {section.links.map((link) => (
                     <a
-                      href={`#${link.toLowerCase()}`}
-                      className="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-200 inline-block"
+                      key={link.label}
+                      href={link.href}
+                      className="footer-link"
                     >
-                      {link}
+                      <ArrowUpRight size={14} />
+                      {link.label}
                     </a>
-                  </li>
-                )
-              )}
-            </ul>
+                  ))}
+                </nav>
+              </div>
+            ))}
           </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-1 h-1 bg-linear-to-r from-blue-400 to-purple-500 rounded-full"></span>
-              Services
-            </h4>
-            <ul className="space-y-2">
-              {[
-                "Web Development",
-                "UI/UX Design",
-                "Backend Development",
-                "Consulting",
-              ].map((service) => (
-                <li key={service}>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-200 inline-block"
-                  >
-                    {service}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social Links */}
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-1 h-1 bg-linear-to-r from-blue-400 to-purple-500 rounded-full"></span>
-              Follow Me
-            </h4>
-            <div className="flex gap-3">
-              {[
-                { icon: Github, link: "#", label: "GitHub" },
-                { icon: Linkedin, link: "#", label: "LinkedIn" },
-                { icon: Twitter, link: "#", label: "Twitter" },
-                { icon: Mail, link: "#", label: "Email" },
-              ].map((social, idx) => {
+          <div className="footer-section min-[1060px]:w-1/4 max-[1072px]:mx-auto">
+            <h2 className="footer-title">Portfolio</h2>
+            <p className="footer-description">
+              MERN full stack web developer focused on building fast,
+              accessible, and visually refined web experiences with modern
+              technologies.
+            </p>
+            <div className="social-links">
+              {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
                   <a
-                    key={idx}
-                    href={social.link}
-                    className="p-3 bg-gray-800 hover:bg-linear-to-r hover:from-blue-600 hover:to-purple-600 rounded-lg hover:scale-110 active:scale-95 transition-all duration-300"
+                    key={social.label}
+                    href={social.href}
+                    className="social-btn"
                     aria-label={social.label}
                     title={social.label}
                   >
@@ -96,26 +503,23 @@ function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center text-gray-400 gap-4">
-            <p className="flex items-center gap-2">
-              &copy; {currentYear} Made with{" "}
-              <Heart size={16} className="text-red-500 animate-pulse" /> by You
+        <div className="footer-divider"></div>
+
+        {/* Bottom Section */}
+        <div className="footer-bottom">
+          <div className="bottom-row">
+            <p className="copyright">
+              &copy; {currentYear} Made with
+              <Heart size={14} className="text-red-500 animate-pulse" /> by{" "}
+              <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
+                Sk Nagur Basha
+              </span>
             </p>
-            <div className="flex gap-6">
-              <a
-                href="#"
-                className="hover:text-white hover:underline transition-all duration-200"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="hover:text-white hover:underline transition-all duration-200"
-              >
-                Terms of Service
-              </a>
-            </div>
+            <nav className="footer-links-bottom">
+              <a href="#privacy">Privacy Policy</a>
+              <a href="#terms">Terms of Service</a>
+              <a href="#cookies">Cookie Policy</a>
+            </nav>
           </div>
         </div>
       </div>
