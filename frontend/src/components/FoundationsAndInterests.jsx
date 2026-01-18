@@ -7,6 +7,7 @@ function FoundationsAndInterests() {
   const { darkMode } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
+  const [hoveredInterestIndex, setHoveredInterestIndex] = useState(null);
 
   useEffect(() => {
     // Minimum skeleton display time (prevents flashing)
@@ -113,7 +114,7 @@ function FoundationsAndInterests() {
         <section
           id="foundations"
           className="mt-10 mb-20 py-10 px-4"
-          style={{ scrollMarginTop: "80px" }}
+          style={{ scrollMarginTop: "50px" }}
         >
           <div className="max-w-7xl mx-auto">
             <div className="text-center mt-5 mb-20">
@@ -280,7 +281,7 @@ function FoundationsAndInterests() {
                 </div>
 
                 {/* Interests / Hobbies */}
-                <div id="hobbies" style={{ scrollMarginTop: "80px" }}>
+                <div id="interests" style={{ scrollMarginTop: "140px" }}>
                   <div className="flex items-center gap-4 mb-6">
                     <div
                       className={`p-3 rounded-full ${darkMode ? "bg-purple-900/40" : "bg-blue-100/60"}`}
@@ -295,7 +296,7 @@ function FoundationsAndInterests() {
                     <h3
                       className={`text-2xl font-bold ${darkMode ? "text-white/90" : "text-black/90"}`}
                     >
-                      Hobbies
+                      Interests
                     </h3>
                   </div>
                   <div className="flex flex-wrap gap-3 sm:gap-4">
@@ -330,7 +331,9 @@ function FoundationsAndInterests() {
                       return (
                         <div
                           key={index}
-                          className={`group relative flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-3xl transition-all duration-300 transform active:scale-90 overflow-hidden backdrop-blur-md ${
+                          onMouseEnter={() => setHoveredInterestIndex(index)}
+                          onMouseLeave={() => setHoveredInterestIndex(null)}
+                          className={`group cursor-pointer relative flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-3xl transition-all duration-300 transform active:scale-90 overflow-visible backdrop-blur-md ${
                             darkMode
                               ? `bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 ${gradient.border} shadow-lg shadow-gray-900/50 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30`
                               : `bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 ${gradient.border} shadow-lg shadow-blue-200/40 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20`
@@ -359,10 +362,34 @@ function FoundationsAndInterests() {
                           >
                             {interest.name}
                           </span>
+
+                          {/* Tooltip for xl+ screens */}
+                          <div
+                            className={`hidden xl:block absolute top-full mt-2 left-1/2 transform -translate-x-1/6 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 ${
+                              darkMode
+                                ? "bg-gray-800/95 text-gray-200 border border-gray-700"
+                                : "bg-gray-900/95 text-white border border-gray-800"
+                            }`}
+                          >
+                            {interest.description}
+                          </div>
                         </div>
                       );
                     })}
                   </div>
+
+                  {/* Tooltip for screens smaller than xl */}
+                  {hoveredInterestIndex !== null && (
+                    <div
+                      className={`mt-4 xl:hidden text-start px-2.5 py-1.5 w-fit rounded-lg text-xs font-medium transition-opacity duration-300 ${
+                        darkMode
+                          ? "bg-gray-800/95 text-gray-200 border border-gray-700"
+                          : "bg-gray-900/95 text-white border border-gray-800"
+                      }`}
+                    >
+                      {interests[hoveredInterestIndex].description}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

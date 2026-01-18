@@ -101,7 +101,7 @@ function Navigation() {
     { name: "About", href: "#about", icon: User },
     { name: "Projects", href: "#projects", icon: Briefcase },
     { name: "Foundations", href: "#foundations", icon: Layers },
-    { name: "Interests", href: "#hobbies", icon: Heart },
+    { name: "Interests", href: "#interests", icon: Heart },
     { name: "Contact", href: "#contact", icon: Mail },
   ];
 
