@@ -106,9 +106,9 @@ function Navigation() {
     >
       <style>{menuAnimationStyle}</style>
       <div
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${isScrolled ? "backdrop-blur-md" : ""}`}
+        className={`px-4 sm:px-6 lg:px-8 w-full  ${isScrolled ? "rounded-3xl backdrop-blur-md" : ""}`}
       >
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
           {/* Logo - Clickable Link to Home */}
           <a
             href="/"
