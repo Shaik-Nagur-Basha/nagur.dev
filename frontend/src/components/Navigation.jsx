@@ -9,6 +9,8 @@ import {
   BookOpen,
   Smile,
   Mail,
+  Heart,
+  Layers,
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
@@ -98,9 +100,8 @@ function Navigation() {
     // { name: "Home", href: "#home", icon: Home },
     { name: "About", href: "#about", icon: User },
     { name: "Projects", href: "#projects", icon: Briefcase },
-    { name: "Skills", href: "#skills", icon: Zap },
-    { name: "Education", href: "#education", icon: BookOpen },
-    { name: "Hobbies", href: "#hobbies", icon: Smile },
+    { name: "Foundations", href: "#foundations", icon: Layers },
+    { name: "Interests", href: "#hobbies", icon: Heart },
     { name: "Contact", href: "#contact", icon: Mail },
   ];
 
@@ -274,7 +275,7 @@ function Navigation() {
                   return (
                     <a
                       key={link.name}
-                      href={link.href}
+                      href={link.href === "#projects" ? "/projects" : link.href}
                       className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
                         darkMode
                           ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"

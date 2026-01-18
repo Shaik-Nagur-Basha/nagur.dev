@@ -1,11 +1,13 @@
 import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import { ButtonPrimary, ButtonSecondary } from "./Button";
 
 function Hero() {
   const { darkMode } = useTheme();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
 
@@ -21,6 +23,21 @@ function Hero() {
       setIsLoading(false);
     }
   }, [minLoadingTime]);
+
+  // Handle navigation to projects
+  const handleViewWork = () => {
+    navigate("/projects");
+  };
+
+  // Handle CV download
+  const handleDownloadCV = () => {
+    const link = document.createElement("a");
+    link.href = "/Sk_Nagur_Basha_CV.pdf"; // Make sure cv.pdf exists in public folder
+    link.download = "Sk_Nagur_Basha_CV.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Add floating animation keyframes
   const floatingStyle = `
@@ -247,14 +264,15 @@ function Hero() {
                     darkMode ? "text-gray-400" : "text-gray-700"
                   }`}
                 >
-                  Full-stack developer passionate about creating beautiful and
-                  functional web experiences. I specialize in React, Node.js,
-                  and modern web technologies.
+                  MERN stack web developer crafting polished, full-stack web
+                  applications with a strong focus on performance, scalability,
+                  and clean architecture.
                 </p>
 
                 {/* CTA Buttons */}
                 <div className="flex flex-row gap-3 pt-4 md:pt-6 w-fit">
                   <ButtonPrimary
+                    onClick={handleViewWork}
                     className={`flex items-center justify-center cursor-pointer truncate gap-2 backdrop-blur-md font-semibold text-sm md:text-base px-5 md:px-7 py-2.5 md:py-3 rounded-xl transition-all duration-300 ${
                       darkMode
                         ? "bg-linear-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-600/40 hover:shadow-xl hover:shadow-blue-500/60 hover:scale-105 active:scale-95"
@@ -268,6 +286,7 @@ function Hero() {
                     />
                   </ButtonPrimary>
                   <ButtonSecondary
+                    onClick={handleDownloadCV}
                     className={`flex items-center justify-center cursor-pointer truncate font-semibold text-sm md:text-base px-5 md:px-7 py-2.5 md:py-3 rounded-xl font-mono backdrop-blur-md transition-all duration-300 ${
                       darkMode
                         ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-purple-500/40 text-gray-200 hover:from-purple-900/50 hover:to-purple-800/50 hover:border-purple-400/70 hover:text-purple-100 hover:shadow-lg hover:shadow-purple-600/40 hover:scale-105 active:scale-95"
@@ -281,7 +300,9 @@ function Hero() {
                 {/* Social Links */}
                 <div className="flex gap-3 sm:gap-4 pt-6 md:pt-8">
                   <a
-                    href="#"
+                    href="https://github.com/Shaik-Nagur-Basha"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
                         ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-blue-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
@@ -314,7 +335,9 @@ function Hero() {
                     ></div>
                   </a>
                   <a
-                    href="#"
+                    href="https://www.linkedin.com/in/nagur-basha"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
                         ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-purple-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-purple-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
@@ -347,7 +370,10 @@ function Hero() {
                     ></div>
                   </a>
                   <a
-                    href="#"
+                    // href="mailto:your-email@example.com?subject=Let's Work Together&body=Hi Nagur, I'd like to discuss..."
+                    href="mailto:sknbasknba@gmail.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
                         ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-pink-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-pink-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"

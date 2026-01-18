@@ -110,7 +110,11 @@ function FoundationsAndInterests() {
       {isLoading ? (
         <SkeletonLoader type="foundations" />
       ) : (
-        <section id="foundations" className="mt-10 mb-20 px-4">
+        <section
+          id="foundations"
+          className="mt-10 mb-20 py-10 px-4"
+          style={{ scrollMarginTop: "80px" }}
+        >
           <div className="max-w-7xl mx-auto">
             <div className="text-center mt-5 mb-20">
               <span
@@ -276,7 +280,7 @@ function FoundationsAndInterests() {
                 </div>
 
                 {/* Interests / Hobbies */}
-                <div>
+                <div id="hobbies" style={{ scrollMarginTop: "80px" }}>
                   <div className="flex items-center gap-4 mb-6">
                     <div
                       className={`p-3 rounded-full ${darkMode ? "bg-purple-900/40" : "bg-blue-100/60"}`}
