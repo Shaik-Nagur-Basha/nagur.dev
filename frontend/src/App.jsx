@@ -2,16 +2,22 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
-import "./style.css";
+// import BlogsPage from "./pages/BlogsPage";
 import ErrorPage from "./pages/ErrorPage";
+// import GalleryPage from "./pages/GalleryPage";
+import ScrollToTop from "./components/ScrollToTop";
+import "./style.css";
 
 function App() {
   return (
     <ThemeProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          {/* <Route path="/gallery" element={<GalleryPage />} /> */}
+          {/* <Route path="/blogs" element={<BlogsPage />} /> */}
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>
