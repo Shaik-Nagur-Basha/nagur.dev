@@ -6,6 +6,8 @@ import Projects from "../components/Projects";
 import FoundationsAndInterests from "../components/FoundationsAndInterests";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
+// import Certifications from "../components/Certifications";
+// import ClientResponses from "../components/ClientResponses";
 
 function HomePage() {
   const { darkMode } = useTheme();
@@ -26,6 +28,8 @@ function HomePage() {
       <About />
       <Projects />
       <FoundationsAndInterests />
+      {/* <Certifications /> */}
+      {/* <ClientResponses /> */}
       <Contact />
       <Footer />
     </div>

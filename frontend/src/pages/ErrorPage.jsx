@@ -1,14 +1,30 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MoveLeft, Home, Meh } from "lucide-react";
 
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { useTheme } from "../context/ThemeContext";
 
 const ErrorPage = () => {
   const { darkMode } = useTheme();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [minLoadingTime, setMinLoadingTime] = useState(true);
+
+  useEffect(() => {
+    // Minimum skeleton display time (prevents flashing)
+    const minTimer = setTimeout(() => setMinLoadingTime(false), 800);
+    return () => clearTimeout(minTimer);
+  }, []);
+
+  useEffect(() => {
+    // Switch to content once minimum time has passed
+    if (!minLoadingTime) {
+      setIsLoading(false);
+    }
+  }, [minLoadingTime]);
 
   useEffect(() => {
     // Optional: Add a class to the body for page-specific styling
@@ -208,46 +224,52 @@ const ErrorPage = () => {
   `;
 
   return (
-    <div className="error-page-container">
-      <style>{styles}</style>
-      <Navigation />
+    <>
+      {isLoading ? (
+        <SkeletonLoader type="errorpage" />
+      ) : (
+        <div className="error-page-container">
+          <style>{styles}</style>
+          <Navigation />
 
-      <main className="error-content-wrapper">
-        <div className="flex flex-col justify-center items-center mt-10 space-y-8">
-          <div className="glitch-text-container">
-            <div className="glitch-text">404</div>
-          </div>
+          <main className="error-content-wrapper">
+            <div className="flex flex-col justify-center items-center mt-10 space-y-8">
+              <div className="glitch-text-container">
+                <div className="glitch-text">404</div>
+              </div>
 
-          <div className="error-details w-full flex flex-col items-center">
-            <h1 className="error-subtitle truncate">
-              <Meh size={36} strokeWidth={1.5} />
-              <span>Oops! Page Not Found</span>
-            </h1>
-            <p className="error-description mx-auto">
-              It seems you've taken a wrong turn in the digital universe. The
-              page you are looking for might have been moved, deleted, or
-              perhaps never existed.
-            </p>
+              <div className="error-details w-full flex flex-col items-center">
+                <h1 className="error-subtitle truncate">
+                  <Meh size={36} strokeWidth={1.5} />
+                  <span>Oops! Page Not Found</span>
+                </h1>
+                <p className="error-description mx-auto">
+                  It seems you've taken a wrong turn in the digital universe.
+                  The page you are looking for might have been moved, deleted,
+                  or perhaps never existed.
+                </p>
 
-            <div className="error-actions justify-center items-center flex-wrap">
-              <button
-                onClick={() => navigate(-1)}
-                className="error-btn btn-secondary"
-              >
-                <MoveLeft size={20} className="mr-2" />
-                Go Back
-              </button>
-              <Link to="/" className="error-btn btn-primary">
-                <Home size={20} className="mr-2" />
-                Take Me Home
-              </Link>
+                <div className="error-actions justify-center items-center flex-wrap">
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="error-btn btn-secondary"
+                  >
+                    <MoveLeft size={20} className="mr-2" />
+                    Go Back
+                  </button>
+                  <Link to="/" className="error-btn btn-primary">
+                    <Home size={20} className="mr-2" />
+                    Take Me Home
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </main>
+          </main>
 
-      <Footer />
-    </div>
+          <Footer />
+        </div>
+      )}
+    </>
   );
 };
 

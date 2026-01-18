@@ -7,10 +7,27 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { useState, useEffect } from "react";
+import SkeletonLoader from "./SkeletonLoader";
 
 function Footer() {
   const { darkMode } = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
+  const [minLoadingTime, setMinLoadingTime] = useState(true);
   const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    // Minimum skeleton display time (prevents flashing)
+    const minTimer = setTimeout(() => setMinLoadingTime(false), 800);
+    return () => clearTimeout(minTimer);
+  }, []);
+
+  useEffect(() => {
+    // Switch to content once minimum time has passed
+    if (!minLoadingTime) {
+      setIsLoading(false);
+    }
+  }, [minLoadingTime]);
 
   const styles = `
     .footer-wrapper {
@@ -448,86 +465,92 @@ function Footer() {
   ];
 
   return (
-    <footer className="footer-wrapper rounded-tl-2xl rounded-tr-2xl">
-      <div
-        className={`absolute top-0 w-full h-1 ${darkMode ? "bg-linear-to-r from-blue-800 via-purple-800 to-cyan-800" : "bg-linear-to-r from-blue-500 via-purple-500 to-cyan-500"}`}
-      ></div>
-      <style>{styles}</style>
+    <>
+      {isLoading ? (
+        <SkeletonLoader type="footer" />
+      ) : (
+        <footer className="footer-wrapper rounded-tl-2xl rounded-tr-2xl">
+          <div
+            className={`absolute top-0 w-full h-1 ${darkMode ? "bg-linear-to-r from-blue-800 via-purple-800 to-cyan-800" : "bg-linear-to-r from-blue-500 via-purple-500 to-cyan-500"}`}
+          ></div>
+          <style>{styles}</style>
 
-      <div className="footer-content">
-        {/* Brand Section */}
-        <div className="w-full gap-14 max-[1072px]:flex-col flex">
-          <div className="flex flex-wrap gap-4 justify-between min-[1072px]:w-3/4">
-            {linkSections.map((section) => (
-              <div key={section.title} className="footer-section max-w-fit">
-                <h3 className="footer-title">{section.title}</h3>
-                <nav className="footer-links">
-                  {section.links.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      className="footer-link"
-                    >
-                      <ArrowUpRight size={14} />
-                      {link.label}
-                    </a>
-                  ))}
+          <div className="footer-content">
+            {/* Brand Section */}
+            <div className="w-full gap-14 max-[1072px]:flex-col flex">
+              <div className="flex flex-wrap gap-4 justify-between min-[1072px]:w-3/4">
+                {linkSections.map((section) => (
+                  <div key={section.title} className="footer-section max-w-fit">
+                    <h3 className="footer-title">{section.title}</h3>
+                    <nav className="footer-links">
+                      {section.links.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          className="footer-link"
+                        >
+                          <ArrowUpRight size={14} />
+                          {link.label}
+                        </a>
+                      ))}
+                    </nav>
+                  </div>
+                ))}
+              </div>
+              <div className="footer-section min-[1060px]:w-1/4 max-[1072px]:mx-auto">
+                <h2 className="footer-title">Portfolio</h2>
+                <p className="footer-description">
+                  MERN full stack web developer focused on building fast,
+                  accessible, and visually refined web experiences with modern
+                  technologies.
+                </p>
+                <div className="social-links">
+                  {socialLinks.map((social) => {
+                    const Icon = social.icon;
+                    return (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        className="social-btn"
+                        aria-label={social.label}
+                        title={social.label}
+                      >
+                        <Icon size={20} />
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="footer-divider"></div>
+
+            {/* Bottom Section */}
+            <div className="footer-bottom">
+              <div className="bottom-row">
+                <p className="copyright">
+                  &copy; {currentYear} Made with
+                  <Heart
+                    size={14}
+                    className="text-red-500 cursor-pointer animate-pulse"
+                  />{" "}
+                  by{" "}
+                  <span className="bg-linear-to-r from-blue-600 to-purple-600 cursor-pointer bg-clip-text text-transparent animate-pulse">
+                    Sk Nagur Basha
+                  </span>
+                </p>
+                <nav className="footer-links-bottom">
+                  <a href="#privacy">Privacy Policy</a>
+                  <a href="#terms">Terms of Service</a>
+                  <a href="#cookies">Cookie Policy</a>
                 </nav>
               </div>
-            ))}
-          </div>
-          <div className="footer-section min-[1060px]:w-1/4 max-[1072px]:mx-auto">
-            <h2 className="footer-title">Portfolio</h2>
-            <p className="footer-description">
-              MERN full stack web developer focused on building fast,
-              accessible, and visually refined web experiences with modern
-              technologies.
-            </p>
-            <div className="social-links">
-              {socialLinks.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    className="social-btn"
-                    aria-label={social.label}
-                    title={social.label}
-                  >
-                    <Icon size={20} />
-                  </a>
-                );
-              })}
             </div>
           </div>
-        </div>
-
-        {/* Divider */}
-        <div className="footer-divider"></div>
-
-        {/* Bottom Section */}
-        <div className="footer-bottom">
-          <div className="bottom-row">
-            <p className="copyright">
-              &copy; {currentYear} Made with
-              <Heart
-                size={14}
-                className="text-red-500 cursor-pointer animate-pulse"
-              />{" "}
-              by{" "}
-              <span className="bg-linear-to-r from-blue-600 to-purple-600 cursor-pointer bg-clip-text text-transparent animate-pulse">
-                Sk Nagur Basha
-              </span>
-            </p>
-            <nav className="footer-links-bottom">
-              <a href="#privacy">Privacy Policy</a>
-              <a href="#terms">Terms of Service</a>
-              <a href="#cookies">Cookie Policy</a>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </footer>
+        </footer>
+      )}
+    </>
   );
 }
 
