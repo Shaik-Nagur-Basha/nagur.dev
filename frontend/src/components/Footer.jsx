@@ -424,44 +424,61 @@ function Footer() {
       links: [
         { label: "Home", href: "#home" },
         { label: "About", href: "#about" },
-        { label: "Projects", href: "#projects" },
-        { label: "Skills", href: "#skills" },
+        { label: "Projects", href: "/projects" },
+        { label: "Skills", href: "#foundations" },
       ],
     },
     {
       title: "Projects",
       links: [
-        { label: "E-Commerce Platform", href: "#" },
-        { label: "Task Management App", href: "#" },
-        { label: "Real Estate Portal", href: "#" },
-        { label: "Analytics Dashboard", href: "#" },
+        { label: "BlogByte Blog", href: "https://blogbyte-blog.onrender.com" },
+        {
+          label: "Gradient Craft",
+          href: "https://shaik-nagur-basha.github.io/Gradient-Craft",
+        },
+        {
+          label: "DevMatrix",
+          href: "https://shaik-nagur-basha.github.io/DevMatrix",
+        },
+        {
+          label: "Spotify Home UI Clone",
+          href: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
+        },
       ],
     },
     {
       title: "Services",
       links: [
-        { label: "Web Development", href: "#" },
-        { label: "UI/UX Design", href: "#" },
-        { label: "Backend Development", href: "#" },
-        { label: "Consulting", href: "#" },
+        { label: "Web Development", href: "#contact" },
+        { label: "UI/UX Design", href: "#contact" },
+        { label: "Backend Development", href: "#contact" },
+        { label: "Consulting", href: "#contact" },
       ],
     },
     {
       title: "Contact",
       links: [
-        { label: "hello@example.com", href: "mailto:hello@example.com" },
-        { label: "+1 (555) 123-4567", href: "tel:+15551234567" },
-        { label: "San Francisco, CA", href: "#location" },
+        { label: "sknbasknba@gmail.com", href: "mailto:sknbasknba@gmail.com" },
+        { label: "+91 6302504034", href: "tel:+916302504034" },
+        { label: "Kadapa, Andhra Pradesh", href: "#location" },
         { label: "Contact Form", href: "#contact" },
       ],
     },
   ];
 
   const socialLinks = [
-    { icon: Github, label: "GitHub", href: "#github" },
-    { icon: Linkedin, label: "LinkedIn", href: "#linkedin" },
-    { icon: Twitter, label: "Twitter", href: "#twitter" },
-    { icon: Mail, label: "Email", href: "#email" },
+    {
+      icon: Github,
+      label: "GitHub",
+      href: "https://github.com/Shaik-Nagur-Basha",
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/nagur-basha",
+    },
+    { icon: Twitter, label: "Twitter", href: "#" },
+    { icon: Mail, label: "Email", href: "mailto:sknbasknba@gmail.com" },
   ];
 
   return (
@@ -486,7 +503,11 @@ function Footer() {
                       {section.links.map((link) => (
                         <a
                           key={link.label}
-                          href={link.href}
+                          href={
+                            link.href === "#projects" ? "/projects" : link.href
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="footer-link"
                         >
                           <ArrowUpRight size={14} />
@@ -511,6 +532,8 @@ function Footer() {
                       <a
                         key={social.label}
                         href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="social-btn"
                         aria-label={social.label}
                         title={social.label}
