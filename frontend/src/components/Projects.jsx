@@ -200,73 +200,93 @@ function Projects() {
   const projects = [
     {
       id: 1,
-      title: "E-Commerce Platform",
+      title: "BlogByte Blog",
       description:
-        "Full-stack e-commerce solution with payment integration and admin dashboard",
-      tags: ["React", "Node.js", "MongoDB", "Stripe"],
-      link: "#",
-      github: "#",
+        "Full-stack blogging platform with post creation, comments, authentication, and modern UI.",
+      tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+      link: "https://blogbyte-blog.onrender.com",
+      github: "https://github.com/Shaik-Nagur-Basha/BlogByte-Blog",
       video: "/BlogByte-Blog.mp4",
     },
     {
       id: 2,
-      title: "Task Management App",
+      title: "Listing Hub",
       description:
-        "Real-time collaborative task management with drag-and-drop functionality",
-      tags: ["React", "Firebase", "Tailwind CSS"],
-      link: "#",
-      github: "#",
-      video: "/Gradient-Craft.mp4",
+        "Full-stack listing platform built using RESTful APIs and MVC architecture.",
+      tags: ["React", "Node.js", "Express", "MongoDB", "REST API"],
+      link: "https://listing-hub.onrender.com",
+      github: "https://github.com/Shaik-Nagur-Basha/Listing-Hub",
+      video: "/Listing-Hub.mp4",
     },
     {
       id: 3,
-      title: "AI Chat Application",
+      title: "Gradient Craft",
       description:
-        "Advanced chat application with AI integration and message persistence",
-      tags: ["React", "OpenAI API", "WebSocket"],
-      link: "#",
-      github: "#",
-      video: "/Devmatrix.mp4",
+        "Interactive gradient generator tool with live preview and copy-ready CSS output.",
+      tags: ["HTML", "CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/Gradient-Craft",
+      github: "https://github.com/Shaik-Nagur-Basha/Gradient-Craft",
+      video: "/Gradient-Craft.mp4",
     },
     {
       id: 4,
-      title: "Portfolio Website",
+      title: "DevMatrix (Ongoing)",
       description:
-        "Modern portfolio with animations, dark mode, and responsive design",
-      tags: ["React", "Tailwind CSS", "Framer Motion"],
-      link: "#",
-      github: "#",
-      video: "/NeoChat.mp4",
-    },
-    {
-      id: 5,
-      title: "Weather Forecast App",
-      description:
-        "Real-time weather application with geolocation and weather APIs integration",
-      tags: ["React", "OpenWeather API", "Axios"],
-      link: "#",
-      github: "#",
-      video: "/Text-In-Image.mp4",
-    },
-    {
-      id: 6,
-      title: "Social Media Dashboard",
-      description:
-        "Analytics dashboard for multiple social media platforms with real-time stats",
-      tags: ["React", "Chart.js", "Redux"],
-      link: "#",
-      github: "#",
+        "Developer-focused platform showcasing tools, utilities, and productivity features.",
+      tags: ["React", "Tailwind CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/DevMatrix",
+      github: "https://github.com/Shaik-Nagur-Basha/DevMatrix",
       video: "/Devmatrix.mp4",
     },
     {
-      id: 7,
-      title: "Video Streaming Platform",
+      id: 5,
+      title: "NeoChat (Ongoing)",
       description:
-        "Full-featured video streaming service with user authentication and subscriptions",
-      tags: ["React", "Node.js", "HLS.js", "PostgreSQL"],
-      link: "#",
-      github: "#",
-      video: "/BlogByte-Blog.mp4",
+        "Real-time chat application with users, groups, channels, and message persistence.",
+      tags: ["React", "Node.js", "Socket.io", "MongoDB"],
+      link: "https://neochat-sk.onrender.com",
+      github: "https://github.com/Shaik-Nagur-Basha/NeoChat",
+      video: "/NeoChat.mp4",
+    },
+    {
+      id: 6,
+      title: "Spotify Home UI Clone",
+      description:
+        "Pixel-perfect Spotify home interface clone with responsive and modern layout.",
+      tags: ["HTML", "CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
+      github: "https://github.com/Shaik-Nagur-Basha/Spotify-Home-UI-Clone",
+      video: "/Spotify-Home.mp4",
+    },
+    {
+      id: 7,
+      title: "StellarMarket (Ongoing)",
+      description:
+        "Modern e-commerce UI with product listings, filters, and clean UX patterns.",
+      tags: ["React", "Tailwind CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/StellarMarket",
+      github: "https://github.com/Shaik-Nagur-Basha/StellarMarket",
+      video: "/StellarMarket.mp4",
+    },
+    {
+      id: 8,
+      title: "SyncTask (Ongoing)",
+      description:
+        "Task management application focused on productivity and clean user experience.",
+      tags: ["React", "JavaScript", "Tailwind CSS"],
+      link: "https://shaik-nagur-basha.github.io/SyncTask",
+      github: "https://github.com/Shaik-Nagur-Basha/SyncTask",
+      video: "/SyncTask.mp4",
+    },
+    {
+      id: 9,
+      title: "Text In Image Generator",
+      description:
+        "Utility tool to generate styled text embedded inside images dynamically.",
+      tags: ["HTML", "CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/Text-In-Image",
+      github: "https://github.com/Shaik-Nagur-Basha/Text-In-Image",
+      video: "/Text-In-Image.mp4",
     },
   ];
 
@@ -468,7 +488,9 @@ function Projects() {
                           }`}
                           onClick={(e) => handleClick(e, project.id)}
                         >
-                          <h3 className="text-lg tracking-wide font-black text-white italic mb-1">
+                          <h3
+                            className={`text-lg tracking-wide font-black italic transition-colors duration-300 ${expandedId === project.id ? "text-cyan-400 mb-3" : "text-white mb-1"}`}
+                          >
                             {project.title}
                           </h3>
 
@@ -492,6 +514,8 @@ function Projects() {
                               <div className="flex gap-2.5 mt-auto">
                                 <a
                                   href={project.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-medium ${
                                     darkMode
                                       ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
@@ -507,6 +531,8 @@ function Projects() {
                                 </a>
                                 <a
                                   href={project.github}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-mono font-medium ${
                                     darkMode
                                       ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"

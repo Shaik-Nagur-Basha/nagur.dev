@@ -7,6 +7,7 @@ import ErrorPage from "./pages/ErrorPage";
 // import GalleryPage from "./pages/GalleryPage";
 import ScrollToTop from "./components/ScrollToTop";
 import "./style.css";
+// import IframePage from "./pages/IframePage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          {/* <Route path="/iframe" element={<IframePage />} /> */}
           {/* <Route path="/gallery" element={<GalleryPage />} /> */}
           {/* <Route path="/blogs" element={<BlogsPage />} /> */}
           <Route path="*" element={<ErrorPage />} />
