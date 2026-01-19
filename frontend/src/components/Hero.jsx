@@ -32,7 +32,7 @@ function Hero() {
   // Handle CV download
   const handleDownloadCV = () => {
     const link = document.createElement("a");
-    link.href = "/Sk_Nagur_Basha_CV.pdf"; // Make sure cv.pdf exists in public folder
+    link.href = ".../public/Sk_Nagur_Basha_CV.pdf"; // Make sure cv.pdf exists in public folder
     link.download = "Sk_Nagur_Basha_CV.pdf";
     document.body.appendChild(link);
     link.click();
@@ -172,7 +172,7 @@ function Hero() {
                   >
                     {/* Profile Image */}
                     <img
-                      src="/nagur_photo.png"
+                      src=".../public/nagur_photo.png"
                       alt="Sk Nagur Basha"
                       className="w-full h-full transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
                       style={{
