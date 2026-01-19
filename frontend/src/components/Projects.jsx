@@ -621,7 +621,7 @@ function Projects() {
             {/* View All Button - Positioned at Bottom */}
             <div className="flex justify-center mt-12">
               <a
-                href="/projects"
+                href="/nagur.dev/projects"
                 className={`group inline-flex items-center gap-2 font-medium transition-all duration-300 ${
                   darkMode
                     ? "text-cyan-300 hover:text-cyan-100"
