@@ -86,8 +86,8 @@ function Hero() {
         >
           {/* ${
         darkMode
-          ? "bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
-          : "bg-linear-to-br from-blue-50 via-white to-purple-50"
+          ? "bg-gradient-to-br from-gray-950 via-gray-900 to-purple-950"
+          : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
       } */}
 
           {/* Radial gradient overlay - Top Right */}
@@ -150,11 +150,11 @@ function Hero() {
                   {/* Animated background blur circles */}
                   {/* <div className="absolute -inset-6 bg-linear-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full blur-3xl opacity-30 group-hover:opacity-50 animate-pulse transition-all duration-500"></div> */}
                   <div
-                    className="absolute -inset-4 bg-linear-to-r from-blue-500 to-purple-600 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"
+                    className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"
                     style={{ animationDelay: "0.5s" }}
                   ></div>
                   <div
-                    className="absolute -inset-2 bg-linear-to-br from-purple-400 to-blue-500 rounded-full blur-xl opacity-15 group-hover:opacity-25 animate-pulse transition-all duration-500"
+                    className="absolute -inset-2 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full blur-xl opacity-15 group-hover:opacity-25 animate-pulse transition-all duration-500"
                     style={{ animationDelay: "1s" }}
                   ></div>
 
@@ -183,12 +183,12 @@ function Hero() {
 
                     {/* Overlay gradient for light mode - only shows when not hovering */}
                     {!darkMode && (
-                      <div className="absolute inset-0 bg-linear-to-br from-blue-300/10 via-transparent to-purple-600/10 rounded-full group-hover:opacity-0 transition-all duration-500 pointer-events-none"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-300/10 via-transparent to-purple-600/10 rounded-full group-hover:opacity-0 transition-all duration-500 pointer-events-none"></div>
                     )}
 
                     {/* Dark overlay for dark mode - only shows when not hovering */}
                     {darkMode && (
-                      <div className="absolute inset-0 bg-linear-to-br from-purple-900/20 via-transparent to-gray-900/20 rounded-full group-hover:opacity-0 transition-all duration-500 pointer-events-none"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-gray-900/20 rounded-full group-hover:opacity-0 transition-all duration-500 pointer-events-none"></div>
                     )}
 
                     {/* Animated rotating border - only visible on hover */}
@@ -254,7 +254,7 @@ function Hero() {
                   }`}
                 >
                   Hi, I'm{" "}
-                  <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
                     Sk Nagur Basha
                   </span>
                 </h1>
@@ -275,8 +275,8 @@ function Hero() {
                     onClick={handleViewWork}
                     className={`flex items-center justify-center cursor-pointer truncate gap-2 backdrop-blur-md font-semibold text-sm md:text-base px-5 md:px-7 py-2.5 md:py-3 rounded-xl transition-all duration-300 ${
                       darkMode
-                        ? "bg-linear-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-600/40 hover:shadow-xl hover:shadow-blue-500/60 hover:scale-105 active:scale-95"
-                        : "bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-400/50 hover:shadow-xl hover:shadow-blue-400/70 hover:scale-105 active:scale-95"
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-600/40 hover:shadow-xl hover:shadow-blue-500/60 hover:scale-105 active:scale-95"
+                        : "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-400/50 hover:shadow-xl hover:shadow-blue-400/70 hover:scale-105 active:scale-95"
                     }`}
                   >
                     View My Work{" "}
@@ -289,8 +289,8 @@ function Hero() {
                     onClick={handleDownloadCV}
                     className={`flex items-center justify-center cursor-pointer truncate font-semibold text-sm md:text-base px-5 md:px-7 py-2.5 md:py-3 rounded-xl font-mono backdrop-blur-md transition-all duration-300 ${
                       darkMode
-                        ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-purple-500/40 text-gray-200 hover:from-purple-900/50 hover:to-purple-800/50 hover:border-purple-400/70 hover:text-purple-100 hover:shadow-lg hover:shadow-purple-600/40 hover:scale-105 active:scale-95"
-                        : "bg-linear-to-r from-white/50 to-blue-50/50 border-2 border-blue-300/50 text-gray-600! hover:text-gray-700! hover:bg-gray-300! hover:from-blue-100/70 hover:to-blue-50/70 hover:border-purple-400/70 hover:shadow-lg hover:shadow-purple-400/40 hover:scale-105 active:scale-95"
+                        ? "bg-gradient-to-r from-gray-700/40 to-gray-800/40 border-2 border-purple-500/40 text-gray-200 hover:from-purple-900/50 hover:to-purple-800/50 hover:border-purple-400/70 hover:text-purple-100 hover:shadow-lg hover:shadow-purple-600/40 hover:scale-105 active:scale-95"
+                        : "bg-gradient-to-r from-white/50 to-blue-50/50 border-2 border-blue-300/50 text-gray-600! hover:text-gray-700! hover:bg-gray-300! hover:from-blue-100/70 hover:to-blue-50/70 hover:border-purple-400/70 hover:shadow-lg hover:shadow-purple-400/40 hover:scale-105 active:scale-95"
                     }`}
                   >
                     Download CV
@@ -305,8 +305,8 @@ function Hero() {
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
-                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-blue-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
-                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-blue-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-blue-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-blue-200/20"
+                        ? "backdrop-blur-2xl bg-gradient-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-blue-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
+                        : "backdrop-blur-2xl bg-gradient-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-blue-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-blue-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-blue-200/20"
                     }`}
                     aria-label="GitHub"
                     title="GitHub"
@@ -314,8 +314,8 @@ function Hero() {
                     <div
                       className={`absolute inset-0 transition-all duration-500 ${
                         darkMode
-                          ? "bg-linear-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/20 group-hover:via-blue-500/10 group-hover:to-blue-500/0"
-                          : "bg-linear-to-r from-blue-400/0 via-blue-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-blue-400/15 group-hover:to-blue-400/0"
+                          ? "bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/20 group-hover:via-blue-500/10 group-hover:to-blue-500/0"
+                          : "bg-gradient-to-r from-blue-400/0 via-blue-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-blue-400/15 group-hover:to-blue-400/0"
                       }`}
                     ></div>
                     <Github
@@ -340,8 +340,8 @@ function Hero() {
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
-                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-purple-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-purple-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
-                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-purple-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-purple-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20"
+                        ? "backdrop-blur-2xl bg-gradient-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-purple-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-purple-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
+                        : "backdrop-blur-2xl bg-gradient-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-purple-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-purple-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20"
                     }`}
                     aria-label="LinkedIn"
                     title="LinkedIn"
@@ -349,8 +349,8 @@ function Hero() {
                     <div
                       className={`absolute inset-0 transition-all duration-500 ${
                         darkMode
-                          ? "bg-linear-to-r from-purple-500/0 via-purple-500/0 to-purple-500/0 group-hover:from-purple-500/20 group-hover:via-purple-500/10 group-hover:to-purple-500/0"
-                          : "bg-linear-to-r from-purple-400/0 via-purple-400/0 to-purple-400/0 group-hover:from-purple-400/20 group-hover:via-purple-400/15 group-hover:to-purple-400/0"
+                          ? "bg-gradient-to-r from-purple-500/0 via-purple-500/0 to-purple-500/0 group-hover:from-purple-500/20 group-hover:via-purple-500/10 group-hover:to-purple-500/0"
+                          : "bg-gradient-to-r from-purple-400/0 via-purple-400/0 to-purple-400/0 group-hover:from-purple-400/20 group-hover:via-purple-400/15 group-hover:to-purple-400/0"
                       }`}
                     ></div>
                     <Linkedin
@@ -376,8 +376,8 @@ function Hero() {
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
-                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-pink-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-pink-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
-                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-pink-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-pink-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-pink-200/20"
+                        ? "backdrop-blur-2xl bg-gradient-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-pink-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-pink-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
+                        : "backdrop-blur-2xl bg-gradient-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-pink-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-pink-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-pink-200/20"
                     }`}
                     aria-label="Email"
                     title="Email"
@@ -385,8 +385,8 @@ function Hero() {
                     <div
                       className={`absolute inset-0 transition-all duration-500 ${
                         darkMode
-                          ? "bg-linear-to-r from-pink-500/0 via-pink-500/0 to-pink-500/0 group-hover:from-pink-500/20 group-hover:via-pink-500/10 group-hover:to-pink-500/0"
-                          : "bg-linear-to-r from-pink-400/0 via-pink-400/0 to-pink-400/0 group-hover:from-pink-400/20 group-hover:via-pink-400/15 group-hover:to-pink-400/0"
+                          ? "bg-gradient-to-r from-pink-500/0 via-pink-500/0 to-pink-500/0 group-hover:from-pink-500/20 group-hover:via-pink-500/10 group-hover:to-pink-500/0"
+                          : "bg-gradient-to-r from-pink-400/0 via-pink-400/0 to-pink-400/0 group-hover:from-pink-400/20 group-hover:via-pink-400/15 group-hover:to-pink-400/0"
                       }`}
                     ></div>
                     <Mail

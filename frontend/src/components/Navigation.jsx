@@ -122,7 +122,7 @@ function Navigation() {
                 : "border border-blue-300/30"
               : darkMode
                 ? "border-b border-gray-700/30"
-                : "border-b border-linear-to-r from-blue-200/40 to-cyan-200/40"
+                : "border-b border-gradient-to-r from-blue-200/40 to-cyan-200/40"
           }`}
         >
           <style>{menuAnimationStyle}</style>
@@ -137,7 +137,7 @@ function Navigation() {
               >
                 <Logo />
                 <h1
-                  className={`text-lg font-bold sm:text-xl bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg border-2 border-glow ${
+                  className={`text-lg font-bold sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg border-2 border-purple-500/30 ${
                     !darkMode && "drop-shadow-sm"
                   }`}
                 >
@@ -161,8 +161,8 @@ function Navigation() {
                     <span
                       className={`absolute bottom-0 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300 ${
                         darkMode
-                          ? "bg-linear-to-r from-blue-600 to-purple-600"
-                          : "bg-linear-to-r from-blue-500 to-cyan-500"
+                          ? "bg-gradient-to-r from-blue-600 to-purple-600"
+                          : "bg-gradient-to-r from-blue-500 to-cyan-500"
                       }`}
                     ></span>
                   </a>
@@ -258,8 +258,8 @@ function Navigation() {
                 isOpen ? "menu-enter" : "menu-exit"
               } backdrop-blur-md rounded-xl border shadow-2xl ${
                 darkMode
-                  ? "bg-linear-to-br from-gray-800/25 via-gray-900/20 to-purple-900/25 border-gray-600/30 shadow-purple-900/20"
-                  : "bg-linear-to-br from-white/30 via-blue-50/25 to-cyan-50/30 border-blue-300/30 shadow-blue-300/15"
+                  ? "bg-gradient-to-br from-gray-800/25 via-gray-900/20 to-purple-900/25 border-gray-600/30 shadow-purple-900/20"
+                  : "bg-gradient-to-br from-white/30 via-blue-50/25 to-cyan-50/30 border-blue-300/30 shadow-blue-300/15"
               }`}
               style={{
                 right: "1rem",
@@ -278,8 +278,8 @@ function Navigation() {
                       href={link.href === "#projects" ? "/projects" : link.href}
                       className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
                         darkMode
-                          ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
-                          : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
+                          ? "text-gray-300 border-transparent hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
+                          : "text-gray-700 border-transparent hover:bg-gradient-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
                       }`}
                       onClick={() => setIsOpen(false)}
                     >

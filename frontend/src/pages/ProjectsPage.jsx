@@ -272,8 +272,8 @@ function ProjectsPage() {
         <div
           className={`${
             darkMode
-              ? "dark bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
-              : "bg-linear-to-br from-blue-50 via-white to-purple-50"
+              ? "dark bg-gradient-to-br from-gray-950 via-gray-900 to-purple-950"
+              : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
           } min-h-screen`}
         >
           <Navigation />
@@ -284,8 +284,8 @@ function ProjectsPage() {
             <div
               className={`absolute top-0 right-0 w-96 h-96 pointer-events-none blur-3xl ${
                 darkMode
-                  ? "bg-linear-to-br from-purple-600/15 via-purple-500/5 to-transparent"
-                  : "bg-linear-to-br from-blue-400/20 via-blue-300/10 to-transparent"
+                  ? "bg-gradient-to-br from-purple-600/15 via-purple-500/5 to-transparent"
+                  : "bg-gradient-to-br from-blue-400/20 via-blue-300/10 to-transparent"
               }`}
               style={{
                 borderRadius: "50%",
@@ -296,8 +296,8 @@ function ProjectsPage() {
             <div
               className={`absolute bottom-0 left-0 w-80 h-80 pointer-events-none blur-3xl ${
                 darkMode
-                  ? "bg-linear-to-tr from-blue-600/10 via-blue-500/5 to-transparent"
-                  : "bg-linear-to-tr from-purple-300/15 via-purple-200/5 to-transparent"
+                  ? "bg-gradient-to-tr from-blue-600/10 via-blue-500/5 to-transparent"
+                  : "bg-gradient-to-tr from-purple-300/15 via-purple-200/5 to-transparent"
               }`}
               style={{
                 borderRadius: "50%",

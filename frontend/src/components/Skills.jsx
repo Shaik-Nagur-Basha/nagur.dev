@@ -74,8 +74,8 @@ function Skills() {
               className={`group relative rounded-3xl p-px
                  ${
                    darkMode
-                     ? "bg-linear-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30"
-                     : "bg-linear-to-br from-blue-500/80 via-purple-500/60 to-pink-500/60"
+                     ? "bg-gradient-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30"
+                     : "bg-gradient-to-br from-blue-500/80 via-purple-500/60 to-pink-500/60"
                  }
                 transition-all hover:from-blue-500 hover:to-purple-500 duration-500`}
             >
@@ -120,7 +120,7 @@ function Skills() {
                       "
                       >
                         <div
-                          className={`h-full rounded-full ${darkMode ? "bg-linear-to-r from-blue-600/75 via-purple-600/75 to-pink-600/75" : "bg-linear-to-r from-blue-600/85 via-purple-600/85 to-pink-600/85"}
+                          className={`h-full rounded-full ${darkMode ? "bg-gradient-to-r from-blue-600/75 via-purple-600/75 to-pink-600/75" : "bg-gradient-to-r from-blue-600/85 via-purple-600/85 to-pink-600/85"}
                             
                             shadow-md
                             transition-all duration-1000 ease-out`}
@@ -137,7 +137,7 @@ function Skills() {
                     pointer-events-none absolute inset-0 rounded-3xl
                     opacity-0 group-hover:opacity-100
                     transition duration-500
-                    bg-linear-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10
+                    bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10
                   "
                 />
               </div>

@@ -49,8 +49,8 @@ function About() {
         >
           {/* ${
         darkMode
-          ? "bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
-          : "bg-linear-to-br from-blue-50 via-white to-purple-50"
+          ? "bg-gradient-to-br from-gray-950 via-gray-900 to-purple-950"
+          : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
       } */}
 
           <style>{overlayStyle}</style>
@@ -146,7 +146,7 @@ function About() {
                     }`}
                   >
                     I'm a{" "}
-                    <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <span className="font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       MERN full stack web developer
                     </span>{" "}
                     who builds{" "}
@@ -170,7 +170,7 @@ function About() {
                       design precision
                     </span>{" "}
                     with{" "}
-                    <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <span className="font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       engineering discipline
                     </span>
                     , ensuring every product is{" "}
@@ -182,7 +182,7 @@ function About() {
                       Continuous learning
                     </span>{" "}
                     keeps me aligned with the{" "}
-                    <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <span className="font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       latest web technologies
                     </span>
                     , allowing me to deliver{" "}
@@ -234,15 +234,15 @@ function About() {
                         key={idx}
                         className={`relative p-4 sm:p-5 lg:p-6 rounded-xl text-center transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border group overflow-hidden ${
                           darkMode
-                            ? "bg-linear-to-br from-gray-900/50 to-gray-800/50 border-gray-700/40 hover:from-blue-900/40 hover:to-purple-900/50 hover:border-purple-500/60 hover:shadow-2xl hover:shadow-purple-500/30"
-                            : "bg-linear-to-br from-blue-50/80 to-purple-50/80 hover:from-blue-100/80 hover:to-purple-100/80 border-blue-200/50 hover:border-purple-300/50 hover:shadow-lg hover:shadow-blue-300/40"
+                            ? "bg-gradient-to-br from-gray-900/50 to-gray-800/50 border-gray-700/40 hover:from-blue-900/40 hover:to-purple-900/50 hover:border-purple-500/60 hover:shadow-2xl hover:shadow-purple-500/30"
+                            : "bg-gradient-to-br from-blue-50/80 to-purple-50/80 hover:from-blue-100/80 hover:to-purple-100/80 border-blue-200/50 hover:border-purple-300/50 hover:shadow-lg hover:shadow-blue-300/40"
                         }`}
                       >
                         <div
                           className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
                             darkMode
-                              ? "bg-linear-to-br from-blue-500/10 to-purple-500/15"
-                              : "bg-linear-to-br from-blue-600/5 to-purple-600/5"
+                              ? "bg-gradient-to-br from-blue-500/10 to-purple-500/15"
+                              : "bg-gradient-to-br from-blue-600/5 to-purple-600/5"
                           }`}
                         />
                         <div className="relative">
@@ -256,7 +256,7 @@ function About() {
                               size={22}
                             />
                           </div>
-                          <p className="text-xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1 group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-300">
+                          <p className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1 group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-300">
                             {stat.number}
                           </p>
                           <p
