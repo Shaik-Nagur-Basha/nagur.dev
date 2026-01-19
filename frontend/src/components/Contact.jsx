@@ -95,22 +95,22 @@ function Contact() {
                   {
                     icon: Mail,
                     title: "Email",
-                    info: "hello@example.com",
-                    link: "mailto:hello@example.com",
+                    info: "sknbasknba@gmail.com",
+                    // link: "mailto:sknbasknba@gmail.com",
                     color: "blue",
                   },
                   {
                     icon: Phone,
                     title: "Phone",
-                    info: "+1 (555) 123-4567",
-                    link: "tel:+15551234567",
+                    info: "+91 6302504034",
+                    // link: "tel:+916302504034",
                     color: "purple",
                   },
                   {
                     icon: MapPin,
                     title: "Location",
-                    info: "San Francisco, USA",
-                    link: "#",
+                    info: "Kadapa, Andhra Pradesh",
+                    // link: "#",
                     color: "pink",
                   },
                 ].map((contact, idx) => {
@@ -137,7 +137,7 @@ function Contact() {
                   return (
                     <a
                       key={idx}
-                      href={contact.link}
+                      // href={contact.link}
                       className={`group max-w-fit contact-card block relative overflow-hidden rounded-xl p-3 pr-7 transition-all duration-500 transform active:scale-95 cursor-pointer animate-slide-in-left backdrop-blur-xl border ${
                         darkMode
                           ? `${colorConfig[contact.color].dark} bg-gray-900/50 shadow-2xl shadow-${contact.color}-900/20 hover:shadow-${contact.color}-500/30`
@@ -232,7 +232,7 @@ function Contact() {
                         onFocus={() => setFocusedField("name")}
                         onBlur={() => setFocusedField(null)}
                         required
-                        placeholder="John Doe"
+                        placeholder="Your Name"
                         className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none ${
                           focusedField === "name"
                             ? darkMode
