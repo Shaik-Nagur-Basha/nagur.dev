@@ -275,7 +275,7 @@ function Navigation() {
                   return (
                     <a
                       key={link.name}
-                      href={link.href === "#projects" ? "/projects" : link.href}
+                      href={link.href === "#projects" ? "/nagur.dev./projects" : link.href}
                       className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
                         darkMode
                           ? "text-gray-300 border-transparent hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
