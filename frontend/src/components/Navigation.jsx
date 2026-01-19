@@ -132,7 +132,7 @@ function Navigation() {
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}
               <a
-                href="/"
+                href="/nagur.dev"
                 className="shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
               >
                 <Logo />
