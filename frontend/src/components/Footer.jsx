@@ -424,7 +424,7 @@ function Footer() {
       links: [
         { label: "Home", href: "#home" },
         { label: "About", href: "#about" },
-        { label: "Projects", href: "/projects" },
+        { label: "Projects", href: "#projects" },
         { label: "Skills", href: "#foundations" },
       ],
     },
@@ -504,7 +504,7 @@ function Footer() {
                         <a
                           key={link.label}
                           href={
-                            link.href === "#projects" ? "/projects" : link.href
+                            link.href === "#projects" ? "/nagur.dev/projects" : link.href
                           }
                           target="_blank"
                           rel="noopener noreferrer"
