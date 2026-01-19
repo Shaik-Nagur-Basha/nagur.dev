@@ -25,26 +25,27 @@ function FoundationsAndInterests() {
   const education = [
     {
       degree: "B. Tech in Computer Science & Engineering",
-      institution: "Andhra University, Visakhapatnam",
+      institution: "Indira Institute Of Technology And Sciences, Markapur",
       year: "2020 - 2024",
       cgpa: "7.02/10",
-      details: "Web development, cloud computing, and software engineering.",
+      details:
+        "Focused on full stack web development, databases, and software engineering fundamentals.",
     },
     {
       degree: "12th Grade (MPC - Intermediate/IPE)",
-      institution: "Sri Chaitanya Junior College, Vijayawada",
+      institution: "Gowtham Junior College, Badvel",
       year: "2018 - 2020",
       cgpa: "9.4/10",
       details:
-        "Mathematics, Physics, and Chemistry stream with strong STEM foundation.",
+        "Strong analytical foundation through Mathematics, Physics, and Chemistry.",
     },
     {
       degree: "10th Grade (SSC Board)",
-      institution: "Vikas Public School, Vijayawada",
+      institution: "Sri Viswashanthi Vidyanikethan High School, Badvel",
       year: "2017 - 2018",
       cgpa: "9/10",
       details:
-        "Secondary education with excellent performance in core subjects.",
+        "Built solid fundamentals in mathematics, science, and problem-solving.",
     },
   ];
 
@@ -53,8 +54,8 @@ function FoundationsAndInterests() {
       category: "Frontend",
       icon: "🎨",
       skills: [
-        { name: "React", level: 95 },
-        { name: "JavaScript", level: 95 },
+        { name: "React", level: 85 },
+        { name: "JavaScript", level: 90 },
         { name: "Tailwind CSS", level: 90 },
         { name: "HTML / CSS", level: 95 },
       ],
@@ -64,8 +65,8 @@ function FoundationsAndInterests() {
       icon: "⚙️",
       skills: [
         { name: "Node.js", level: 90 },
-        { name: "Express.js", level: 90 },
-        { name: "MongoDB", level: 85 },
+        { name: "Express.js", level: 85 },
+        { name: "MongoDB", level: 90 },
         { name: "REST APIs", level: 90 },
       ],
     },
@@ -73,10 +74,10 @@ function FoundationsAndInterests() {
       category: "Tools & Others",
       icon: "🛠️",
       skills: [
-        { name: "Git", level: 90 },
-        { name: "Docker", level: 80 },
-        { name: "Vite", level: 85 },
-        { name: "Figma", level: 85 },
+        { name: "VS Code", level: 90 },
+        { name: "Git", level: 80 },
+        { name: "GitHub", level: 90 },
+        { name: "npm", level: 85 },
       ],
     },
   ];
@@ -180,7 +181,7 @@ function FoundationsAndInterests() {
                       </p>
                       <div className="flex items-center gap-3 mt-2 mb-3">
                         <p
-                          className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-500"}`}
+                          className={`text-xs font-mono ${darkMode ? "text-white/70" : "text-black/70"}`}
                         >
                           {edu.year}
                         </p>
@@ -195,7 +196,7 @@ function FoundationsAndInterests() {
                         </span>
                       </div>
                       <p
-                        className={`mt-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}
+                        className={`mt-2 text-sm ${darkMode ? "text-gray-300/70" : "text-gray-700/70"}`}
                       >
                         {edu.details}
                       </p>
