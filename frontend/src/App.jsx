@@ -16,7 +16,7 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/nagur.dev" element={<HomePage />} />
-          <Route path="/nagur.dev./projects" element={<ProjectsPage />} />
+          <Route path="/nagur.dev/projects" element={<ProjectsPage />} />
           {/* <Route path="/iframe" element={<IframePage />} /> */}
           {/* <Route path="/gallery" element={<GalleryPage />} /> */}
           {/* <Route path="/blogs" element={<BlogsPage />} /> */}
