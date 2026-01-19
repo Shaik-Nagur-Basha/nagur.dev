@@ -21,7 +21,7 @@ function About() {
     }
   }, [minLoadingTime]);
   const highlights = [
-    "1.5+ years experience in MERN",
+    "1.5+ yrs experience in MERN",
     "Expert in React & Node.js",
     "Responsive & accessible design",
     "Performance optimization",
@@ -126,11 +126,12 @@ function About() {
                 Crafting Digital Solutions
               </h2>
               <p
-                className={`text-base md:text-lg transition-colors duration-300 ${
+                className={`text-base md:text-lg transition-colors duration-300 line-clamp-2 ${
                   darkMode ? "text-gray-400" : "text-gray-600"
                 }`}
               >
-                Crafting digital solutions with passion and precision
+                Full-stack developer creating responsive, performant, and
+                user-friendly experiences
               </p>
             </div>
 
@@ -144,25 +145,17 @@ function About() {
                       darkMode ? "text-gray-300" : "text-gray-700"
                     }`}
                   >
-                    Passionate{" "}
+                    I'm a{" "}
                     <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      web developer
+                      MERN full stack web developer
                     </span>{" "}
-                    with a strong eye for{" "}
+                    who builds{" "}
                     <span className="font-semibold text-blue-600 dark:text-blue-400">
-                      design
+                      modern, high-performance web applications
                     </span>{" "}
-                    and problem-solving. I build{" "}
-                    <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      modern, high-performance
-                    </span>{" "}
-                    web applications that balance{" "}
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">
-                      clean aesthetics
-                    </span>{" "}
-                    with{" "}
+                    with a strong focus on{" "}
                     <span className="font-semibold text-purple-600 dark:text-purple-400">
-                      real-world functionality
+                      clean UI, scalability, and real-world usability
                     </span>
                     .
                   </p>
@@ -172,28 +165,31 @@ function About() {
                       darkMode ? "text-gray-300" : "text-gray-700"
                     }`}
                   >
-                    Driven by{" "}
-                    <span className="font-semibold text-purple-600 dark:text-purple-400">
-                      continuous learning
+                    I combine{" "}
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      design precision
+                    </span>{" "}
+                    with{" "}
+                    <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      engineering discipline
                     </span>
-                    , I stay updated with the{" "}
+                    , ensuring every product is{" "}
+                    <span className="font-semibold text-purple-600 dark:text-purple-400">
+                      responsive, accessible, and optimized
+                    </span>{" "}
+                    for performance.{" "}
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      Continuous learning
+                    </span>{" "}
+                    keeps me aligned with the{" "}
                     <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       latest web technologies
-                    </span>{" "}
-                    and focus on delivering{" "}
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">
-                      reliable
                     </span>
-                    ,{" "}
+                    , allowing me to deliver{" "}
                     <span className="font-semibold text-purple-600 dark:text-purple-400">
-                      scalable
-                    </span>
-                    , and
-                    <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      {" "}
-                      impactful
+                      reliable and maintainable
                     </span>{" "}
-                    solutions in every project I work on.
+                    solutions consistently.
                   </p>
                 </div>
 
