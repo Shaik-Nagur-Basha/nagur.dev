@@ -26,7 +26,7 @@ function Hero() {
 
   // Handle navigation to projects
   const handleViewWork = () => {
-    navigate("/nagur.dev./projects");
+    navigate("/nagur.dev/projects");
   };
 
   // Handle CV download
