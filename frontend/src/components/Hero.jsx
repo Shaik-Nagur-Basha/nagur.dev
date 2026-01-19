@@ -172,7 +172,7 @@ function Hero() {
                   >
                     {/* Profile Image */}
                     <img
-                      src=`${import.meta.env.BASE_URL}nagur_photo.png`
+                      src={`${import.meta.env.BASE_URL}nagur_photo.png`} 
                       alt="Sk Nagur Basha"
                       className="w-full h-full transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
                       style={{
