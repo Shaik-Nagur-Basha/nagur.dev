@@ -206,7 +206,7 @@ function Projects() {
       tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
       link: "https://blogbyte-blog.onrender.com",
       github: "https://github.com/Shaik-Nagur-Basha/BlogByte-Blog",
-      video: "/BlogByte-Blog.mp4",
+      video: ".../public/BlogByte-Blog.mp4",
     },
     {
       id: 2,
@@ -216,7 +216,7 @@ function Projects() {
       tags: ["React", "Node.js", "Express", "MongoDB", "REST API"],
       link: "https://listing-hub.onrender.com",
       github: "https://github.com/Shaik-Nagur-Basha/Listing-Hub",
-      video: "/Listing-Hub.mp4",
+      video: ".../public/Listing-Hub.mp4",
     },
     {
       id: 3,
@@ -226,7 +226,7 @@ function Projects() {
       tags: ["HTML", "CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/Gradient-Craft",
       github: "https://github.com/Shaik-Nagur-Basha/Gradient-Craft",
-      video: "/Gradient-Craft.mp4",
+      video: ".../public/Gradient-Craft.mp4",
     },
     {
       id: 4,
@@ -236,7 +236,7 @@ function Projects() {
       tags: ["React", "Tailwind CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/DevMatrix",
       github: "https://github.com/Shaik-Nagur-Basha/DevMatrix",
-      video: "/Devmatrix.mp4",
+      video: ".../public/Devmatrix.mp4",
     },
     {
       id: 5,
@@ -246,7 +246,7 @@ function Projects() {
       tags: ["React", "Node.js", "Socket.io", "MongoDB"],
       link: "https://neochat-sk.onrender.com",
       github: "https://github.com/Shaik-Nagur-Basha/NeoChat",
-      video: "/NeoChat.mp4",
+      video: ".../public/NeoChat.mp4",
     },
     {
       id: 6,
@@ -256,7 +256,7 @@ function Projects() {
       tags: ["HTML", "CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
       github: "https://github.com/Shaik-Nagur-Basha/Spotify-Home-UI-Clone",
-      video: "/Spotify-Home.mp4",
+      video: ".../public/Spotify-Home.mp4",
     },
     {
       id: 7,
@@ -266,7 +266,7 @@ function Projects() {
       tags: ["React", "Tailwind CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/StellarMarket",
       github: "https://github.com/Shaik-Nagur-Basha/StellarMarket",
-      video: "/StellarMarket.mp4",
+      video: ".../public/StellarMarket.mp4",
     },
     {
       id: 8,
@@ -276,7 +276,7 @@ function Projects() {
       tags: ["React", "JavaScript", "Tailwind CSS"],
       link: "https://shaik-nagur-basha.github.io/SyncTask",
       github: "https://github.com/Shaik-Nagur-Basha/SyncTask",
-      video: "/SyncTask.mp4",
+      video: ".../public/SyncTask.mp4",
     },
     {
       id: 9,
@@ -286,7 +286,7 @@ function Projects() {
       tags: ["HTML", "CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/Text-In-Image",
       github: "https://github.com/Shaik-Nagur-Basha/Text-In-Image",
-      video: "/Text-In-Image.mp4",
+      video: ".../public/Text-In-Image.mp4",
     },
   ];
 
