@@ -132,12 +132,16 @@ function Navigation() {
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}
               <a
-                href="/"
+                href="/nagur.dev"
                 className="shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
               >
                 <Logo />
                 <h1
+<<<<<<< HEAD
                   className={`text-lg font-bold sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg border-2 border-glow ${
+=======
+                  className={`text-lg font-bold sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg ${
+>>>>>>> 3205ad284053c9972ac430aedb8eae8287b1759f
                     !darkMode && "drop-shadow-sm"
                   }`}
                 >
@@ -275,7 +279,7 @@ function Navigation() {
                   return (
                     <a
                       key={link.name}
-                      href={link.href === "#projects" ? "/projects" : link.href}
+                      href={link.href === "#projects" ? "/nagur.dev/projects" : link.href}
                       className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
                         darkMode
                           ? "text-gray-300 border-transparent hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
