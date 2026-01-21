@@ -1,51 +1,38 @@
-name: Deploy to GitHub Pages
+name: GitHub Pages
 
 on:
   push:
-    branches: [gh-pages]
+    branches:
+      - gh-pages  # Set a branch name to trigger deployment
   pull_request:
-    branches: [gh-pages]
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
+  deploy:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
         with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: "frontend/package-lock.json"
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
-      - name: Install dependencies
-        run: npm ci
-        working-directory: ./frontend
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.110.0'
 
       - name: Build
-        run: npm run build
-        working-directory: ./frontend
+        run: hugo --minify
 
-      - name: Create .nojekyll file
-        run: touch ./frontend/dist/.nojekyll
-
-      - name: Copy 404.html for SPA routing
-        run: |
-          if [ -f ./frontend/public/404.html ]; then
-            cp ./frontend/public/404.html ./frontend/dist/404.html
-          fi
-        shell: bash
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        # If you're changing the branch from main,
+        # also change the `main` in `refs/heads/main`
+        # below accordingly.
+        if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./frontend/dist
-          force_orphan: true
+          publish_dir: ./public
