@@ -10,10 +10,12 @@ import "./style.css";
 // import IframePage from "./pages/IframePage";
 
 function App() {
+  const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
   return (
     <ThemeProvider>
       <ScrollToTop />
-      <Routes>
+      <Routes basename={basePath}>
         <Route path="/" element={<HomePage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         {/* <Route path="/iframe" element={<IframePage />} /> */}
