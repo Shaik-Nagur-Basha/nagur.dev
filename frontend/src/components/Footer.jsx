@@ -425,7 +425,7 @@ function Footer() {
         { label: "Home", href: "#home" },
         { label: "About", href: "#about" },
         { label: "Projects", href: "#projects" },
-        { label: "Skills", href: "#foundations" },
+        { label: "Foundations", href: "#foundations" },
       ],
     },
     {
@@ -458,9 +458,12 @@ function Footer() {
     {
       title: "Contact",
       links: [
-        { label: "sknbasknba@gmail.com", href: "mailto:sknbasknba@gmail.com" },
         { label: "+91 6302504034", href: "tel:+916302504034" },
-        { label: "Badvel, Kadapa, Andhra Pradesh, 516227", href: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7" },
+        { label: "sknbasknba@gmail.com", href: "mailto:sknbasknba@gmail.com" },
+        {
+          label: "Badvel, Kadapa, Andhra Pradesh, 516227",
+          href: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7",
+        },
         { label: "Contact Form", href: "#contact" },
       ],
     },
@@ -504,7 +507,9 @@ function Footer() {
                         <a
                           key={link.label}
                           href={
-                            link.href === "#projects" ? "/nagur.dev/projects" : link.href
+                            link.href === "#projects"
+                              ? "/nagur.dev/projects"
+                              : link.href
                           }
                           target="_blank"
                           rel="noopener noreferrer"

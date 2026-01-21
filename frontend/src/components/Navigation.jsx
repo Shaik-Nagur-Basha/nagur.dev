@@ -36,7 +36,7 @@ function Navigation() {
       } else {
         // If on another page, navigate to home with redirect param
         // Clear history and go to home
-        navigate("/", { replace: true });
+        navigate(-1);
         // This replaces current history entry so back button doesn't go to previous page;
       }
       setIsOpen(false);
@@ -152,7 +152,7 @@ function Navigation() {
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}
               <a
-                href="/"
+                href="/nagur.dev/"
                 className="shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
               >
                 <Logo />
@@ -170,7 +170,7 @@ function Navigation() {
                 {navLinks.map((link) => (
                   <a
                     key={link.name}
-                    onClick={() => handleNavigate(link.href)}
+                    href={link.href}
                     className={`font-medium transition-all duration-200 relative group bg-transparent border-0 cursor-pointer ${
                       darkMode
                         ? "text-gray-300 hover:text-blue-400"
@@ -295,15 +295,13 @@ function Navigation() {
                   return (
                     <a
                       key={link.name}
+                      href={link.href}
                       className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
                         darkMode
                           ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
                           : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
                       }`}
-                      onClick={() => {
-                        handleNavigate(link.href);
-                        setIsOpen(false);
-                      }}
+                      onClick={() => setIsOpen(false)}
                     >
                       <IconComponent
                         size={18}
