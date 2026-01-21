@@ -170,10 +170,11 @@ function ProjectsPage() {
       title: "BlogByte Blog",
       description:
         "Full-stack blogging platform with post creation, comments, authentication, and modern UI.",
-      tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+      tags: ["React", "Node.js", "Express", "MongoDB"],
       link: "https://blogbyte-blog.onrender.com",
       github: "https://github.com/Shaik-Nagur-Basha/BlogByte-Blog",
-      video: `${import.meta.env.BASE_URL}BlogByte-Blog.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023123/Blogbyte-Blog_twspq4.mp4",
     },
     {
       id: 2,
@@ -183,7 +184,8 @@ function ProjectsPage() {
       tags: ["React", "Node.js", "Express", "MongoDB", "REST API"],
       link: "https://listing-hub.onrender.com",
       github: "https://github.com/Shaik-Nagur-Basha/Listing-Hub",
-      video: `${import.meta.env.BASE_URL}Listing-Hub.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023142/Listing-Hub_z3cxqu.mp4",
     },
     {
       id: 3,
@@ -193,7 +195,8 @@ function ProjectsPage() {
       tags: ["HTML", "CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/Gradient-Craft",
       github: "https://github.com/Shaik-Nagur-Basha/Gradient-Craft",
-      video: `${import.meta.env.BASE_URL}Gradient-Craft.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021732/Gradient-Craft_lkzjpk.mp4",
     },
     {
       id: 4,
@@ -203,7 +206,8 @@ function ProjectsPage() {
       tags: ["React", "Tailwind CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/DevMatrix",
       github: "https://github.com/Shaik-Nagur-Basha/DevMatrix",
-      video: `${import.meta.env.BASE_URL}Devmatrix.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021718/DevMatrix_zngwlj.mp4",
     },
     {
       id: 5,
@@ -213,7 +217,8 @@ function ProjectsPage() {
       tags: ["React", "Node.js", "Socket.io", "MongoDB"],
       link: "https://neochat-sk.onrender.com",
       github: "https://github.com/Shaik-Nagur-Basha/NeoChat",
-      video: `${import.meta.env.BASE_URL}NeoChat.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023132/NeoChat_d6tcg7.mp4",
     },
     {
       id: 6,
@@ -223,7 +228,8 @@ function ProjectsPage() {
       tags: ["HTML", "CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
       github: "https://github.com/Shaik-Nagur-Basha/Spotify-Home-UI-Clone",
-      video: `${import.meta.env.BASE_URL}Spotify-Home.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769019956/Spotify-Home_cdmuj7.mp4",
     },
     {
       id: 7,
@@ -233,7 +239,8 @@ function ProjectsPage() {
       tags: ["React", "Tailwind CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/StellarMarket",
       github: "https://github.com/Shaik-Nagur-Basha/StellarMarket",
-      video: `${import.meta.env.BASE_URL}StellarMarket.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/w_1280,h_720/v1769022237/StellarMarket_y7tab1.mp4",
     },
     {
       id: 8,
@@ -243,7 +250,8 @@ function ProjectsPage() {
       tags: ["React", "JavaScript", "Tailwind CSS"],
       link: "https://shaik-nagur-basha.github.io/SyncTask",
       github: "https://github.com/Shaik-Nagur-Basha/SyncTask",
-      video: `${import.meta.env.BASE_URL}SyncTask.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769019970/SyncTask_g7nsdf.mp4",
     },
     {
       id: 9,
@@ -253,7 +261,8 @@ function ProjectsPage() {
       tags: ["HTML", "CSS", "JavaScript"],
       link: "https://shaik-nagur-basha.github.io/Text-In-Image",
       github: "https://github.com/Shaik-Nagur-Basha/Text-In-Image",
-      video: `${import.meta.env.BASE_URL}Text-In-Image.mp4`,
+      video:
+        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021713/Text-In-Image_f3g0hw.mp4",
     },
   ];
 
