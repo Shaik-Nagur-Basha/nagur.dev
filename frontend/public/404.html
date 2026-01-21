@@ -1,13 +1,19 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <title>Page Redirect</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nagur.dev</title>
     <script>
-      // Store the path the user was trying to access
-      sessionStorage.redirect = location.href;
+      // GitHub Pages SPA fallback: redirect all 404s to index.html
+      // This allows React Router to handle all routing
+      const path = location.pathname;
+      if (!path.endsWith(".html") && !path.includes(".")) {
+        // Store the path and redirect to index.html
+        sessionStorage.setItem("redirect", path);
+        location.replace("/nagur.dev/index.html");
+      }
     </script>
-    <meta http-equiv="refresh" content="0;url=/nagur.dev/" />
   </head>
   <body></body>
 </html>
