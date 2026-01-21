@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -7,9 +7,20 @@ import ErrorPage from "./pages/ErrorPage";
 // import GalleryPage from "./pages/GalleryPage";
 import ScrollToTop from "./components/ScrollToTop";
 import "./style.css";
+import { useEffect } from "react";
 // import IframePage from "./pages/IframePage";
 
 function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    if (redirect) {
+      navigate(redirect, { replace: true });
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       <Router basename={import.meta.env.BASE_URL}>
