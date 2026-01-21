@@ -137,11 +137,7 @@ function Navigation() {
               >
                 <Logo />
                 <h1
-<<<<<<< HEAD
                   className={`text-lg font-bold sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg border-2 border-glow ${
-=======
-                  className={`text-lg font-bold sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg ${
->>>>>>> 3205ad284053c9972ac430aedb8eae8287b1759f
                     !darkMode && "drop-shadow-sm"
                   }`}
                 >
