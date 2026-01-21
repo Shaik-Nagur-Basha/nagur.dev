@@ -188,8 +188,8 @@ function FoundationsAndInterests() {
                         <span
                           className={`text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap inline-block transition-all duration-300 ${
                             darkMode
-                              ? "bg-gradient-to-r from-amber-900/60 to-yellow-800/60 text-amber-200 border border-amber-700/40"
-                              : "bg-gradient-to-r from-amber-100/80 to-yellow-100/80 text-amber-700 border border-amber-300/60"
+                              ? "bg-linear-to-r from-amber-900/60 to-yellow-800/60 text-amber-200 border border-amber-700/40"
+                              : "bg-linear-to-r from-amber-100/80 to-yellow-100/80 text-amber-700 border border-amber-300/60"
                           }`}
                         >
                           CGPA: {edu.cgpa}
@@ -232,8 +232,8 @@ function FoundationsAndInterests() {
                       className={`group relative rounded-3xl p-px
                     ${
                       darkMode
-                        ? "bg-gradient-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30"
-                        : "bg-gradient-to-br from-blue-500/80 via-purple-500/60 to-pink-500/60"
+                        ? "bg-linear-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30"
+                        : "bg-linear-to-br from-blue-500/80 via-purple-500/60 to-pink-500/60"
                     }
                     transition-all hover:from-blue-500 hover:to-purple-500 duration-500`}
                     >
@@ -269,7 +269,7 @@ function FoundationsAndInterests() {
                               </div>
                               <div className="w-full h-2 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
                                 <div
-                                  className={`h-full rounded-full ${darkMode ? "bg-gradient-to-r from-blue-600/75 via-purple-600/75 to-pink-600/75" : "bg-gradient-to-r from-blue-600/85 via-purple-600/85 to-pink-600/85"} shadow-md transition-all duration-1000 ease-out`}
+                                  className={`h-full rounded-full ${darkMode ? "bg-linear-to-r from-blue-600/75 via-purple-600/75 to-pink-600/75" : "bg-linear-to-r from-blue-600/85 via-purple-600/85 to-pink-600/85"} shadow-md transition-all duration-1000 ease-out`}
                                   style={{ width: `${skill.level}%` }}
                                 />
                               </div>
@@ -336,12 +336,12 @@ function FoundationsAndInterests() {
                           onMouseLeave={() => setHoveredInterestIndex(null)}
                           className={`group cursor-pointer relative flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-3xl transition-all duration-300 transform active:scale-90 overflow-visible backdrop-blur-md ${
                             darkMode
-                              ? `bg-gradient-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 ${gradient.border} shadow-lg shadow-gray-900/50 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30`
-                              : `bg-gradient-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 ${gradient.border} shadow-lg shadow-blue-200/40 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20`
+                              ? `bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 ${gradient.border} shadow-lg shadow-gray-900/50 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30`
+                              : `bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 ${gradient.border} shadow-lg shadow-blue-200/40 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20`
                           }`}
                         >
                           <div
-                            className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 bg-gradient-to-br ${
+                            className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 bg-linear-to-br ${
                               darkMode ? gradient.dark : gradient.light
                             }`}
                           ></div>

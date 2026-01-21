@@ -40,7 +40,7 @@ const ScrollToTop = () => {
                 : "bg-white/70 border-white/40 text-gray-900 shadow-lg shadow-black/5"
             }`}
           >
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-bold">
+            <span className="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-bold">
               Scroll to Top
             </span>
           </div>
@@ -48,7 +48,7 @@ const ScrollToTop = () => {
           {/* Button with gradient border - inspired by FoundationsAndInterests */}
           <div
             className={`relative rounded-full p-px transition-all duration-500 transform group-hover:scale-110 group-hover:-translate-y-2
-              bg-gradient-to-br from-blue-500/50 via-purple-500/40 to-pink-500/30
+              bg-linear-to-br from-blue-500/50 via-purple-500/40 to-pink-500/30
               hover:from-blue-500 hover:via-purple-500 hover:to-pink-500
             `}
           >
@@ -72,8 +72,8 @@ const ScrollToTop = () => {
                 className={`relative z-10 transition-all duration-500 group-hover:-translate-y-1 group-hover:scale-110
                   ${
                     darkMode
-                      ? "text-white group-hover:bg-gradient-to-br group-hover:from-blue-300 group-hover:to-purple-300 group-hover:bg-clip-text"
-                      : "text-gray-900 group-hover:bg-gradient-to-br group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text"
+                      ? "text-white group-hover:bg-linear-to-br group-hover:from-blue-300 group-hover:to-purple-300 group-hover:bg-clip-text"
+                      : "text-gray-900 group-hover:bg-linear-to-br group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text"
                   }
                 `}
               />

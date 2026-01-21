@@ -257,7 +257,7 @@ const ErrorPage = () => {
                     <MoveLeft size={20} className="mr-2" />
                     Go Back
                   </button>
-                  <Link to="/nagur.dev" className="error-btn btn-primary">
+                  <Link to="/" className="error-btn btn-primary">
                     <Home size={20} className="mr-2" />
                     Take Me Home
                   </Link>

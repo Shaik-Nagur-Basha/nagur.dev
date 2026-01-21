@@ -15,6 +15,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import Logo from "./Logo";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,25 @@ function Navigation() {
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const { darkMode, toggleDarkMode } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Handle navigation to sections - redirect to home if needed
+  const handleNavigate = (href) => {
+    if (href.startsWith("#")) {
+      // If on home page, scroll to section
+      if (location.pathname === "/") {
+        const element = document.querySelector(href);
+        element?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // If on another page, navigate to home with redirect param
+        // Clear history and go to home
+        navigate("/", { replace: true });
+        // This replaces current history entry so back button doesn't go to previous page;
+      }
+      setIsOpen(false);
+    }
+  };
 
   // Minimum skeleton display time (prevents flashing)
   useEffect(() => {
@@ -132,12 +152,12 @@ function Navigation() {
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}
               <a
-                href="/nagur.dev"
+                href="/"
                 className="shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
               >
                 <Logo />
                 <h1
-                  className={`text-lg font-bold sm:text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg border-2 border-glow ${
+                  className={`text-lg font-bold sm:text-xl bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg border-2 border-glow ${
                     !darkMode && "drop-shadow-sm"
                   }`}
                 >
@@ -150,8 +170,8 @@ function Navigation() {
                 {navLinks.map((link) => (
                   <a
                     key={link.name}
-                    href={link.href}
-                    className={`font-medium transition-all duration-200 relative group ${
+                    onClick={() => handleNavigate(link.href)}
+                    className={`font-medium transition-all duration-200 relative group bg-transparent border-0 cursor-pointer ${
                       darkMode
                         ? "text-gray-300 hover:text-blue-400"
                         : "text-gray-800 hover:text-blue-600"
@@ -161,8 +181,8 @@ function Navigation() {
                     <span
                       className={`absolute bottom-0 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300 ${
                         darkMode
-                          ? "bg-gradient-to-r from-blue-600 to-purple-600"
-                          : "bg-gradient-to-r from-blue-500 to-cyan-500"
+                          ? "bg-linear-to-r from-blue-600 to-purple-600"
+                          : "bg-linear-to-r from-blue-500 to-cyan-500"
                       }`}
                     ></span>
                   </a>
@@ -258,8 +278,8 @@ function Navigation() {
                 isOpen ? "menu-enter" : "menu-exit"
               } backdrop-blur-md rounded-xl border shadow-2xl ${
                 darkMode
-                  ? "bg-gradient-to-br from-gray-800/25 via-gray-900/20 to-purple-900/25 border-gray-600/30 shadow-purple-900/20"
-                  : "bg-gradient-to-br from-white/30 via-blue-50/25 to-cyan-50/30 border-blue-300/30 shadow-blue-300/15"
+                  ? "bg-linear-to-br from-gray-800/25 via-gray-900/20 to-purple-900/25 border-gray-600/30 shadow-purple-900/20"
+                  : "bg-linear-to-br from-white/30 via-blue-50/25 to-cyan-50/30 border-blue-300/30 shadow-blue-300/15"
               }`}
               style={{
                 right: "1rem",
@@ -275,13 +295,15 @@ function Navigation() {
                   return (
                     <a
                       key={link.name}
-                      href={link.href === "#projects" ? "/nagur.dev/projects" : link.href}
                       className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
                         darkMode
-                          ? "text-gray-300 border-transparent hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
-                          : "text-gray-700 border-transparent hover:bg-gradient-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
+                          ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
+                          : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
                       }`}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => {
+                        handleNavigate(link.href);
+                        setIsOpen(false);
+                      }}
                     >
                       <IconComponent
                         size={18}

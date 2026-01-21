@@ -97,13 +97,6 @@ function ProjectsPage() {
       position: absolute;
       inset: -1px;
       z-index: -1;
-      background: conic-gradient(
-        from var(--gradient-angle),
-        transparent 70%,
-        #3b82f6,
-        #8b5cf6,
-        #3b82f6
-      );
       border-radius: inherit;
       animation: rotate-gradient 4s linear infinite;
       opacity: 0;
@@ -172,97 +165,97 @@ function ProjectsPage() {
   };
 
   const projects = [
-  {
-    id: 1,
-    title: "BlogByte Blog",
-    description:
-      "Full-stack blogging platform with post creation, comments, authentication, and modern UI.",
-    tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
-    link: "https://blogbyte-blog.onrender.com",
-    github: "https://github.com/Shaik-Nagur-Basha/BlogByte-Blog",
-    video: `${import.meta.env.BASE_URL}BlogByte-Blog.mp4`,
-  },
-  {
-    id: 2,
-    title: "Listing Hub",
-    description:
-      "Full-stack listing platform built using RESTful APIs and MVC architecture.",
-    tags: ["React", "Node.js", "Express", "MongoDB", "REST API"],
-    link: "https://listing-hub.onrender.com",
-    github: "https://github.com/Shaik-Nagur-Basha/Listing-Hub",
-    video: `${import.meta.env.BASE_URL}Listing-Hub.mp4`,
-  },
-  {
-    id: 3,
-    title: "Gradient Craft",
-    description:
-      "Interactive gradient generator tool with live preview and copy-ready CSS output.",
-    tags: ["HTML", "CSS", "JavaScript"],
-    link: "https://shaik-nagur-basha.github.io/Gradient-Craft",
-    github: "https://github.com/Shaik-Nagur-Basha/Gradient-Craft",
-    video: `${import.meta.env.BASE_URL}Gradient-Craft.mp4`,
-  },
-  {
-    id: 4,
-    title: "DevMatrix (Ongoing)",
-    description:
-      "Developer-focused platform showcasing tools, utilities, and productivity features.",
-    tags: ["React", "Tailwind CSS", "JavaScript"],
-    link: "https://shaik-nagur-basha.github.io/DevMatrix",
-    github: "https://github.com/Shaik-Nagur-Basha/DevMatrix",
-    video: `${import.meta.env.BASE_URL}DevMatrix.mp4`,
-  },
-  {
-    id: 5,
-    title: "NeoChat (Ongoing)",
-    description:
-      "Real-time chat application with users, groups, channels, and message persistence.",
-    tags: ["React", "Node.js", "Socket.io", "MongoDB"],
-    link: "https://neochat-sk.onrender.com",
-    github: "https://github.com/Shaik-Nagur-Basha/NeoChat",
-    video: `${import.meta.env.BASE_URL}NeoChat.mp4`,
-  },
-  {
-    id: 6,
-    title: "Spotify Home UI Clone",
-    description:
-      "Pixel-perfect Spotify home interface clone with responsive and modern layout.",
-    tags: ["HTML", "CSS", "JavaScript"],
-    link: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
-    github: "https://github.com/Shaik-Nagur-Basha/Spotify-Home-UI-Clone",
-    video: `${import.meta.env.BASE_URL}Spotify-Home.mp4`,
-  },
-  {
-    id: 7,
-    title: "StellarMarket (Ongoing)",
-    description:
-      "Modern e-commerce UI with product listings, filters, and clean UX patterns.",
-    tags: ["React", "Tailwind CSS", "JavaScript"],
-    link: "https://shaik-nagur-basha.github.io/StellarMarket",
-    github: "https://github.com/Shaik-Nagur-Basha/StellarMarket",
-    video: `${import.meta.env.BASE_URL}StellarMarket.mp4`,
-  },
-  {
-    id: 8,
-    title: "SyncTask (Ongoing)",
-    description:
-      "Task management application focused on productivity and clean user experience.",
-    tags: ["React", "JavaScript", "Tailwind CSS"],
-    link: "https://shaik-nagur-basha.github.io/SyncTask",
-    github: "https://github.com/Shaik-Nagur-Basha/SyncTask",
-    video: `${import.meta.env.BASE_URL}SyncTask.mp4`,
-  },
-  {
-    id: 9,
-    title: "Text In Image Generator",
-    description:
-      "Utility tool to generate styled text embedded inside images dynamically.",
-    tags: ["HTML", "CSS", "JavaScript"],
-    link: "https://shaik-nagur-basha.github.io/Text-In-Image",
-    github: "https://github.com/Shaik-Nagur-Basha/Text-In-Image",
-    video: `${import.meta.env.BASE_URL}Text-In-Image.mp4`,
-  },
-];
+    {
+      id: 1,
+      title: "BlogByte Blog",
+      description:
+        "Full-stack blogging platform with post creation, comments, authentication, and modern UI.",
+      tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+      link: "https://blogbyte-blog.onrender.com",
+      github: "https://github.com/Shaik-Nagur-Basha/BlogByte-Blog",
+      video: `${import.meta.env.BASE_URL}BlogByte-Blog.mp4`,
+    },
+    {
+      id: 2,
+      title: "Listing Hub",
+      description:
+        "Full-stack listing platform built using RESTful APIs and MVC architecture.",
+      tags: ["React", "Node.js", "Express", "MongoDB", "REST API"],
+      link: "https://listing-hub.onrender.com",
+      github: "https://github.com/Shaik-Nagur-Basha/Listing-Hub",
+      video: `${import.meta.env.BASE_URL}Listing-Hub.mp4`,
+    },
+    {
+      id: 3,
+      title: "Gradient Craft",
+      description:
+        "Interactive gradient generator tool with live preview and copy-ready CSS output.",
+      tags: ["HTML", "CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/Gradient-Craft",
+      github: "https://github.com/Shaik-Nagur-Basha/Gradient-Craft",
+      video: `${import.meta.env.BASE_URL}Gradient-Craft.mp4`,
+    },
+    {
+      id: 4,
+      title: "DevMatrix (Ongoing)",
+      description:
+        "Developer-focused platform showcasing tools, utilities, and productivity features.",
+      tags: ["React", "Tailwind CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/DevMatrix",
+      github: "https://github.com/Shaik-Nagur-Basha/DevMatrix",
+      video: `${import.meta.env.BASE_URL}Devmatrix.mp4`,
+    },
+    {
+      id: 5,
+      title: "NeoChat (Ongoing)",
+      description:
+        "Real-time chat application with users, groups, channels, and message persistence.",
+      tags: ["React", "Node.js", "Socket.io", "MongoDB"],
+      link: "https://neochat-sk.onrender.com",
+      github: "https://github.com/Shaik-Nagur-Basha/NeoChat",
+      video: `${import.meta.env.BASE_URL}NeoChat.mp4`,
+    },
+    {
+      id: 6,
+      title: "Spotify Home UI Clone",
+      description:
+        "Pixel-perfect Spotify home interface clone with responsive and modern layout.",
+      tags: ["HTML", "CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
+      github: "https://github.com/Shaik-Nagur-Basha/Spotify-Home-UI-Clone",
+      video: `${import.meta.env.BASE_URL}Spotify-Home.mp4`,
+    },
+    {
+      id: 7,
+      title: "StellarMarket (Ongoing)",
+      description:
+        "Modern e-commerce UI with product listings, filters, and clean UX patterns.",
+      tags: ["React", "Tailwind CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/StellarMarket",
+      github: "https://github.com/Shaik-Nagur-Basha/StellarMarket",
+      video: `${import.meta.env.BASE_URL}StellarMarket.mp4`,
+    },
+    {
+      id: 8,
+      title: "SyncTask (Ongoing)",
+      description:
+        "Task management application focused on productivity and clean user experience.",
+      tags: ["React", "JavaScript", "Tailwind CSS"],
+      link: "https://shaik-nagur-basha.github.io/SyncTask",
+      github: "https://github.com/Shaik-Nagur-Basha/SyncTask",
+      video: `${import.meta.env.BASE_URL}SyncTask.mp4`,
+    },
+    {
+      id: 9,
+      title: "Text In Image Generator",
+      description:
+        "Utility tool to generate styled text embedded inside images dynamically.",
+      tags: ["HTML", "CSS", "JavaScript"],
+      link: "https://shaik-nagur-basha.github.io/Text-In-Image",
+      github: "https://github.com/Shaik-Nagur-Basha/Text-In-Image",
+      video: `${import.meta.env.BASE_URL}Text-In-Image.mp4`,
+    },
+  ];
 
   return (
     <>
@@ -272,8 +265,8 @@ function ProjectsPage() {
         <div
           className={`${
             darkMode
-              ? "dark bg-gradient-to-br from-gray-950 via-gray-900 to-purple-950"
-              : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
+              ? "dark bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
+              : "bg-linear-to-br from-blue-50 via-white to-purple-50"
           } min-h-screen`}
         >
           <Navigation />
@@ -284,8 +277,8 @@ function ProjectsPage() {
             <div
               className={`absolute top-0 right-0 w-96 h-96 pointer-events-none blur-3xl ${
                 darkMode
-                  ? "bg-gradient-to-br from-purple-600/15 via-purple-500/5 to-transparent"
-                  : "bg-gradient-to-br from-blue-400/20 via-blue-300/10 to-transparent"
+                  ? "bg-linear-to-br from-purple-600/15 via-purple-500/5 to-transparent"
+                  : "bg-linear-to-br from-blue-400/20 via-blue-300/10 to-transparent"
               }`}
               style={{
                 borderRadius: "50%",
@@ -296,8 +289,8 @@ function ProjectsPage() {
             <div
               className={`absolute bottom-0 left-0 w-80 h-80 pointer-events-none blur-3xl ${
                 darkMode
-                  ? "bg-gradient-to-tr from-blue-600/10 via-blue-500/5 to-transparent"
-                  : "bg-gradient-to-tr from-purple-300/15 via-purple-200/5 to-transparent"
+                  ? "bg-linear-to-tr from-blue-600/10 via-blue-500/5 to-transparent"
+                  : "bg-linear-to-tr from-purple-300/15 via-purple-200/5 to-transparent"
               }`}
               style={{
                 borderRadius: "50%",
@@ -386,7 +379,7 @@ function ProjectsPage() {
                       className={`relative z-20 transition-all duration-500 flex flex-col ${
                         expandedId === project.id
                           ? "h-full p-6 backdrop-blur-md"
-                          : "mt-auto hidden group-hover:flex pl-3 pb-1 bg-black/40 backdrop-blur-xs"
+                          : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-1 bg-black/40 backdrop-blur-xs"
                       }`}
                       onClick={(e) => handleClick(e, project.id)}
                     >

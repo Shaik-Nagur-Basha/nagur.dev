@@ -460,7 +460,7 @@ function Footer() {
       links: [
         { label: "sknbasknba@gmail.com", href: "mailto:sknbasknba@gmail.com" },
         { label: "+91 6302504034", href: "tel:+916302504034" },
-        { label: "Kadapa, Andhra Pradesh", href: "#location" },
+        { label: "Badvel, Kadapa, Andhra Pradesh, 516227", href: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7" },
         { label: "Contact Form", href: "#contact" },
       ],
     },
@@ -488,7 +488,7 @@ function Footer() {
       ) : (
         <footer className="footer-wrapper rounded-tl-2xl rounded-tr-2xl">
           <div
-            className={`absolute top-0 w-full h-1 ${darkMode ? "bg-gradient-to-r from-blue-800 via-purple-800 to-cyan-800" : "bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500"}`}
+            className={`absolute top-0 w-full h-1 ${darkMode ? "bg-linear-to-r from-blue-800 via-purple-800 to-cyan-800" : "bg-linear-to-r from-blue-500 via-purple-500 to-cyan-500"}`}
           ></div>
           <style>{styles}</style>
 
@@ -559,7 +559,7 @@ function Footer() {
                     className="text-red-500 cursor-pointer animate-pulse"
                   />{" "}
                   by{" "}
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 cursor-pointer bg-clip-text text-transparent animate-pulse">
+                  <span className="bg-linear-to-r from-blue-600 to-purple-600 cursor-pointer bg-clip-text text-transparent animate-pulse">
                     Sk Nagur Basha
                   </span>
                 </p>

@@ -93,24 +93,24 @@ function Contact() {
               <div className="lg:space-y-6 lg:place-content-start max-lg:w-full max-lg:flex items-center justify-center md:gap-8 gap-4 flex-wrap lg:mt-10 lg:mr-10">
                 {[
                   {
-                    icon: Mail,
-                    title: "Email",
-                    info: "sknbasknba@gmail.com",
-                    // link: "mailto:sknbasknba@gmail.com",
-                    color: "blue",
-                  },
-                  {
                     icon: Phone,
                     title: "Phone",
                     info: "+91 6302504034",
-                    // link: "tel:+916302504034",
+                    link: "tel:+916302504034",
                     color: "purple",
+                  },
+                  {
+                    icon: Mail,
+                    title: "Email",
+                    info: "sknbasknba@gmail.com",
+                    link: "mailto:sknbasknba@gmail.com",
+                    color: "blue",
                   },
                   {
                     icon: MapPin,
                     title: "Location",
-                    info: "Kadapa, Andhra Pradesh",
-                    // link: "#",
+                    info: "Badvel, Kadapa, Andhra Pradesh, 516227",
+                    link: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7",
                     color: "pink",
                   },
                 ].map((contact, idx) => {
@@ -137,7 +137,7 @@ function Contact() {
                   return (
                     <a
                       key={idx}
-                      // href={contact.link}
+                      href={contact.link}
                       className={`group max-w-fit contact-card block relative overflow-hidden rounded-xl p-3 pr-7 transition-all duration-500 transform active:scale-95 cursor-pointer animate-slide-in-left backdrop-blur-xl border ${
                         darkMode
                           ? `${colorConfig[contact.color].dark} bg-gray-900/50 shadow-2xl shadow-${contact.color}-900/20 hover:shadow-${contact.color}-500/30`
@@ -149,8 +149,8 @@ function Contact() {
                       <div
                         className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
                           darkMode
-                            ? "bg-gradient-to-br from-white/5 to-transparent"
-                            : "bg-gradient-to-br from-white/40 to-transparent"
+                            ? "bg-linear-to-br from-white/5 to-transparent"
+                            : "bg-linear-to-br from-white/40 to-transparent"
                         }`}
                       ></div>
 
@@ -236,8 +236,8 @@ function Contact() {
                         className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none ${
                           focusedField === "name"
                             ? darkMode
-                              ? "bg-gradient-to-r from-blue-500/30 to-blue-400/20 border-2 border-blue-400 shadow-lg shadow-blue-500/30"
-                              : "bg-gradient-to-r from-blue-100 to-blue-50 border-2 border-blue-400 shadow-lg shadow-blue-300/50 text-black"
+                              ? "bg-linear-to-r from-blue-500/30 to-blue-400/20 border-2 border-blue-400 shadow-lg shadow-blue-500/30"
+                              : "bg-linear-to-r from-blue-100 to-blue-50 border-2 border-blue-400 shadow-lg shadow-blue-300/50 text-black"
                             : darkMode
                               ? "bg-gray-800/50 border border-gray-700 text-gray-200 placeholder-gray-500 hover:border-gray-600"
                               : "bg-gray-100/50 border border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400"
@@ -266,8 +266,8 @@ function Contact() {
                         className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none ${
                           focusedField === "email"
                             ? darkMode
-                              ? "bg-gradient-to-r from-purple-500/30 to-purple-400/20 border-2 border-purple-400 shadow-lg shadow-purple-500/30"
-                              : "bg-gradient-to-r from-purple-100 to-purple-50 border-2 border-purple-400 shadow-lg shadow-purple-300/50 text-black"
+                              ? "bg-linear-to-r from-purple-500/30 to-purple-400/20 border-2 border-purple-400 shadow-lg shadow-purple-500/30"
+                              : "bg-linear-to-r from-purple-100 to-purple-50 border-2 border-purple-400 shadow-lg shadow-purple-300/50 text-black"
                             : darkMode
                               ? "bg-gray-800/50 border border-gray-700 text-gray-200 placeholder-gray-500 hover:border-gray-600"
                               : "bg-gray-100/50 border border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400"
@@ -297,8 +297,8 @@ function Contact() {
                       className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none resize-none ${
                         focusedField === "message"
                           ? darkMode
-                            ? "bg-gradient-to-r from-pink-500/30 to-pink-400/20 border-2 border-pink-400 shadow-lg shadow-pink-500/30"
-                            : "bg-gradient-to-r from-pink-100 to-pink-50 border-2 border-pink-400 shadow-lg shadow-pink-300/50 text-black"
+                            ? "bg-linear-to-r from-pink-500/30 to-pink-400/20 border-2 border-pink-400 shadow-lg shadow-pink-500/30"
+                            : "bg-linear-to-r from-pink-100 to-pink-50 border-2 border-pink-400 shadow-lg shadow-pink-300/50 text-black"
                           : darkMode
                             ? "bg-gray-800/50 border border-gray-700 text-gray-200 placeholder-gray-500 hover:border-gray-600"
                             : "bg-gray-100/50 border border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400"
@@ -332,8 +332,8 @@ function Contact() {
                     <div
                       className={`mt-6 sm:mt-8 p-4 sm:p-6 rounded-lg flex items-center gap-3 animate-success-pop border ${
                         darkMode
-                          ? "bg-gradient-to-r from-green-900/40 to-emerald-900/40 border-green-700/50 text-green-200 shadow-lg shadow-green-900/20"
-                          : "bg-gradient-to-r from-green-100 to-emerald-100 border-green-400 text-green-800 shadow-lg shadow-green-300/30"
+                          ? "bg-linear-to-r from-green-900/40 to-emerald-900/40 border-green-700/50 text-green-200 shadow-lg shadow-green-900/20"
+                          : "bg-linear-to-r from-green-100 to-emerald-100 border-green-400 text-green-800 shadow-lg shadow-green-300/30"
                       }`}
                     >
                       <CheckCircle
