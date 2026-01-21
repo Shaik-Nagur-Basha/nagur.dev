@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -12,17 +12,15 @@ import "./style.css";
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/nagur.dev" element={<HomePage />} />
-          <Route path="/nagur.dev/projects" element={<ProjectsPage />} />
-          {/* <Route path="/iframe" element={<IframePage />} /> */}
-          {/* <Route path="/gallery" element={<GalleryPage />} /> */}
-          {/* <Route path="/blogs" element={<BlogsPage />} /> */}
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </Router>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
+        {/* <Route path="/iframe" element={<IframePage />} /> */}
+        {/* <Route path="/gallery" element={<GalleryPage />} /> */}
+        {/* <Route path="/blogs" element={<BlogsPage />} /> */}
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
     </ThemeProvider>
   );
 }
