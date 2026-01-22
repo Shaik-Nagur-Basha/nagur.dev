@@ -11,16 +11,18 @@ import { useEffect } from "react";
 // import IframePage from "./pages/IframePage";
 
 function App() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    const params = location.pathname;
-    // const redirect = params.get("redirect");
-    // console.log(params);
-    if (params === "/nagur.dev/projects") {
-      navigate("/nagur.dev/projects");
-    }
-  }, []);
+  // useEffect(() => {
+  //   const params = location.pathname;
+
+  //   if (params === "/nagur.dev" || params === "/nagur.dev/") {
+  //     location.replace("/nagur.dev");
+  //   }
+  //   if (params === "/nagur.dev/projects" || params === "/nagur.dev/projects/") {
+  //     location.replace("/nagur.dev/projects");
+  //   }
+  // }, []);
 
   return (
     <ThemeProvider>
