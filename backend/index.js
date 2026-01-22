@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import Contact from "./models/Contact.js";
 import { addContactToSheet } from "./services/googleSheets.js";
+import path from "path";
 
 dotenv.config();
 
@@ -37,6 +38,8 @@ const connectDB = async () => {
 
 // Connect to database
 connectDB();
+
+const __dirname = path.resolve();
 
 // Contact form submission endpoint
 app.post("/api/contact", async (req, res, next) => {
@@ -86,14 +89,14 @@ app.post("/api/contact", async (req, res, next) => {
 });
 
 // Get all contacts (for admin purposes)
-app.get("/api/contacts", async (req, res, next) => {
-  try {
-    const contacts = await Contact.find().sort({ submittedAt: -1 });
-    res.json(contacts);
-  } catch (error) {
-    next(error);
-  }
-});
+// app.get("/api/contacts", async (req, res, next) => {
+//   try {
+//     const contacts = await Contact.find().sort({ submittedAt: -1 });
+//     res.json(contacts);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // Health check endpoint
 app.get("/api/health", async (req, res, next) => {
@@ -127,6 +130,12 @@ app.use((err, req, res, next) => {
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: "Endpoint not found" });
+});
+
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
 // Start server
