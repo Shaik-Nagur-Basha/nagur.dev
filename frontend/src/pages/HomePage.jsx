@@ -16,8 +16,8 @@ function HomePage() {
     <div
       className={`${
         darkMode
-          ? "dark bg-gradient-to-br from-gray-950 via-gray-900 to-purple-950"
-          : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
+          ? "dark bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
+          : "bg-linear-to-br from-blue-50 via-white to-purple-50"
       }`}
       // style={{
       //   background: "linear-gradient(to bottom right, #ffea0022, #92d8eb44, #52204366)",
