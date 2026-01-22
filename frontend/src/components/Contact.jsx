@@ -13,7 +13,12 @@ import SkeletonLoader from "./SkeletonLoader";
 import axios from "axios";
 import "./Contact.css";
 
-const API_URL = "http://localhost:5000/api";
+// Dynamically set API URL based on environment
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV
+    ? "http://localhost:5000/api"
+    : `${window.location.origin}/api`);
 
 function Contact() {
   const { darkMode } = useTheme();
