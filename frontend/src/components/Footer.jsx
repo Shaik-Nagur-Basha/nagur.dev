@@ -424,8 +424,8 @@ function Footer() {
       links: [
         { label: "Home", href: "#home" },
         { label: "About", href: "#about" },
-        { label: "Projects", href: "/projects" },
-        { label: "Skills", href: "#foundations" },
+        { label: "Projects", href: "#projects" },
+        { label: "Foundations", href: "#foundations" },
       ],
     },
     {
@@ -441,8 +441,8 @@ function Footer() {
           href: "https://shaik-nagur-basha.github.io/DevMatrix",
         },
         {
-          label: "Spotify Home UI Clone",
-          href: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
+          label: "NeoChat",
+          href: "https://neochat-sk.onrender.com",
         },
       ],
     },
@@ -458,9 +458,12 @@ function Footer() {
     {
       title: "Contact",
       links: [
-        { label: "sknbasknba@gmail.com", href: "mailto:sknbasknba@gmail.com" },
         { label: "+91 6302504034", href: "tel:+916302504034" },
-        { label: "Kadapa, Andhra Pradesh", href: "#location" },
+        { label: "sknbasknba@gmail.com", href: "mailto:sknbasknba@gmail.com" },
+        {
+          label: "Badvel, Kadapa, Andhra Pradesh, 516227",
+          href: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7",
+        },
         { label: "Contact Form", href: "#contact" },
       ],
     },
@@ -503,9 +506,7 @@ function Footer() {
                       {section.links.map((link) => (
                         <a
                           key={link.label}
-                          href={
-                            link.href === "#projects" ? "/projects" : link.href
-                          }
+                          href={link.href}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="footer-link"

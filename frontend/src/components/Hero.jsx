@@ -32,7 +32,8 @@ function Hero() {
   // Handle CV download
   const handleDownloadCV = () => {
     const link = document.createElement("a");
-    link.href = "/Sk_Nagur_Basha_CV.pdf"; // Make sure cv.pdf exists in public folder
+    link.href =
+      "https://drive.google.com/uc?export=download&id=1g0laVGqr29yG5ub4MjvNUYWDIW5oAe88"; // Make sure cv.pdf exists in public folder
     link.download = "Sk_Nagur_Basha_CV.pdf";
     document.body.appendChild(link);
     link.click();
@@ -82,7 +83,7 @@ function Hero() {
       ) : (
         <section
           id="home"
-          className={`pt-32 pb-20 px-4 min-h-screen flex items-center transition-all duration-500 relative overflow-hidden`}
+          className={`pt-32 pb-20 px-4 md:pt-44 flex items-center transition-all duration-500 relative overflow-hidden`}
         >
           {/* ${
         darkMode
@@ -172,7 +173,7 @@ function Hero() {
                   >
                     {/* Profile Image */}
                     <img
-                      src="/nagur_photo.png"
+                      src="https://lh3.googleusercontent.com/d/1_GDWssa-FoPeoW3HaDNJCea9TrG8zgkM"
                       alt="Sk Nagur Basha"
                       className="w-full h-full transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
                       style={{

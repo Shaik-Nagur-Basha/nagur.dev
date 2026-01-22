@@ -93,24 +93,24 @@ function Contact() {
               <div className="lg:space-y-6 lg:place-content-start max-lg:w-full max-lg:flex items-center justify-center md:gap-8 gap-4 flex-wrap lg:mt-10 lg:mr-10">
                 {[
                   {
-                    icon: Mail,
-                    title: "Email",
-                    info: "sknbasknba@gmail.com",
-                    // link: "mailto:sknbasknba@gmail.com",
-                    color: "blue",
-                  },
-                  {
                     icon: Phone,
                     title: "Phone",
                     info: "+91 6302504034",
-                    // link: "tel:+916302504034",
+                    link: "tel:+916302504034",
                     color: "purple",
+                  },
+                  {
+                    icon: Mail,
+                    title: "Email",
+                    info: "sknbasknba@gmail.com",
+                    link: "mailto:sknbasknba@gmail.com",
+                    color: "blue",
                   },
                   {
                     icon: MapPin,
                     title: "Location",
-                    info: "Kadapa, Andhra Pradesh",
-                    // link: "#",
+                    info: "Badvel, Kadapa, Andhra Pradesh, 516227",
+                    link: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7",
                     color: "pink",
                   },
                 ].map((contact, idx) => {
@@ -137,7 +137,7 @@ function Contact() {
                   return (
                     <a
                       key={idx}
-                      // href={contact.link}
+                      href={contact.link}
                       className={`group max-w-fit contact-card block relative overflow-hidden rounded-xl p-3 pr-7 transition-all duration-500 transform active:scale-95 cursor-pointer animate-slide-in-left backdrop-blur-xl border ${
                         darkMode
                           ? `${colorConfig[contact.color].dark} bg-gray-900/50 shadow-2xl shadow-${contact.color}-900/20 hover:shadow-${contact.color}-500/30`

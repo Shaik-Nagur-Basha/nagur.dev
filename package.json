@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/Shaik-Nagur-Basha/nagur.dev/issues"
   },
-  "homepage": "https://github.com/Shaik-Nagur-Basha/nagur.dev#readme",
+  "homepage": "https://github.com/Shaik-Nagur-Basha/nagur.dev",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
