@@ -425,7 +425,7 @@ function Footer() {
         { label: "Home", href: "/" },
         { label: "About", href: "/about" },
         { label: "Projects", href: "/projects" },
-        { label: "Foundations", href: "/foundations" },
+        { label: "Skills & Education", href: "/skills" },
       ],
     },
     {

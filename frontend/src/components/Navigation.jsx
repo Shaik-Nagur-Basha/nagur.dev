@@ -94,7 +94,7 @@ function Navigation() {
   const navLinks = [
     { name: "About", href: "/about", icon: User },
     { name: "Projects", href: "/projects", icon: Briefcase },
-    { name: "Foundations", href: "/foundations", icon: Layers },
+    { name: "Skills & Education", href: "/skills", icon: Layers },
     { name: "Contact", href: "/contact", icon: Mail },
   ];
 

@@ -113,7 +113,7 @@ function FoundationsAndInterests() {
         <SkeletonLoader type="foundations" />
       ) : (
         <section
-          id="foundations"
+          id="skills"
           className="py-20 px-4"
           style={{ scrollMarginTop: "50px" }}
         >
@@ -127,7 +127,7 @@ function FoundationsAndInterests() {
                 }`}
               >
                 <Zap size={16} />
-                Foundations & Interests
+                Skills & Education
               </span>
 
               <h2

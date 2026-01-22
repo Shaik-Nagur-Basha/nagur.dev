@@ -83,7 +83,7 @@ function Hero() {
       ) : (
         <section
           id="home"
-          className={`pt-32 pb-20 px-4 md:pt-44 flex items-center transition-all duration-500 relative overflow-hidden`}
+          className={`pt-32 min-h-screen pb-20 px-4 md:pt-44 flex items-center transition-all duration-500 relative overflow-hidden`}
         >
           <style>{floatingStyle}</style>
           <div className="max-w-7xl mx-auto w-full relative z-10">
