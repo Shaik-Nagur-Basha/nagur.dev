@@ -61,9 +61,7 @@ function Contact() {
     setSubmitError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/contact`, formData, {
-        withCredentials: true,
-      });
+      const response = await axios.post(`${API_URL}/contact`, formData);
 
       if (response.status === 201) {
         setSubmitted(true);
