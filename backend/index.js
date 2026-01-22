@@ -114,7 +114,20 @@ app.get("/api/health", async (req, res, next) => {
   }
 });
 
-// Error handling middleware
+// Serve static files from frontend dist
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+// SPA fallback - serve index.html for all non-API routes
+app.get(/^(?!\/api\/)/, (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
+
+// 404 handler for unmatched API routes
+app.use((req, res) => {
+  res.status(404).json({ error: "Endpoint not found" });
+});
+
+// Error handling middleware (must be last)
 app.use((err, req, res, next) => {
   console.error("Error:", err.message);
 
@@ -125,17 +138,6 @@ app.use((err, req, res, next) => {
     error: message,
     timestamp: new Date().toISOString(),
   });
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: "Endpoint not found" });
-});
-
-app.use(express.static(path.join(__dirname, "/frontend/dist")));
-
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
 // Start server
