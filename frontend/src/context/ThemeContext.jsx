@@ -1,8 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 
 const ThemeContext = createContext();
-const API_URL = "http://localhost:5000/api";
 
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(() => {
@@ -11,53 +9,9 @@ export function ThemeProvider({ children }) {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Fetch theme preference from backend on mount
+  // Save theme preference to localStorage
   useEffect(() => {
-    const fetchThemePreference = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/theme`, {
-          withCredentials: true,
-        });
-
-        if (response.data.darkMode !== null) {
-          setDarkMode(response.data.darkMode);
-        }
-      } catch (error) {
-        console.error("Error fetching theme preference:", error);
-        // Fallback to localStorage if backend is unavailable
-      } finally {
-        setIsInitialized(true);
-      }
-    };
-
-    fetchThemePreference();
-  }, []);
-
-  // Save theme preference to both localStorage and backend
-  useEffect(() => {
-    if (!isInitialized) return;
-
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
-
-    // Save to backend
-    const saveTheme = async () => {
-      try {
-        await axios.post(
-          `${API_URL}/theme`,
-          { darkMode },
-          {
-            withCredentials: true,
-          },
-        );
-      } catch (error) {
-        console.error("Error saving theme preference:", error);
-        // Silently fail - localStorage is already updated as fallback
-      }
-    };
-
-    saveTheme();
 
     // Update DOM
     if (darkMode) {
@@ -65,7 +19,7 @@ export function ThemeProvider({ children }) {
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, [darkMode, isInitialized]);
+  }, [darkMode]);
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 

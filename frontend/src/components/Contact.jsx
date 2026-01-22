@@ -8,7 +8,6 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
-import { ButtonPrimary } from "./Button";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import axios from "axios";
@@ -321,6 +320,7 @@ function Contact() {
                       onBlur={() => setFocusedField(null)}
                       required
                       rows="5"
+                      minLength={5}
                       placeholder="Tell us about your project ideas, requirements, or any questions you have..."
                       disabled={isSubmitting}
                       className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none resize-none disabled:opacity-50 ${

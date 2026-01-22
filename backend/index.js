@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import Contact from "./models/Contact.js";
-import Theme from "./models/Theme.js";
+import { addContactToSheet } from "./services/googleSheets.js";
 
 dotenv.config();
 
@@ -29,7 +29,6 @@ const connectDB = async () => {
     console.log("✓ MongoDB connected successfully");
   } catch (error) {
     console.error("✗ MongoDB connection error:", error.message);
-    // Continue running with warning
     console.warn(
       "⚠ Backend running without database. Please configure MONGODB_URI in .env",
     );
@@ -40,7 +39,7 @@ const connectDB = async () => {
 connectDB();
 
 // Contact form submission endpoint
-app.post("/api/contact", async (req, res) => {
+app.post("/api/contact", async (req, res, next) => {
   try {
     const { name, email, message } = req.body;
 
@@ -62,6 +61,14 @@ app.post("/api/contact", async (req, res) => {
 
     await contact.save();
 
+    // Also add to Google Sheet
+    await addContactToSheet({
+      name: contact.name,
+      email: contact.email,
+      message: contact.message,
+      submittedAt: contact.submittedAt,
+    });
+
     res.status(201).json({
       success: true,
       message: "Contact form submitted successfully",
@@ -74,97 +81,22 @@ app.post("/api/contact", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error submitting contact form:", error);
-    res.status(500).json({ error: "Failed to submit contact form" });
+    next(error);
   }
 });
 
-// Get all contacts (for admin purposes - add authentication in production)
-app.get("/api/contacts", async (req, res) => {
+// Get all contacts (for admin purposes)
+app.get("/api/contacts", async (req, res, next) => {
   try {
     const contacts = await Contact.find().sort({ submittedAt: -1 });
     res.json(contacts);
   } catch (error) {
-    console.error("Error fetching contacts:", error);
-    res.status(500).json({ error: "Failed to fetch contacts" });
-  }
-});
-
-// Save theme preference endpoint
-app.post("/api/theme", async (req, res) => {
-  try {
-    const { darkMode } = req.body;
-    const sessionId = req.cookies.sessionId || Date.now().toString();
-
-    // Set cookie with 30-day expiry
-    const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-    const expiresDate = new Date(Date.now() + thirtyDaysInMs);
-
-    res.cookie("sessionId", sessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: thirtyDaysInMs,
-    });
-
-    // Update or create theme preference in MongoDB
-    await Theme.findOneAndUpdate(
-      { sessionId },
-      {
-        sessionId,
-        darkMode: darkMode === true || darkMode === "true",
-        lastUpdated: new Date(),
-        expiresAt: expiresDate,
-      },
-      { upsert: true, new: true },
-    );
-
-    res.json({
-      success: true,
-      message: "Theme preference saved",
-      sessionId,
-      darkMode: darkMode === true || darkMode === "true",
-    });
-  } catch (error) {
-    console.error("Error saving theme preference:", error);
-    res.status(500).json({ error: "Failed to save theme preference" });
-  }
-});
-
-// Get theme preference endpoint
-app.get("/api/theme", async (req, res) => {
-  try {
-    const sessionId = req.cookies.sessionId;
-
-    if (!sessionId) {
-      return res.json({
-        darkMode: null,
-        sessionId: null,
-      });
-    }
-
-    const themeData = await Theme.findOne({ sessionId });
-
-    if (!themeData) {
-      return res.json({
-        darkMode: null,
-        sessionId,
-      });
-    }
-
-    res.json({
-      success: true,
-      darkMode: themeData.darkMode,
-      sessionId,
-    });
-  } catch (error) {
-    console.error("Error fetching theme preference:", error);
-    res.status(500).json({ error: "Failed to fetch theme preference" });
+    next(error);
   }
 });
 
 // Health check endpoint
-app.get("/api/health", async (req, res) => {
+app.get("/api/health", async (req, res, next) => {
   try {
     const mongooseStatus = mongoose.connection.readyState;
     const dbConnected = mongooseStatus === 1;
@@ -175,12 +107,26 @@ app.get("/api/health", async (req, res) => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    res.json({
-      status: "Backend is running!",
-      database: "Error checking database status",
-      error: error.message,
-    });
+    next(error);
   }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+
+  res.status(statusCode).json({
+    error: message,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: "Endpoint not found" });
 });
 
 // Start server
@@ -190,7 +136,5 @@ app.listen(PORT, () => {
   console.log(`\nEndpoints:`);
   console.log(`  POST   /api/contact    - Submit contact form`);
   console.log(`  GET    /api/contacts   - Get all submissions (admin)`);
-  console.log(`  POST   /api/theme      - Save theme preference`);
-  console.log(`  GET    /api/theme      - Get theme preference`);
   console.log(`  GET    /api/health     - Health check\n`);
 });

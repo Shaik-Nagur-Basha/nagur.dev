@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useLayoutEffect } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -10,6 +11,11 @@ import FoundationsPage from "./pages/FoundationsPage";
 import ContactPage from "./pages/ContactPage";
 
 function App() {
+  // Scroll to top on every route change
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <ThemeProvider>
       <Router>
