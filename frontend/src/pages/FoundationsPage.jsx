@@ -1,9 +1,9 @@
 import { useTheme } from "../context/ThemeContext";
 import Navigation from "../components/Navigation";
-import Hero from "../components/Hero";
+import FoundationsAndInterests from "../components/FoundationsAndInterests";
 import Footer from "../components/Footer";
 
-function HomePage() {
+function FoundationsPage() {
   const { darkMode } = useTheme();
 
   return (
@@ -15,10 +15,10 @@ function HomePage() {
       }`}
     >
       <Navigation />
-      <Hero />
+      <FoundationsAndInterests />
       <Footer />
     </div>
   );
 }
 
-export default HomePage;
+export default FoundationsPage;

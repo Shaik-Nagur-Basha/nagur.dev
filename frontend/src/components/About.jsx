@@ -47,64 +47,8 @@ function About() {
           id="about"
           className={`py-20 px-4 transition-all duration-300 relative overflow-hidden`}
         >
-          {/* ${
-        darkMode
-          ? "bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
-          : "bg-linear-to-br from-blue-50 via-white to-purple-50"
-      } */}
-
           <style>{overlayStyle}</style>
-          {/* Radial gradient overlay - Top Right */}
-          {/* <div
-        className={`absolute top-0 right-0 w-96 h-96 pointer-events-none blur-3xl ${
-          darkMode
-            ? "bg-gradient-to-br from-purple-600/15 via-purple-500/5 to-transparent"
-            : "bg-gradient-to-br from-blue-400/20 via-blue-300/10 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "glow-pulse 4s ease-in-out infinite",
-        }}
-      /> */}
 
-          {/* Inner glow accent - Top Right */}
-          {/* <div
-        className={`absolute top-10 right-10 w-64 h-64 pointer-events-none blur-2xl ${
-          darkMode
-            ? "bg-gradient-to-br from-purple-500/10 to-transparent"
-            : "bg-gradient-to-br from-blue-300/15 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "float-glow 6s ease-in-out infinite",
-        }}
-      /> */}
-
-          {/* Radial gradient overlay - Bottom Left */}
-          {/* <div
-        className={`absolute bottom-0 left-0 w-80 h-80 pointer-events-none blur-3xl ${
-          darkMode
-            ? "bg-gradient-to-tr from-blue-600/10 via-blue-500/5 to-transparent"
-            : "bg-gradient-to-tr from-purple-300/15 via-purple-200/5 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "glow-pulse 5s ease-in-out infinite 1s",
-        }}
-      /> */}
-
-          {/* Inner glow accent - Bottom Left */}
-          {/* <div
-        className={`absolute bottom-10 left-10 w-56 h-56 pointer-events-none blur-2xl ${
-          darkMode
-            ? "bg-gradient-to-tr from-blue-500/8 to-transparent"
-            : "bg-gradient-to-tr from-purple-200/10 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "float-glow 7s ease-in-out infinite reverse",
-        }}
-      /> */}
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="text-center mt-4 mb-16">
               <div className="inline-block mb-4">

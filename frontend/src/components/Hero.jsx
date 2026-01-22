@@ -85,63 +85,6 @@ function Hero() {
           id="home"
           className={`pt-32 pb-20 px-4 md:pt-44 flex items-center transition-all duration-500 relative overflow-hidden`}
         >
-          {/* ${
-        darkMode
-          ? "bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
-          : "bg-linear-to-br from-blue-50 via-white to-purple-50"
-      } */}
-
-          {/* Radial gradient overlay - Top Right */}
-          {/* <div
-        className={`absolute top-0 right-0 w-96 h-96 pointer-events-none blur-3xl ${
-          darkMode
-            ? "bg-gradient-to-br from-purple-600/15 via-purple-500/5 to-transparent"
-            : "bg-gradient-to-br from-blue-400/20 via-blue-300/10 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "glow-pulse 4s ease-in-out infinite",
-        }}
-      /> */}
-
-          {/* Inner glow accent - Top Right */}
-          {/* <div
-        className={`absolute top-10 right-10 w-64 h-64 pointer-events-none blur-2xl ${
-          darkMode
-            ? "bg-gradient-to-br from-purple-500/10 to-transparent"
-            : "bg-gradient-to-br from-blue-300/15 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "float-glow 6s ease-in-out infinite",
-        }}
-      /> */}
-
-          {/* Radial gradient overlay - Bottom Left */}
-          {/* <div
-        className={`absolute bottom-0 left-0 w-80 h-80 pointer-events-none blur-3xl ${
-          darkMode
-            ? "bg-gradient-to-tr from-blue-600/10 via-blue-500/5 to-transparent"
-            : "bg-gradient-to-tr from-purple-300/15 via-purple-200/5 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "glow-pulse 5s ease-in-out infinite 1s",
-        }}
-      /> */}
-
-          {/* Inner glow accent - Bottom Left */}
-          {/* <div
-        className={`absolute bottom-10 left-10 w-56 h-56 pointer-events-none blur-2xl ${
-          darkMode
-            ? "bg-gradient-to-tr from-blue-500/8 to-transparent"
-            : "bg-gradient-to-tr from-purple-200/10 to-transparent"
-        }`}
-        style={{
-          borderRadius: "50%",
-          animation: "float-glow 7s ease-in-out infinite reverse",
-        }}
-      /> */}
           <style>{floatingStyle}</style>
           <div className="max-w-7xl mx-auto w-full relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
@@ -149,7 +92,6 @@ function Hero() {
               <div className="flex items-center justify-center order-first md:order-last">
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 group">
                   {/* Animated background blur circles */}
-                  {/* <div className="absolute -inset-6 bg-linear-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full blur-3xl opacity-30 group-hover:opacity-50 animate-pulse transition-all duration-500"></div> */}
                   <div
                     className="absolute -inset-4 bg-linear-to-r from-blue-500 to-purple-600 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"
                     style={{ animationDelay: "0.5s" }}
@@ -371,7 +313,6 @@ function Hero() {
                     ></div>
                   </a>
                   <a
-                    // href="mailto:your-email@example.com?subject=Let's Work Together&body=Hi Nagur, I'd like to discuss..."
                     href="mailto:sknbasknba@gmail.com"
                     target="_blank"
                     rel="noopener noreferrer"

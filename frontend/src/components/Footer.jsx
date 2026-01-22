@@ -61,13 +61,13 @@ function Footer() {
       z-index: 1;
       max-width: 80rem;
       margin: 0 auto;
-      padding: 3rem 1.25rem 2rem;
+      padding: 1.5rem 0.875rem 1rem;
     }
 
     .footer-section {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.5rem;
       animation: fadeInUp 0.6s ease-out;
     }
 
@@ -83,26 +83,26 @@ function Footer() {
     }
 
     .footer-title {
-      font-size: 1.125rem;
+      font-size: 0.95rem;
       font-weight: 700;
       letter-spacing: 0.3px;
       color: ${darkMode ? "#f1f5f9" : "#0f172a"};
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.35rem;
     }
 
     .footer-title::before {
       content: "";
-      width: 3px;
-      height: 20px;
+      width: 2px;
+      height: 16px;
       background: linear-gradient(180deg, #3b82f6, #a855f7);
       border-radius: 2px;
     }
 
     .footer-description {
-      font-size: 0.95rem;
-      line-height: 1.7;
+      font-size: 0.85rem;
+      line-height: 1.6;
       color: ${darkMode ? "#cbd5e1" : "#64748b"};
       max-width: 380px;
     }
@@ -110,19 +110,19 @@ function Footer() {
     .footer-links {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.4rem;
     }
 
     .footer-link {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
+      gap: 0.35rem;
+      font-size: 0.8rem;
       color: ${darkMode ? "#cbd5e1" : "#64748b"};
       text-decoration: none;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
-      padding-left: 1rem;
+      padding-left: 0.75rem;
     }
 
     .footer-link::before {
@@ -158,16 +158,16 @@ function Footer() {
 
     .social-links {
       display: flex;
-      gap: 1rem;
+      gap: 0.6rem;
       flex-wrap: wrap;
-      margin-top: 0.75rem;
+      margin-top: 0.4rem;
       align-items: center;
       justify-content: flex-start;
     }
 
     .social-btn {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
@@ -238,12 +238,12 @@ function Footer() {
     }
 
     .social-btn:hover {
-      transform: translateY(-8px) rotateZ(10deg) scale(1.05);
+      transform: translateY(-6px) rotateZ(10deg) scale(1.05);
       color: var(--icon-color-hover);
       border-color: var(--gradient-start);
       box-shadow: 
-        0 20px 50px rgba(0,0,0,0.2),
-        0 0 30px rgba(0,0,0,0.1),
+        0 15px 35px rgba(0,0,0,0.15),
+        0 0 20px rgba(0,0,0,0.08),
         inset 0 1px 2px rgba(255,255,255,0.1);
       background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     }
@@ -264,7 +264,7 @@ function Footer() {
         box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
       }
       70% {
-        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
       }
       100% {
         box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
@@ -272,7 +272,7 @@ function Footer() {
     }
 
     .social-btn:active {
-      transform: translateY(-4px) rotateZ(10deg) scale(1.05);
+      transform: translateY(-3px) rotateZ(10deg) scale(1.05);
     }
 
     ${
@@ -286,8 +286,8 @@ function Footer() {
       .social-btn:hover {
         background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
         box-shadow: 
-          0 20px 50px rgba(99,102,241,0.4),
-          0 0 30px rgba(168,85,247,0.2),
+          0 15px 35px rgba(99,102,241,0.3),
+          0 0 20px rgba(168,85,247,0.15),
           inset 0 1px 2px rgba(255,255,255,0.2);
       }
     `
@@ -295,8 +295,8 @@ function Footer() {
       .social-btn:hover {
         background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
         box-shadow: 
-          0 20px 50px rgba(59,130,246,0.25),
-          0 0 30px rgba(168,85,247,0.15),
+          0 15px 35px rgba(59,130,246,0.2),
+          0 0 20px rgba(168,85,247,0.1),
           inset 0 1px 2px rgba(255,255,255,0.3);
       }
     `
@@ -304,7 +304,7 @@ function Footer() {
 
     .footer-divider {
       height: 1px;
-      margin: 2.5rem 0 1.75rem 0;
+      margin: 1.5rem 0 1rem 0;
       background: linear-gradient(
         90deg,
         transparent,
@@ -316,8 +316,8 @@ function Footer() {
     .footer-bottom {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      font-size: 0.875rem;
+      gap: 0.875rem;
+      font-size: 0.8rem;
       color: ${darkMode ? "#94a3b8" : "#64748b"};
     }
 
@@ -326,20 +326,20 @@ function Footer() {
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     .copyright {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.35rem;
       flex-wrap: wrap;
     }
 
     .footer-links-bottom {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.5rem;
+      gap: 1rem;
     }
 
     .footer-links-bottom a {
@@ -370,13 +370,13 @@ function Footer() {
 
     @media (max-width: 768px) {
       .footer-content {
-        padding: 2.5rem 1rem 1.5rem;
+        padding: 1.25rem 0.75rem 1rem;
       }
 
       .bottom-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.75rem;
+        gap: 0.5rem;
       }
 
       .footer-description {
@@ -384,36 +384,36 @@ function Footer() {
       }
 
       .footer-links-bottom {
-        gap: 1rem;
-        font-size: 0.8rem;
+        gap: 0.75rem;
+        font-size: 0.75rem;
       }
     }
 
     @media (max-width: 480px) {
       .footer-content {
-        padding: 1.75rem 0.75rem 1.25rem;
+        padding: 1rem 0.6rem 0.75rem;
       }
 
       .footer-title {
-        font-size: 1rem;
-      }
-
-      .footer-description {
-        font-size: 0.875rem;
-        line-height: 1.6;
-      }
-
-      .footer-link {
         font-size: 0.85rem;
       }
 
+      .footer-description {
+        font-size: 0.75rem;
+        line-height: 1.5;
+      }
+
+      .footer-link {
+        font-size: 0.75rem;
+      }
+
       .social-links {
-        margin-top: 0.75rem;
+        margin-top: 0.35rem;
       }
 
       .social-btn {
-        width: 40px;
-        height: 40px;
+        width: 34px;
+        height: 34px;
       }
     }
   `;
@@ -422,10 +422,10 @@ function Footer() {
     {
       title: "Quick Links",
       links: [
-        { label: "Home", href: "#home" },
-        { label: "About", href: "#about" },
-        { label: "Projects", href: "#projects" },
-        { label: "Foundations", href: "#foundations" },
+        { label: "Home", href: "/" },
+        { label: "About", href: "/about" },
+        { label: "Projects", href: "/projects" },
+        { label: "Foundations", href: "/foundations" },
       ],
     },
     {
@@ -447,15 +447,6 @@ function Footer() {
       ],
     },
     {
-      title: "Services",
-      links: [
-        { label: "Web Development", href: "#contact" },
-        { label: "UI/UX Design", href: "#contact" },
-        { label: "Backend Development", href: "#contact" },
-        { label: "Consulting", href: "#contact" },
-      ],
-    },
-    {
       title: "Contact",
       links: [
         { label: "+91 6302504034", href: "tel:+916302504034" },
@@ -464,7 +455,7 @@ function Footer() {
           label: "Badvel, Kadapa, Andhra Pradesh, 516227",
           href: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7",
         },
-        { label: "Contact Form", href: "#contact" },
+        { label: "Contact Form", href: "/contact" },
       ],
     },
   ];
@@ -497,8 +488,8 @@ function Footer() {
 
           <div className="footer-content">
             {/* Brand Section */}
-            <div className="w-full gap-14 max-[1072px]:flex-col flex">
-              <div className="flex flex-wrap gap-4 justify-between min-[1072px]:w-3/4">
+            <div className="w-full gap-14 max-[1050px]:flex-col flex">
+              <div className="flex flex-wrap gap-4 justify-between min-[1050px]:w-3/5">
                 {linkSections.map((section) => (
                   <div key={section.title} className="footer-section max-w-fit">
                     <h3 className="footer-title">{section.title}</h3>
@@ -519,8 +510,8 @@ function Footer() {
                   </div>
                 ))}
               </div>
-              <div className="footer-section min-[1060px]:w-1/4 max-[1072px]:mx-auto">
-                <h2 className="footer-title">Portfolio</h2>
+              <div className="footer-section min-[1060px]:w-2/5 max-[1050px]:mx-auto xl:translate-x-20 2xl:translate-x-40">
+                <h2 className="footer-title">Sk Nagur Basha</h2>
                 <p className="footer-description">
                   MERN full stack web developer focused on building fast,
                   accessible, and visually refined web experiences with modern

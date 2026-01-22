@@ -114,7 +114,7 @@ function FoundationsAndInterests() {
       ) : (
         <section
           id="foundations"
-          className="mt-10 mb-20 py-10 px-4"
+          className="py-20 px-4"
           style={{ scrollMarginTop: "50px" }}
         >
           <div className="max-w-7xl mx-auto">

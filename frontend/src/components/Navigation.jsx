@@ -2,14 +2,9 @@ import { useState, useEffect } from "react";
 import {
   Moon,
   Sun,
-  Home,
   User,
   Briefcase,
-  Zap,
-  BookOpen,
-  Smile,
   Mail,
-  Heart,
   Layers,
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
@@ -97,12 +92,10 @@ function Navigation() {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const navLinks = [
-    // { name: "Home", href: "#home", icon: Home },
-    { name: "About", href: "#about", icon: User },
-    { name: "Projects", href: "#projects", icon: Briefcase },
-    { name: "Foundations", href: "#foundations", icon: Layers },
-    { name: "Interests", href: "#interests", icon: Heart },
-    { name: "Contact", href: "#contact", icon: Mail },
+    { name: "About", href: "/about", icon: User },
+    { name: "Projects", href: "/projects", icon: Briefcase },
+    { name: "Foundations", href: "/foundations", icon: Layers },
+    { name: "Contact", href: "/contact", icon: Mail },
   ];
 
   return (
@@ -206,10 +199,6 @@ function Navigation() {
                       }`}
                       style={{
                         background: "transparent",
-                        // ? `conic-gradient(from 0deg, ${
-                        //     darkMode ? "#3b82f6ee" : "#2563ebee"
-                        //   }, ${darkMode ? "#7c3aedee" : "#7c3aedee"})`
-                        // : "transparent",
                       }}
                     ></div>
 
