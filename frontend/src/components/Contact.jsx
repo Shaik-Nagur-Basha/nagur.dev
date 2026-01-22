@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
-import axios from "axios";
 import "./Contact.css";
 
 // Dynamically set API URL based on environment
@@ -66,7 +65,13 @@ function Contact() {
     setSubmitError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/contact`, formData);
+      const response = await fetch(`${API_URL}/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (response.status === 201) {
         setSubmitted(true);
@@ -75,13 +80,15 @@ function Contact() {
 
         // Hide success message after 3 seconds
         setTimeout(() => setSubmitted(false), 3000);
+      } else {
+        const data = await response.json();
+        setSubmitError(
+          data.error || "Failed to submit the form. Please try again.",
+        );
       }
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      setSubmitError(
-        error.response?.data?.error ||
-          "Failed to submit the form. Please try again.",
-      );
+      setSubmitError("Failed to submit the form. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
