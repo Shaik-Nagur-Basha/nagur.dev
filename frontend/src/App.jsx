@@ -14,10 +14,11 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const redirect = params.get("redirect");
-    if (redirect) {
-      navigate(redirect, { replace: true });
+    const params = location.pathname;
+    // const redirect = params.get("redirect");
+    // console.log(params);
+    if (params === "/nagur.dev/projects") {
+      navigate("/nagur.dev/projects");
     }
   }, []);
 

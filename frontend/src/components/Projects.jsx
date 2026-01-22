@@ -2,12 +2,14 @@ import { Code2, ExternalLink, Github, MoveRightIcon, Plus } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
 import SkeletonLoader from "./SkeletonLoader";
+import { useNavigate } from "react-router-dom";
 
 function Projects() {
   const { darkMode } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Minimum skeleton display time (prevents flashing)
@@ -623,8 +625,8 @@ function Projects() {
             {/* View All Button - Positioned at Bottom */}
             <div className="flex justify-center mt-12">
               <a
-                href="/nagur.dev/projects"
-                className={`group inline-flex items-center gap-2 font-medium transition-all duration-300 ${
+                onClick={() => navigate("/nagur.dev/projects")}
+                className={`group inline-flex items-center cursor-pointer gap-2 font-medium transition-all duration-300 ${
                   darkMode
                     ? "text-cyan-300 hover:text-cyan-100"
                     : "text-cyan-600 hover:text-cyan-500"

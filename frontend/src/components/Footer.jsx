@@ -441,8 +441,8 @@ function Footer() {
           href: "https://shaik-nagur-basha.github.io/DevMatrix",
         },
         {
-          label: "Spotify Home UI Clone",
-          href: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
+          label: "NeoChat",
+          href: "https://neochat-sk.onrender.com",
         },
       ],
     },
