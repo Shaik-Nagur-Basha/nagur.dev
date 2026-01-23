@@ -12,13 +12,6 @@ import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import "./Contact.css";
 
-// Dynamically set API URL based on environment
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV
-    ? "http://localhost:5000/api"
-    : `${window.location.origin}/api`);
-
 function Contact() {
   const { darkMode } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +58,7 @@ function Contact() {
     setSubmitError(null);
 
     try {
-      const response = await fetch(`${API_URL}/contact`, {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
