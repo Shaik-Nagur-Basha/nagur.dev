@@ -344,9 +344,9 @@ function ProjectsPage() {
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
                   onClick={(e) => handleClick(e, project.id)}
-                  className="project-card-grid relative shadow-md shadow-gray-200/70 dark:shadow-black/70 rounded-2xl overflow-hidden group h-64 aspect-video isolate z-0 cursor-pointer"
+                  className="project-card-grid relative p-2 rounded-2xl overflow-hidden group h-64 aspect-video isolate z-0 cursor-pointer"
                 >
-                  <div className="project-card-inner rounded-2xl overflow-hidden flex flex-col relative h-full">
+                  <div className="project-card-inner shadow-md shadow-gray-200/70 dark:shadow-black/70 rounded-2xl overflow-hidden flex flex-col relative h-full">
                     {/* Ripple Container */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-25">
                       {ripples[`${project.id}`] &&

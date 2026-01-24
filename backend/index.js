@@ -145,6 +145,5 @@ app.listen(PORT, () => {
   console.log(`📝 API Base URL: http://localhost:${PORT}/api`);
   console.log(`\nEndpoints:`);
   console.log(`  POST   /api/contact    - Submit contact form`);
-  console.log(`  GET    /api/contacts   - Get all submissions (admin)`);
   console.log(`  GET    /api/health     - Health check\n`);
 });

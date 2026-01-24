@@ -1,47 +1,48 @@
 export default function SkeletonWaveBlur({ className = "" }) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      {/* Blurred diagonal wave bar */}
-      <div className="absolute inset-0 wave-blur-bar" />
+      <div className="absolute inset-0 wave-water-bar" />
 
       <style>
         {`
-          .wave-blur-bar {
+          .wave-water-bar {
             position: absolute;
-            top: -50%;
-            left: -70%;
-            width: 45%;
-            height: 200%;
-            transform: rotate(20deg);
-            animation: wave-move 2.4s ease-in-out infinite;
+            top: -40%;
+            left: -60%;
+            width: 9%; /* SHORT BAR */
+            height: 180%;
+            transform: rotate(18deg);
+            animation: wave-water-move 2.4s linear infinite;
 
-            /* THIS is the key part */
+            /* HEAVY WHITE WATER SHIMMER */
             background: linear-gradient(
               90deg,
               transparent,
-              rgba(127, 127, 127, 0.08),
-              rgba(127, 127, 127, 0.25),
-              rgba(127, 127, 127, 0.08),
+              rgba(255, 255, 255, 0.25),
+              rgba(255, 255, 255, 0.95),
+              rgba(255, 255, 255, 0.25),
               transparent
             );
+
+            filter: blur(6px);
           }
 
-          @keyframes wave-move {
+          @keyframes wave-water-move {
             0% {
-              left: -70%;
+              left: -60%;
             }
             100% {
               left: 140%;
             }
           }
 
-          .dark .wave-blur-bar {
+          .dark .wave-water-bar {
             background: linear-gradient(
               90deg,
               transparent,
-              rgba(127, 127, 127, 0.08),
-              rgba(127, 127, 127, 0.25),
-              rgba(127, 127, 127, 0.08),
+              rgba(255, 255, 255, 0.08),
+              rgba(255, 255, 255, 0.25),
+              rgba(255, 255, 255, 0.08),
               transparent
             );
           }
