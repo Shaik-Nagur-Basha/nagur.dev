@@ -2,6 +2,7 @@ import { useTheme } from "../context/ThemeContext";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import SkeletonLoader from "../components/SkeletonLoader";
+import SkeletonWaveBlur from "../components/SkeletonWaveBar";
 import { ExternalLink, Github, MoveRightIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -11,6 +12,7 @@ function ProjectsPage() {
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const [ripples, setRipples] = useState({});
   const [expandedId, setExpandedId] = useState(null);
+  const [videoLoadingStates, setVideoLoadingStates] = useState({});
 
   useEffect(() => {
     // Minimum skeleton display time (prevents flashing)
@@ -162,6 +164,13 @@ function ProjectsPage() {
     }, 600);
 
     setExpandedId(expandedId === projectId ? null : projectId);
+  };
+
+  const handleVideoLoaded = (projectId) => {
+    setVideoLoadingStates((prev) => ({
+      ...prev,
+      [projectId]: true,
+    }));
   };
 
   const projects = [
@@ -335,9 +344,9 @@ function ProjectsPage() {
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
                   onClick={(e) => handleClick(e, project.id)}
-                  className="project-card-grid relative rounded-2xl overflow-hidden group h-64 aspect-video isolate z-0 cursor-pointer"
+                  className="project-card-grid relative shadow-md shadow-gray-200/70 dark:shadow-black/70 rounded-2xl overflow-hidden group h-64 aspect-video isolate z-0 cursor-pointer"
                 >
-                  <div className="project-card-inner rounded-2xl overflow-hidden shadow-2xl flex flex-col relative h-full">
+                  <div className="project-card-inner rounded-2xl overflow-hidden flex flex-col relative h-full">
                     {/* Ripple Container */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-25">
                       {ripples[`${project.id}`] &&
@@ -366,9 +375,15 @@ function ProjectsPage() {
                       loop
                       muted
                       playsInline
+                      onLoadedData={() => handleVideoLoaded(project.id)}
                     >
                       <source src={project.video} type="video/mp4" />
                     </video>
+
+                    {/* Skeleton Wave Bar - Shows while video is loading */}
+                    {!videoLoadingStates[project.id] && (
+                      <SkeletonWaveBlur className="absolute w-full h-full inset-0 z-10" />
+                    )}
 
                     {/* Overlay for light mode styling */}
                     <div

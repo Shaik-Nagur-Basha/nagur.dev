@@ -1,15 +1,25 @@
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
+import {
+  ArrowRight,
+  Github,
+  Linkedin,
+  Mail,
+  Download,
+  CheckCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import { ButtonPrimary, ButtonSecondary } from "./Button";
+import SkeletonWaveBar from "./SkeletonWaveBar";
 
 function Hero() {
   const { darkMode } = useTheme();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState("idle"); // idle, downloading, completed
 
   // Minimum skeleton display time (prevents flashing)
   useEffect(() => {
@@ -31,6 +41,7 @@ function Hero() {
 
   // Handle CV download
   const handleDownloadCV = () => {
+    setDownloadStatus("downloading");
     const link = document.createElement("a");
     link.href =
       "https://drive.google.com/uc?export=download&id=1g0laVGqr29yG5ub4MjvNUYWDIW5oAe88"; // Make sure cv.pdf exists in public folder
@@ -38,6 +49,15 @@ function Hero() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Set completed status after a short delay
+    setTimeout(() => {
+      setDownloadStatus("completed");
+      // Reset to idle after 3 seconds
+      setTimeout(() => {
+        setDownloadStatus("idle");
+      }, 3000);
+    }, 500);
   };
 
   // Add floating animation keyframes
@@ -113,10 +133,15 @@ function Hero() {
                         "drop-shadow(0 20px 25px rgba(0, 0, 0, 0.3)) drop-shadow(0 10px 15px rgba(59, 130, 246, 0.2))",
                     }}
                   >
+                    {!imageLoaded && (
+                      <SkeletonWaveBar className="w-full h-full transition-all duration-500 group-hover:scale-105 drop-shadow-2xl rounded-full" />
+                    )}
+
                     {/* Profile Image */}
                     <img
                       src="https://lh3.googleusercontent.com/d/1_GDWssa-FoPeoW3HaDNJCea9TrG8zgkM"
                       alt="Sk Nagur Basha"
+                      onLoad={() => setImageLoaded(true)}
                       className="w-full h-full transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
                       style={{
                         filter:
@@ -230,13 +255,44 @@ function Hero() {
                   </ButtonPrimary>
                   <ButtonSecondary
                     onClick={handleDownloadCV}
+                    disabled={downloadStatus === "downloading"}
                     className={`flex items-center justify-center cursor-pointer truncate font-semibold text-sm md:text-base px-5 md:px-7 py-2.5 md:py-3 rounded-xl font-mono backdrop-blur-md transition-all duration-300 ${
-                      darkMode
-                        ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-purple-500/40 text-gray-200 hover:from-purple-900/50 hover:to-purple-800/50 hover:border-purple-400/70 hover:text-purple-100 hover:shadow-lg hover:shadow-purple-600/40 hover:scale-105 active:scale-95"
-                        : "bg-linear-to-r from-white/50 to-blue-50/50 border-2 border-blue-300/50 text-gray-600! hover:text-gray-700! hover:bg-gray-300! hover:from-blue-100/70 hover:to-blue-50/70 hover:border-purple-400/70 hover:shadow-lg hover:shadow-purple-400/40 hover:scale-105 active:scale-95"
+                      downloadStatus === "downloading"
+                        ? darkMode
+                          ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-blue-500/40 text-blue-300 opacity-75 cursor-not-allowed"
+                          : "bg-linear-to-r from-white/50 to-blue-50/50 border-2 border-blue-500/40 text-blue-500 opacity-75 cursor-not-allowed"
+                        : downloadStatus === "completed"
+                          ? darkMode
+                            ? "bg-linear-to-r from-green-900/50 to-green-800/50 border-2 border-green-500/70 text-green-300"
+                            : "bg-linear-to-r from-green-100/70 to-green-50/70 border-2 border-green-400/70 text-green-600"
+                          : darkMode
+                            ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-purple-500/40 text-gray-200 hover:from-purple-900/50 hover:to-purple-800/50 hover:border-purple-400/70 hover:text-purple-100 hover:shadow-lg hover:shadow-purple-600/40 hover:scale-105 active:scale-95"
+                            : "bg-linear-to-r from-white/50 to-blue-50/50 border-2 border-blue-300/50 text-gray-600! hover:text-gray-700! hover:bg-gray-300! hover:from-blue-100/70 hover:to-blue-50/70 hover:border-purple-400/70 hover:shadow-lg hover:shadow-purple-400/40 hover:scale-105 active:scale-95"
                     }`}
                   >
-                    Download CV
+                    {downloadStatus === "downloading" && (
+                      <>
+                        <Download
+                          size={18}
+                          className="animate-bounce transition-all duration-300"
+                        />
+                        <span className="hidden sm:inline ml-2">
+                          Downloading...
+                        </span>
+                      </>
+                    )}
+                    {downloadStatus === "completed" && (
+                      <>
+                        <CheckCircle
+                          size={18}
+                          className="transition-all duration-300"
+                        />
+                        <span className="hidden sm:inline ml-2">
+                          Downloaded!
+                        </span>
+                      </>
+                    )}
+                    {downloadStatus === "idle" && "Download CV"}
                   </ButtonSecondary>
                 </div>
 
