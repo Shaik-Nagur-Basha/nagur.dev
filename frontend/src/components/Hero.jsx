@@ -44,7 +44,7 @@ function Hero() {
     setDownloadStatus("downloading");
     const link = document.createElement("a");
     link.href =
-      "https://drive.google.com/uc?export=download&id=1g0laVGqr29yG5ub4MjvNUYWDIW5oAe88"; // Make sure cv.pdf exists in public folder
+      "https://drive.google.com/uc?export=download&id=1cTnDl26rDruvAOiCGLtGJc8RBhpLFULx"; // Make sure cv.pdf exists in public folder
     link.download = "Sk_Nagur_Basha_CV.pdf";
     document.body.appendChild(link);
     link.click();
@@ -260,14 +260,14 @@ function Hero() {
                       downloadStatus === "downloading"
                         ? darkMode
                           ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-blue-500/40 text-blue-300 opacity-75 cursor-not-allowed"
-                          : "bg-linear-to-r from-white/50 to-blue-50/50 border-2 border-blue-500/40 text-blue-500 opacity-75 cursor-not-allowed"
+                          : "bg-transparent! text-blue-500! opacity-75 cursor-not-allowed"
                         : downloadStatus === "completed"
                           ? darkMode
                             ? "bg-linear-to-r from-green-900/50 to-green-800/50 border-2 border-green-500/70 text-green-300"
-                            : "bg-linear-to-r from-green-100/70 to-green-50/70 border-2 border-green-400/70 text-green-600"
+                            : "bg-transparent! text-green-600!"
                           : darkMode
                             ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-purple-500/40 text-gray-200 hover:from-purple-900/50 hover:to-purple-800/50 hover:border-purple-400/70 hover:text-purple-100 hover:shadow-lg hover:shadow-purple-600/40 hover:scale-105 active:scale-95"
-                            : "bg-linear-to-r from-white/50 to-blue-50/50 border-2 border-blue-300/50 text-gray-600! hover:text-gray-700! hover:bg-gray-300! hover:from-blue-100/70 hover:to-blue-50/70 hover:border-purple-400/70 hover:shadow-lg hover:shadow-purple-400/40 hover:scale-105 active:scale-95"
+                            : "hover:bg-transparent! text-gray-700! hover:shadow-lg hover:shadow-purple-400/40 hover:scale-105 active:scale-95"
                     }`}
                   >
                     {downloadStatus === "downloading" && (

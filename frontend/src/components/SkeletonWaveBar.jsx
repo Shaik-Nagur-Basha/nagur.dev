@@ -1,50 +1,47 @@
 export default function SkeletonWaveBlur({ className = "" }) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      <div className="absolute inset-0 wave-water-bar" />
+      <div className="skeleton-wave-bar" />
 
       <style>
         {`
-          .wave-water-bar {
-            position: absolute;
-            top: -40%;
-            left: -60%;
-            width: 9%; /* SHORT BAR */
-            height: 180%;
-            transform: rotate(18deg);
-            animation: wave-water-move 2.4s linear infinite;
-
-            /* HEAVY WHITE WATER SHIMMER */
-            background: linear-gradient(
-              90deg,
-              transparent,
-              rgba(255, 255, 255, 0.25),
-              rgba(255, 255, 255, 0.95),
-              rgba(255, 255, 255, 0.25),
-              transparent
-            );
-
-            filter: blur(6px);
-          }
-
-          @keyframes wave-water-move {
+          /* Animation keyframes for shimmer wave effect */
+          @keyframes shimmer-progress {
             0% {
-              left: -60%;
+              background-position: 200% 0;
             }
             100% {
-              left: 140%;
+              background-position: -200% 0;
             }
           }
 
-          .dark .wave-water-bar {
+          /* Light mode: Darker wave effect */
+          .skeleton-wave-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(
               90deg,
-              transparent,
-              rgba(255, 255, 255, 0.08),
-              rgba(255, 255, 255, 0.25),
-              rgba(255, 255, 255, 0.08),
-              transparent
+              rgba(150, 150, 150, 0.15) 25%,
+              rgba(200, 200, 200, 0.6) 50%,
+              rgba(150, 150, 150, 0.15) 75%
             );
+            background-size: 200% 100%;
+            animation: shimmer-progress 1.5s infinite;
+          }
+
+          /* Dark mode: Lighter wave effect */
+          .dark .skeleton-wave-bar {
+            background: linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0.08) 25%,
+              rgba(255, 255, 255, 0.2) 50%,
+              rgba(255, 255, 255, 0.08) 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer-progress 1.5s infinite;
           }
         `}
       </style>
