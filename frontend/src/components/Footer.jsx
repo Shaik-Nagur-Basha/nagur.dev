@@ -1,7 +1,7 @@
 import {
   Github,
   Linkedin,
-  Twitter,
+  Send,
   Mail,
   Heart,
   ArrowUpRight,
@@ -471,8 +471,8 @@ function Footer() {
       label: "LinkedIn",
       href: "https://www.linkedin.com/in/nagur-basha",
     },
-    { icon: Twitter, label: "Twitter", href: "#" },
     { icon: Mail, label: "Email", href: "mailto:sknbasknba@gmail.com" },
+    { icon: Send, label: "Telegram", href: "https://t.me/sknba" },
   ];
 
   return (

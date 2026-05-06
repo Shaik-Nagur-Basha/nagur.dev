@@ -44,7 +44,7 @@ function Hero() {
     setDownloadStatus("downloading");
     const link = document.createElement("a");
     link.href =
-      "https://drive.google.com/uc?export=download&id=1cTnDl26rDruvAOiCGLtGJc8RBhpLFULx"; // Make sure cv.pdf exists in public folder
+      "https://drive.google.com/uc?export=download&id=1P3IEWXQhUUf6H2VGg1VjRFOOVBrS4DfV"; // Make sure cv.pdf exists in public folder
     link.download = "Sk_Nagur_Basha_CV.pdf";
     document.body.appendChild(link);
     link.click();

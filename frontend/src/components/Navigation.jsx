@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { NavLink, Link } from "react-router-dom";
 import {
   Moon,
   Sun,
@@ -124,8 +125,8 @@ function Navigation() {
           >
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
               >
                 <Logo />
@@ -136,29 +137,41 @@ function Navigation() {
                 >
                   nagur.dev
                 </h1>
-              </a>
+              </Link>
 
               {/* Desktop Menu */}
               <div className="hidden md:flex items-center space-x-8">
                 {navLinks.map((link) => (
-                  <a
+                  <NavLink
                     key={link.name}
-                    href={link.href}
-                    className={`font-medium transition-all duration-200 relative group bg-transparent border-0 cursor-pointer ${
-                      darkMode
-                        ? "text-gray-300 hover:text-blue-400"
-                        : "text-gray-800 hover:text-blue-600"
-                    }`}
+                    to={link.href}
+                    className={({ isActive }) =>
+                      `font-medium transition-all duration-200 relative group bg-transparent border-0 cursor-pointer ${
+                        isActive
+                          ? darkMode
+                            ? "text-blue-400"
+                            : "text-blue-600"
+                          : darkMode
+                            ? "text-gray-300 hover:text-blue-400"
+                            : "text-gray-800 hover:text-blue-600"
+                      }`
+                    }
                   >
-                    {link.name}
-                    <span
-                      className={`absolute bottom-0 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300 ${
-                        darkMode
-                          ? "bg-linear-to-r from-blue-600 to-purple-600"
-                          : "bg-linear-to-r from-blue-500 to-cyan-500"
-                      }`}
-                    ></span>
-                  </a>
+                    {({ isActive }) => (
+                      <>
+                        {link.name}
+                        <span
+                          className={`absolute bottom-0 left-0 h-0.5 transition-all duration-300 ${
+                            isActive ? "w-full" : "w-0 group-hover:w-full"
+                          } ${
+                            darkMode
+                              ? "bg-linear-to-r from-blue-600 to-purple-600"
+                              : "bg-linear-to-r from-blue-500 to-cyan-500"
+                          }`}
+                        ></span>
+                      </>
+                    )}
+                  </NavLink>
                 ))}
               </div>
 
@@ -262,14 +275,20 @@ function Navigation() {
                 {navLinks.map((link) => {
                   const IconComponent = link.icon;
                   return (
-                    <a
+                    <NavLink
                       key={link.name}
-                      href={link.href}
-                      className={`menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
-                        darkMode
-                          ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
-                          : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
-                      }`}
+                      to={link.href}
+                      className={({ isActive }) =>
+                        `menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
+                          isActive
+                            ? darkMode
+                              ? "text-blue-300 bg-blue-600/20 border-blue-500/40 translate-x-1 shadow-lg shadow-blue-500/20"
+                              : "text-blue-700 bg-blue-400/20 border-blue-400/50 translate-x-1 shadow-lg shadow-blue-400/20"
+                            : darkMode
+                              ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
+                              : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
+                        }`
+                      }
                       onClick={() => setIsOpen(false)}
                     >
                       <IconComponent
@@ -277,7 +296,7 @@ function Navigation() {
                         className="transition-all duration-200"
                       />
                       {link.name}
-                    </a>
+                    </NavLink>
                   );
                 })}
               </div>
