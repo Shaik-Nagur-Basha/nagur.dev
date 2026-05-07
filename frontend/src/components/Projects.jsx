@@ -2,6 +2,7 @@ import { Code2, ExternalLink, Github, MoveRightIcon, Plus } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
 import SkeletonLoader from "./SkeletonLoader";
+import API from "../api/axios";
 
 function Projects() {
   const { darkMode } = useTheme();
@@ -9,18 +10,24 @@ function Projects() {
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
 
-  useEffect(() => {
-    // Minimum skeleton display time (prevents flashing)
-    const minTimer = setTimeout(() => setMinLoadingTime(false), 800);
-    return () => clearTimeout(minTimer);
-  }, []);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    // Switch to content once minimum time has passed
-    if (!minLoadingTime) {
-      setIsLoading(false);
-    }
-  }, [minLoadingTime]);
+    const fetchProjects = async () => {
+      try {
+        const { data } = await API.get("/projects");
+        if (data.success) {
+          setProjects(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
   const [currentPage, setCurrentPage] = useState(1);
   const [ripples, setRipples] = useState({});
   const [windowWidth, setWindowWidth] = useState(
@@ -34,10 +41,6 @@ function Projects() {
     return 3;
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
 
   const projectsPerPage = getProjectsPerPage(windowWidth);
 
@@ -190,107 +193,6 @@ function Projects() {
     setExpandedId(expandedId === projectId ? null : projectId);
   };
 
-  const projects = [
-    {
-      id: 1,
-      title: "BlogByte Blog",
-      description:
-        "Full-stack blogging platform with post creation, comments, authentication, and modern UI.",
-      tags: ["React", "Node.js", "Express", "MongoDB"],
-      link: "https://blogbyte-blog.onrender.com",
-      github: "https://github.com/Shaik-Nagur-Basha/BlogByte-Blog",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023123/Blogbyte-Blog_twspq4.mp4",
-    },
-    {
-      id: 2,
-      title: "Listing Hub",
-      description:
-        "Full-stack listing platform built using RESTful APIs and MVC architecture.",
-      tags: ["React", "Node.js", "Express", "MongoDB", "REST API"],
-      link: "https://listing-hub.onrender.com",
-      github: "https://github.com/Shaik-Nagur-Basha/Listing-Hub",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023142/Listing-Hub_z3cxqu.mp4",
-    },
-    {
-      id: 3,
-      title: "Gradient Craft",
-      description:
-        "Interactive gradient generator tool with live preview and copy-ready CSS output.",
-      tags: ["HTML", "CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/Gradient-Craft",
-      github: "https://github.com/Shaik-Nagur-Basha/Gradient-Craft",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021732/Gradient-Craft_lkzjpk.mp4",
-    },
-    {
-      id: 4,
-      title: "DevMatrix (Ongoing)",
-      description:
-        "Developer-focused platform showcasing tools, utilities, and productivity features.",
-      tags: ["React", "Tailwind CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/DevMatrix",
-      github: "https://github.com/Shaik-Nagur-Basha/DevMatrix",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021718/DevMatrix_zngwlj.mp4",
-    },
-    {
-      id: 5,
-      title: "NeoChat (Ongoing)",
-      description:
-        "Real-time chat application with users, groups, channels, and message persistence.",
-      tags: ["React", "Node.js", "Socket.io", "MongoDB"],
-      link: "https://neochat-sk.onrender.com",
-      github: "https://github.com/Shaik-Nagur-Basha/NeoChat",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023132/NeoChat_d6tcg7.mp4",
-    },
-    {
-      id: 6,
-      title: "Spotify Home UI Clone",
-      description:
-        "Pixel-perfect Spotify home interface clone with responsive and modern layout.",
-      tags: ["HTML", "CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
-      github: "https://github.com/Shaik-Nagur-Basha/Spotify-Home-UI-Clone",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769019956/Spotify-Home_cdmuj7.mp4",
-    },
-    {
-      id: 7,
-      title: "StellarMarket (Ongoing)",
-      description:
-        "Modern e-commerce UI with product listings, filters, and clean UX patterns.",
-      tags: ["React", "Tailwind CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/StellarMarket",
-      github: "https://github.com/Shaik-Nagur-Basha/StellarMarket",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/w_1280,h_720/v1769022237/StellarMarket_y7tab1.mp4",
-    },
-    {
-      id: 8,
-      title: "SyncTask (Ongoing)",
-      description:
-        "Task management application focused on productivity and clean user experience.",
-      tags: ["React", "JavaScript", "Tailwind CSS"],
-      link: "https://shaik-nagur-basha.github.io/SyncTask",
-      github: "https://github.com/Shaik-Nagur-Basha/SyncTask",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769019970/SyncTask_g7nsdf.mp4",
-    },
-    {
-      id: 9,
-      title: "Text In Image Generator",
-      description:
-        "Utility tool to generate styled text embedded inside images dynamically.",
-      tags: ["HTML", "CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/Text-In-Image",
-      github: "https://github.com/Shaik-Nagur-Basha/Text-In-Image",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021713/Text-In-Image_f3g0hw.mp4",
-    },
-  ];
 
   // Pagination - advance by 1 project at a time
   const totalSteps = Math.max(0, projects.length - projectsPerPage) + 1;
@@ -425,7 +327,7 @@ function Projects() {
                 >
                   {projects.map((project) => (
                     <div
-                      key={project.id}
+                      key={project._id}
                       onMouseMove={handleMouseMove}
                       onMouseLeave={handleMouseLeave}
                       className={`project-gallery max-sm:scale-x-100 2xl:scale-x-90 max-2xl:scale-x-75 max-xl:scale-x-65 max-lg:scale-x-50 max-md:scale-x-65 relative h-60 rounded-3xl aspect-video group overflow-hidden isolate z-0`}
@@ -436,10 +338,10 @@ function Projects() {
                       <div className="project-card-inner rounded-3xl overflow-hidden shadow-2xl flex flex-col relative">
                         {/* Ripple Container */}
                         <div className="absolute inset-0 overflow-hidden pointer-events-none z-25">
-                          {ripples[`${project.id}`] &&
+                          {ripples[`${project._id}`] &&
                             Object.entries(ripples)
                               .filter(([key]) =>
-                                key.startsWith(`${project.id}-`),
+                                key.startsWith(`${project._id}-`),
                               )
                               .map(([key, ripple]) => (
                                 <div
@@ -457,21 +359,29 @@ function Projects() {
                               ))}
                         </div>
 
-                        {/* Video Background */}
-                        <video
-                          className="absolute inset-0 w-full h-full object-fill"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                        >
-                          <source src={project.video} type="video/mp4" />
-                        </video>
+                        {/* Video/Image Background */}
+                        {project.mediaType === "video" ? (
+                          <video
+                            className="absolute inset-0 w-full h-full object-fill"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                          >
+                            <source src={project.video} type="video/mp4" />
+                          </video>
+                        ) : (
+                          <img 
+                            src={project.image} 
+                            alt={project.title}
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                        )}
 
                         {/* Overlay for light mode styling */}
                         <div
                           className={`absolute inset-0 z-10 transition-opacity duration-300 ${
-                            expandedId === project.id
+                            expandedId === project._id
                               ? darkMode
                                 ? "bg-black/80"
                                 : "bg-black/60"
@@ -484,26 +394,26 @@ function Projects() {
                         {/* Content Area */}
                         <div
                           className={`relative z-20 transition-all duration-500 flex flex-col ${
-                            expandedId === project.id
+                            expandedId === project._id
                               ? "h-full p-6 backdrop-blur-md"
                               : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-1 bg-black/40 backdrop-blur-xs"
                           }`}
-                          onClick={(e) => handleClick(e, project.id)}
+                          onClick={(e) => handleClick(e, project._id)}
                         >
                           <h3
-                            className={`text-lg tracking-wide font-black italic transition-colors duration-300 ${expandedId === project.id ? "text-cyan-400 mb-3" : "text-white mb-1"}`}
+                            className={`text-lg tracking-wide font-black italic transition-colors duration-300 ${expandedId === project._id ? "text-cyan-400 mb-3" : "text-white mb-1"}`}
                           >
                             {project.title}
                           </h3>
 
-                          {expandedId === project.id ? (
+                          {expandedId === project._id ? (
                             <div className="flex flex-col h-full space-y-4 animate-in fade-in zoom-in-95 duration-300">
                               <p className="text-gray-300 text-sm font-medium">
                                 {project.description}
                               </p>
 
                               <div className="flex flex-wrap gap-2 pt-2">
-                                {project.tags.map((tag, idx) => (
+                                {project.skills?.map((tag, idx) => (
                                   <span
                                     key={idx}
                                     className="tech-badge px-3 py-1 bg-white/10 text-cyan-400 rounded-full text-[10px] font-bold border border-cyan-400/30"
@@ -515,7 +425,7 @@ function Projects() {
 
                               <div className="flex gap-2.5 mt-auto">
                                 <a
-                                  href={project.link}
+                                  href={project.demoLink}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-medium ${
@@ -532,7 +442,7 @@ function Projects() {
                                   <span className="hidden sm:inline">DEMO</span>
                                 </a>
                                 <a
-                                  href={project.github}
+                                  href={project.githubLink}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-mono font-medium ${
@@ -555,7 +465,7 @@ function Projects() {
                           ) : (
                             <div
                               className="flex items-center cursor-pointer pl-3 pb-0.5 gap-0.5 hover:gap-1 text-cyan-500 font-bold text-[10px] tracking-widest"
-                              onClick={(e) => handleClick(e, project.id)}
+                              onClick={(e) => handleClick(e, project._id)}
                             >
                               EXPLORE PROJECT
                               <MoveRightIcon size={16} />

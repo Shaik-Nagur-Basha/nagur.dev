@@ -3,23 +3,42 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
-import Contact from "./models/Contact.js";
-import { addContactToSheet } from "./services/googleSheets.js";
+import helmet from "helmet";
 import path from "path";
 
+// Route files
+import authRoutes from "./routes/authRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
+
+// Middleware
+import { errorHandler } from "./middleware/errorMiddleware.js";
+
+// Load env vars
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", 1); // Trust first proxy (useful for Vercel/Cloudflare)
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Middleware
+// Security Middleware
+app.use(helmet()); // Set security headers
+// app.use(mongoSanitize()); // Prevent NoSQL injection
+// app.use(xss()); // Prevent XSS attacks
+// app.use(hpp()); // Prevent HTTP Parameter Pollution
+
+// CORS Configuration
 app.use(
   cors({
-    origin: "*",
-  }),
+    origin: process.env.NODE_ENV === "production" ? "https://nagur.dev" : "http://localhost:5173",
+    credentials: true,
+  })
 );
-app.use(express.json());
+
+// Body parser
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 // MongoDB Connection
@@ -29,9 +48,6 @@ const connectDB = async () => {
     console.log("✓ MongoDB connected successfully");
   } catch (error) {
     console.error("✗ MongoDB connection error:", error.message);
-    console.warn(
-      "⚠ Backend running without database. Please configure MONGODB_URI in .env",
-    );
   }
 };
 
@@ -40,110 +56,32 @@ connectDB();
 
 const __dirname = path.resolve();
 
-// Contact form submission endpoint
-app.post("/api/contact", async (req, res, next) => {
-  try {
-    const { name, email, message } = req.body;
-
-    // Validation
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
-    }
-
-    // Create and save contact to MongoDB
-    const contact = new Contact({
-      name: name.trim(),
-      email: email.trim(),
-      message: message.trim(),
-    });
-
-    await contact.save();
-
-    // Also add to Google Sheet
-    await addContactToSheet({
-      name: contact.name,
-      email: contact.email,
-      message: contact.message,
-      submittedAt: contact.submittedAt,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Contact form submitted successfully",
-      contact: {
-        id: contact._id,
-        name: contact.name,
-        email: contact.email,
-        message: contact.message,
-        submittedAt: contact.submittedAt,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Get all contacts (for admin purposes)
-// app.get("/api/contacts", async (req, res, next) => {
-//   try {
-//     const contacts = await Contact.find().sort({ submittedAt: -1 });
-//     res.json(contacts);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+// Mount routers
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/contacts", contactRoutes);
 
 // Health check endpoint
-app.get("/api/health", async (req, res, next) => {
-  try {
-    const mongooseStatus = mongoose.connection.readyState;
-    const dbConnected = mongooseStatus === 1;
-
-    res.json({
-      status: "Backend is running!",
-      database: dbConnected ? "Connected to MongoDB" : "MongoDB not connected",
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    next(error);
-  }
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "Backend is running!",
+    database: mongoose.connection.readyState === 1 ? "Connected" : "Not Connected",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Serve static files from frontend dist
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-// SPA fallback - serve index.html for all non-API routes
+// SPA fallback
 app.get(/^(?!\/api\/)/, (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
-// 404 handler for unmatched API routes
-app.use((req, res) => {
-  res.status(404).json({ error: "Endpoint not found" });
-});
-
-// Error handling middleware (must be last)
-app.use((err, req, res, next) => {
-  console.error("Error:", err.message);
-
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-
-  res.status(statusCode).json({
-    error: message,
-    timestamp: new Date().toISOString(),
-  });
-});
+// Error handling middleware
+app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📝 API Base URL: http://localhost:${PORT}/api`);
-  console.log(`\nEndpoints:`);
-  console.log(`  POST   /api/contact    - Submit contact form`);
-  console.log(`  GET    /api/health     - Health check\n`);
+  console.log(`\n🚀 Server running in ${process.env.NODE_ENV} mode on http://localhost:${PORT}`);
 });

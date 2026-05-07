@@ -15,11 +15,21 @@ const contactSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    subject: {
+      type: String,
+      default: "No Subject",
+      trim: true,
+    },
     message: {
       type: String,
       required: [true, "Message is required"],
       trim: true,
       minlength: [5, "Message must be at least 5 characters"],
+    },
+    status: {
+      type: String,
+      enum: ["Read", "Unread"],
+      default: "Unread",
     },
     submittedAt: {
       type: Date,
@@ -29,7 +39,9 @@ const contactSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-export default mongoose.model("Contact", contactSchema);
+const Contact = mongoose.model("Contact", contactSchema);
+
+export default Contact;

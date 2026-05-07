@@ -5,6 +5,7 @@ import SkeletonLoader from "../components/SkeletonLoader";
 import SkeletonWaveBlur from "../components/SkeletonWaveBar";
 import { ExternalLink, Github, MoveRightIcon } from "lucide-react";
 import { useState, useEffect } from "react";
+import API from "../api/axios";
 
 function ProjectsPage() {
   const { darkMode } = useTheme();
@@ -20,12 +21,24 @@ function ProjectsPage() {
     return () => clearTimeout(minTimer);
   }, []);
 
+  const [projects, setProjects] = useState([]);
+
   useEffect(() => {
-    // Switch to content once minimum time has passed
-    if (!minLoadingTime) {
-      setIsLoading(false);
-    }
-  }, [minLoadingTime]);
+    const fetchProjects = async () => {
+      try {
+        const { data } = await API.get("/projects");
+        if (data.success) {
+          setProjects(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const projectCardStyle = `
     @property --gradient-angle {
@@ -173,107 +186,6 @@ function ProjectsPage() {
     }));
   };
 
-  const projects = [
-    {
-      id: 1,
-      title: "BlogByte Blog",
-      description:
-        "Full-stack blogging platform with post creation, comments, authentication, and modern UI.",
-      tags: ["React", "Node.js", "Express", "MongoDB"],
-      link: "https://blogbyte-blog.onrender.com",
-      github: "https://github.com/Shaik-Nagur-Basha/BlogByte-Blog",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023123/Blogbyte-Blog_twspq4.mp4",
-    },
-    {
-      id: 2,
-      title: "Listing Hub",
-      description:
-        "Full-stack listing platform built using RESTful APIs and MVC architecture.",
-      tags: ["React", "Node.js", "Express", "MongoDB", "REST API"],
-      link: "https://listing-hub.onrender.com",
-      github: "https://github.com/Shaik-Nagur-Basha/Listing-Hub",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023142/Listing-Hub_z3cxqu.mp4",
-    },
-    {
-      id: 3,
-      title: "Gradient Craft",
-      description:
-        "Interactive gradient generator tool with live preview and copy-ready CSS output.",
-      tags: ["HTML", "CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/Gradient-Craft",
-      github: "https://github.com/Shaik-Nagur-Basha/Gradient-Craft",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021732/Gradient-Craft_lkzjpk.mp4",
-    },
-    {
-      id: 4,
-      title: "DevMatrix (Ongoing)",
-      description:
-        "Developer-focused platform showcasing tools, utilities, and productivity features.",
-      tags: ["React", "Tailwind CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/DevMatrix",
-      github: "https://github.com/Shaik-Nagur-Basha/DevMatrix",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021718/DevMatrix_zngwlj.mp4",
-    },
-    {
-      id: 5,
-      title: "NeoChat (Ongoing)",
-      description:
-        "Real-time chat application with users, groups, channels, and message persistence.",
-      tags: ["React", "Node.js", "Socket.io", "MongoDB"],
-      link: "https://neochat-sk.onrender.com",
-      github: "https://github.com/Shaik-Nagur-Basha/NeoChat",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023132/NeoChat_d6tcg7.mp4",
-    },
-    {
-      id: 6,
-      title: "Spotify Home UI Clone",
-      description:
-        "Pixel-perfect Spotify home interface clone with responsive and modern layout.",
-      tags: ["HTML", "CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/Spotify-Home-UI-Clone",
-      github: "https://github.com/Shaik-Nagur-Basha/Spotify-Home-UI-Clone",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769019956/Spotify-Home_cdmuj7.mp4",
-    },
-    {
-      id: 7,
-      title: "StellarMarket (Ongoing)",
-      description:
-        "Modern e-commerce UI with product listings, filters, and clean UX patterns.",
-      tags: ["React", "Tailwind CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/StellarMarket",
-      github: "https://github.com/Shaik-Nagur-Basha/StellarMarket",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/w_1280,h_720/v1769022237/StellarMarket_y7tab1.mp4",
-    },
-    {
-      id: 8,
-      title: "SyncTask (Ongoing)",
-      description:
-        "Task management application focused on productivity and clean user experience.",
-      tags: ["React", "JavaScript", "Tailwind CSS"],
-      link: "https://shaik-nagur-basha.github.io/SyncTask",
-      github: "https://github.com/Shaik-Nagur-Basha/SyncTask",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769019970/SyncTask_g7nsdf.mp4",
-    },
-    {
-      id: 9,
-      title: "Text In Image Generator",
-      description:
-        "Utility tool to generate styled text embedded inside images dynamically.",
-      tags: ["HTML", "CSS", "JavaScript"],
-      link: "https://shaik-nagur-basha.github.io/Text-In-Image",
-      github: "https://github.com/Shaik-Nagur-Basha/Text-In-Image",
-      video:
-        "https://res.cloudinary.com/dn2jspecc/video/upload/v1769021713/Text-In-Image_f3g0hw.mp4",
-    },
-  ];
 
   return (
     <>
@@ -340,18 +252,18 @@ function ProjectsPage() {
             <div className="flex flex-wrap justify-evenly gap-8">
               {projects.map((project) => (
                 <div
-                  key={project.id}
+                  key={project._id}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
-                  onClick={(e) => handleClick(e, project.id)}
+                  onClick={(e) => handleClick(e, project._id)}
                   className="project-card-grid relative p-2 rounded-2xl overflow-hidden group h-64 aspect-video isolate z-0 cursor-pointer"
                 >
                   <div className="project-card-inner shadow-md shadow-gray-200/70 dark:shadow-black/70 rounded-2xl overflow-hidden flex flex-col relative h-full">
                     {/* Ripple Container */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-25">
-                      {ripples[`${project.id}`] &&
+                      {ripples[`${project._id}`] &&
                         Object.entries(ripples)
-                          .filter(([key]) => key.startsWith(`${project.id}-`))
+                          .filter(([key]) => key.startsWith(`${project._id}-`))
                           .map(([key, ripple]) => (
                             <div
                               key={key}
@@ -368,27 +280,36 @@ function ProjectsPage() {
                           ))}
                     </div>
 
-                    {/* Video Background */}
-                    <video
-                      className="absolute inset-0 w-full h-full object-fill"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      onLoadedData={() => handleVideoLoaded(project.id)}
-                    >
-                      <source src={project.video} type="video/mp4" />
-                    </video>
+                    {/* Video/Image Background */}
+                    {project.mediaType === "video" ? (
+                      <video
+                        className="absolute inset-0 w-full h-full object-fill"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        onLoadedData={() => handleVideoLoaded(project._id)}
+                      >
+                        <source src={project.video} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <img 
+                        src={project.image} 
+                        alt={project.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onLoad={() => handleVideoLoaded(project._id)}
+                      />
+                    )}
 
                     {/* Skeleton Wave Bar - Shows while video is loading */}
-                    {!videoLoadingStates[project.id] && (
+                    {!videoLoadingStates[project._id] && (
                       <SkeletonWaveBlur className="absolute w-full h-full inset-0 z-10" />
                     )}
 
                     {/* Overlay for light mode styling */}
                     <div
                       className={`absolute inset-0 z-10 transition-opacity duration-300 ${
-                        expandedId === project.id
+                        expandedId === project._id
                           ? darkMode
                             ? "bg-black/80"
                             : "bg-black/60"
@@ -401,19 +322,19 @@ function ProjectsPage() {
                     {/* Content Area */}
                     <div
                       className={`relative z-20 transition-all duration-500 flex flex-col ${
-                        expandedId === project.id
+                        expandedId === project._id
                           ? "h-full p-6 backdrop-blur-md"
                           : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-1 bg-black/40 backdrop-blur-xs"
                       }`}
-                      onClick={(e) => handleClick(e, project.id)}
+                      onClick={(e) => handleClick(e, project._id)}
                     >
                       <h3
-                        className={`text-lg tracking-wide font-black italic transition-colors duration-300 ${expandedId === project.id ? "text-cyan-400 mb-3" : "text-white mb-1"}`}
+                        className={`text-lg tracking-wide font-black italic transition-colors duration-300 ${expandedId === project._id ? "text-cyan-400 mb-3" : "text-white mb-1"}`}
                       >
                         {project.title}
                       </h3>
 
-                      {expandedId === project.id ? (
+                      {expandedId === project._id ? (
                         <div className="flex flex-col h-full space-y-4 animate-in fade-in zoom-in-95 duration-300">
                           <p className="text-gray-300 text-sm font-medium group-hover:text-gray-100 transition-colors duration-300">
                             {project.description}
@@ -421,7 +342,7 @@ function ProjectsPage() {
 
                           {/* Tags */}
                           <div className="flex flex-wrap gap-2 pt-2">
-                            {project.tags.map((tag, idx) => (
+                            {project.skills?.map((tag, idx) => (
                               <span
                                 key={idx}
                                 className="tech-badge px-3 py-1 bg-white/10 text-cyan-400 rounded-full text-[10px] font-bold border border-cyan-400/30 hover:bg-white/20 hover:border-cyan-300/60 transition-all duration-300"
@@ -434,7 +355,7 @@ function ProjectsPage() {
                           {/* Buttons */}
                           <div className="flex gap-2.5 mt-auto">
                             <a
-                              href={project.link}
+                              href={project.demoLink}
                               target="_blank"
                               rel="noopener noreferrer"
                               className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-medium ${
@@ -451,7 +372,7 @@ function ProjectsPage() {
                               <span className="hidden sm:inline">DEMO</span>
                             </a>
                             <a
-                              href={project.github}
+                              href={project.githubLink}
                               target="_blank"
                               rel="noopener noreferrer"
                               className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-mono font-medium ${
@@ -474,7 +395,7 @@ function ProjectsPage() {
                       ) : (
                         <div
                           className="flex items-center cursor-pointer pl-3 pb-0.5 gap-0.5 hover:gap-1 text-cyan-500 font-bold text-[10px] tracking-widest"
-                          onClick={(e) => handleClick(e, project.id)}
+                          onClick={(e) => handleClick(e, project._id)}
                         >
                           EXPLORE PROJECT
                           <MoveRightIcon size={16} />
