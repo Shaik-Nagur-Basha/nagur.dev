@@ -232,18 +232,18 @@ function FoundationsAndInterests() {
                       className={`group relative rounded-3xl p-px
                     ${
                       darkMode
-                        ? "bg-linear-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30"
-                        : "bg-linear-to-br from-blue-500/80 via-purple-500/60 to-pink-500/60"
+                        ? "bg-linear-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30 hover:from-blue-500 hover:to-purple-500"
+                        : "bg-linear-to-br from-indigo-200 via-purple-200 to-pink-200 hover:from-indigo-400 hover:to-pink-400"
                     }
-                    transition-all hover:from-blue-500 hover:to-purple-500 duration-500`}
+                    transition-all duration-500`}
                     >
                       <div
                         className="
                       relative h-full rounded-3xl p-6
-                      bg-white/70 dark:bg-gray-900/60
+                      bg-white/95 dark:bg-gray-900/60
                       backdrop-blur-xl
-                      border border-white/40 dark:border-white/10
-                      shadow-lg shadow-black/5 dark:shadow-black/30
+                      border border-white/60 dark:border-white/10
+                      shadow-lg shadow-blue-900/5 dark:shadow-black/30
                       transition-all duration-500
                       group-hover:-translate-y-2
                       group-hover:shadow-2xl
@@ -263,13 +263,13 @@ function FoundationsAndInterests() {
                                 <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                                   {skill.name}
                                 </span>
-                                <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                                <span className="text-xs font-bold text-indigo-600 dark:text-blue-400">
                                   {skill.level}%
                                 </span>
                               </div>
-                              <div className="w-full h-2 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                              <div className="w-full h-2 rounded-full overflow-hidden bg-indigo-50 dark:bg-gray-700">
                                 <div
-                                  className={`h-full rounded-full ${darkMode ? "bg-linear-to-r from-blue-600/75 via-purple-600/75 to-pink-600/75" : "bg-linear-to-r from-blue-600/85 via-purple-600/85 to-pink-600/85"} shadow-md transition-all duration-1000 ease-out`}
+                                  className={`h-full rounded-full ${darkMode ? "bg-linear-to-r from-blue-600/75 via-purple-600/75 to-pink-600/75" : "bg-linear-to-r from-violet-500 via-blue-500 to-cyan-400"} shadow-md transition-all duration-1000 ease-out`}
                                   style={{ width: `${skill.level}%` }}
                                 />
                               </div>
