@@ -344,7 +344,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
             {/* Right controls skeleton */}
             <div className="flex gap-3">
               <div
-                className={`h-8 w-8 rounded-full animate-pulse ${
+                className={`h-8 w-8 md:hidden rounded-full animate-pulse ${
                   darkMode ? "bg-gray-700/50" : "bg-gray-200/50"
                 }`}
               ></div>

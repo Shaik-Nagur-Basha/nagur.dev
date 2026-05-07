@@ -1,187 +1,257 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { 
-  Lock, 
-  ShieldCheck, 
-  ShieldAlert, 
-  Loader2, 
-  Eye, 
-  EyeOff, 
-  CheckCircle2, 
-  XCircle,
-  KeyRound
+import {
+  ShieldCheck,
+  Lock,
+  Key,
+  Eye,
+  EyeOff,
+  ShieldAlert,
+  AlertCircle,
+  CheckCircle2,
+  Fingerprint,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/useAuthStore";
 import { toast } from "react-toastify";
-
-const passwordSchema = z.object({
-  oldPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Must contain at least one number")
-    .regex(/[@$!%*?&]/, "Must contain at least one special character (@$!%*?&)"),
-  confirmPassword: z.string().min(1, "Please confirm your new password"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+import { cn } from "../../utils/cn";
 
 const Security = () => {
-  const [showOld, setShowOld] = useState(false);
-  const [showNew, setShowNew] = useState(false);
   const { updatePassword, loading } = useAuthStore();
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(passwordSchema),
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [formData, setFormData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
-  const newPasswordValue = watch("newPassword", "");
+  const passwordRequirements = [
+    { label: "At least 8 characters", met: formData.newPassword.length >= 8 },
+    { label: "Contains a number", met: /\d/.test(formData.newPassword) },
+    {
+      label: "Special character",
+      met: /[!@#$%^&*]/.test(formData.newPassword),
+    },
+    { label: "Uppercase letter", met: /[A-Z]/.test(formData.newPassword) },
+  ];
 
-  const onSubmit = async (data) => {
-    const result = await updatePassword(data);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (formData.newPassword !== formData.confirmPassword) {
+      return toast.error("Passwords do not match");
+    }
+    const result = await updatePassword(
+      formData.currentPassword,
+      formData.newPassword,
+    );
     if (result.success) {
-      toast.success("Password updated successfully!");
-      reset();
+      toast.success("Password updated successfully");
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } else {
-      toast.error(result.error || "Failed to update password");
+      toast.error(result.error);
     }
   };
 
-  const requirements = [
-    { label: "At least 8 characters", regex: /.{8,}/ },
-    { label: "One uppercase letter", regex: /[A-Z]/ },
-    { label: "One lowercase letter", regex: /[a-z]/ },
-    { label: "One number", regex: /[0-9]/ },
-    { label: "One special character (@$!%*?&)", regex: /[@$!%*?&]/ },
-  ];
-
   return (
-    <div className="max-w-4xl mx-auto font-outfit">
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Main Form */}
-        <div className="flex-1">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm p-8"
-          >
-            <div className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-50 dark:border-slate-800">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                <KeyRound className="w-6 h-6" />
+    <div className="max-w-4xl mx-auto space-y-4 px-3 sm:px-4 pb-8">
+      <div className="flex flex-row items-center gap-3 mb-4 flex-nowrap">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-inner flex-shrink-0">
+          <ShieldCheck className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-7 md:h-7" />
+        </div>
+        <div className="min-w-0 max-w-full">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-white uppercase italic truncate">
+            Security Protocol
+          </h2>
+          <p className="text-[8px] sm:text-[9px] md:text-[10px] text-slate-500 uppercase tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.3em] font-bold truncate">
+            Credential Management & System Access
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-7">
+          <div className="glass-panel rounded-[2rem] overflow-hidden border border-white/5 relative group">
+            <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+            <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+              <div className="flex items-center gap-2">
+                <Lock className="w-3 h-3 text-blue-500" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">
+                  Update Password
+                </h3>
               </div>
-              <div>
-                <h2 className="text-xl font-bold">Update Password</h2>
-                <p className="text-sm text-slate-500">Ensure your account is protected with a strong password.</p>
+              <div className="px-2 py-0.5 rounded-md bg-transparent border-0 border-blue-500/20">
+                <Fingerprint className="w-3 h-3 text-blue-400" />
               </div>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Old Password */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Current Password</label>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+            <form onSubmit={handleSubmit} className="p-4 space-y-4">
+              <div className="space-y-5">
+                <div className="floating-label-group !mb-0">
+                  <Key className="input-icon w-4 h-4" />
                   <input
-                    {...register("oldPassword")}
-                    type={showOld ? "text" : "password"}
-                    className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                    placeholder="••••••••"
+                    type={showCurrent ? "text" : "password"}
+                    value={formData.currentPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        currentPassword: e.target.value,
+                      })
+                    }
+                    placeholder=" "
+                    id="currentPassword"
+                    required
                   />
+                  <label htmlFor="currentPassword">Current Authorization</label>
                   <button
                     type="button"
-                    onClick={() => setShowOld(!showOld)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                    className="absolute right-2 cursor-pointer top-[1.65rem] p-1.5 text-slate-500 hover:text-blue-400 transition-colors z-10"
                   >
-                    {showOld ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showCurrent ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
-                {errors.oldPassword && <p className="text-xs text-red-500 mt-1 ml-1">{errors.oldPassword.message}</p>}
-              </div>
 
-              {/* New Password */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">New Password</label>
-                <div className="relative group">
-                  <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="floating-label-group !mb-0">
+                  <ShieldAlert className="input-icon w-4 h-4" />
                   <input
-                    {...register("newPassword")}
                     type={showNew ? "text" : "password"}
-                    className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                    placeholder="••••••••"
+                    value={formData.newPassword}
+                    onChange={(e) =>
+                      setFormData({ ...formData, newPassword: e.target.value })
+                    }
+                    placeholder=" "
+                    id="newPassword"
+                    required
                   />
+                  <label htmlFor="newPassword">New Access Key</label>
                   <button
                     type="button"
                     onClick={() => setShowNew(!showNew)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    className="absolute right-2 cursor-pointer top-[1.65rem] p-1.5 text-slate-500 hover:text-blue-400 transition-colors z-10"
                   >
-                    {showNew ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showNew ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
-                {errors.newPassword && <p className="text-xs text-red-500 mt-1 ml-1">{errors.newPassword.message}</p>}
-              </div>
 
-              {/* Confirm Password */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Retype New Password</label>
-                <div className="relative group">
-                  <ShieldAlert className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="floating-label-group !mb-0">
+                  <CheckCircle2 className="input-icon w-4 h-4" />
                   <input
-                    {...register("confirmPassword")}
-                    type={showNew ? "text" : "password"}
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                    placeholder="••••••••"
+                    type={showConfirm ? "text" : "password"}
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                    placeholder=" "
+                    id="confirmPassword"
+                    required
                   />
+                  <label htmlFor="confirmPassword">Validate Key</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    className="absolute right-2 cursor-pointer top-[1.65rem] p-1.5 text-slate-500 hover:text-blue-400 transition-colors z-10"
+                  >
+                    {showConfirm ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
-                {errors.confirmPassword && <p className="text-xs text-red-500 mt-1 ml-1">{errors.confirmPassword.message}</p>}
               </div>
 
               <button
-                disabled={loading}
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/25 transition-all active:scale-95 flex items-center justify-center disabled:opacity-70 disabled:pointer-events-none mt-4"
+                disabled={loading}
+                className="w-full py-3 cursor-pointer bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all active:scale-[0.98] disabled:opacity-50 shadow-md shadow-blue-600/20 flex items-center justify-center gap-2"
               >
-                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Update Password"}
+                {loading ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full"
+                    />
+                    <span>INITIALIZING...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>INITIALIZE PROTOCOL</span>
+                  </>
+                )}
               </button>
             </form>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Requirements Sidebar */}
-        <div className="w-full md:w-80">
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] p-6 border border-slate-100 dark:border-slate-800 h-fit">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider">Requirements</h3>
-            <div className="space-y-4">
-              {requirements.map((req, i) => {
-                const isMet = req.regex.test(newPasswordValue);
-                return (
-                  <div key={i} className="flex items-center gap-3">
-                    {isMet ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-slate-300 dark:text-slate-700 shrink-0" />
-                    )}
-                    <span className={`text-xs font-medium ${isMet ? "text-emerald-600 dark:text-emerald-400" : "text-slate-500"}`}>
-                      {req.label}
-                    </span>
-                  </div>
-                );
-              })}
+        <div className="lg:col-span-5 space-y-6 max-md:hidden">
+          <div className="glass-panel rounded-[2rem] p-4 border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />
+
+            <div className="flex items-center gap-2 mb-6 text-slate-400">
+              <ShieldAlert className="w-4 h-4 text-emerald-500" />
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em]">
+                Complexity Index
+              </h3>
             </div>
 
-            <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 rounded-2xl">
-              <p className="text-[10px] leading-relaxed text-amber-700 dark:text-amber-500 font-medium">
-                Tip: Use a combination of random words and numbers to make your password even more secure.
+            <div className="space-y-2">
+              {passwordRequirements.map((req, index) => (
+                <div key={index} className="flex items-center gap-3 group">
+                  <div
+                    className={cn(
+                      "w-5 h-5 rounded-lg flex items-center justify-center transition-all duration-300 border",
+                      req.met
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.08)]"
+                        : "bg-slate-900/50 border-white/5 text-slate-600",
+                    )}
+                  >
+                    {req.met ? (
+                      <CheckCircle2 className="w-3 h-3" />
+                    ) : (
+                      <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                    )}
+                  </div>
+                  <span
+                    className={cn(
+                      "text-[11px] font-bold tracking-tight transition-colors duration-300",
+                      req.met ? "text-emerald-400" : "text-slate-500",
+                    )}
+                  >
+                    {req.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 p-3 rounded-2xl bg-orange-500/5 border border-orange-500/10 flex gap-3 relative">
+              <AlertCircle className="w-4 h-4 text-orange-500 shrink-0" />
+              <p className="text-[9px] text-orange-200/60 leading-snug font-bold uppercase tracking-wider">
+                <span className="text-orange-500 block mb-1">WARNING</span>
+                Updating your credentials will invalidate existing sessions.
+                Re-authentication required.
               </p>
             </div>
           </div>

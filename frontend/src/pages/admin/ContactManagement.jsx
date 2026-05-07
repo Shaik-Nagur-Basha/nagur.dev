@@ -1,217 +1,284 @@
 import { useEffect, useState } from "react";
-import { 
-  Mail, 
-  Trash2, 
-  Search, 
-  Clock, 
-  User, 
-  ChevronRight,
-  MessageSquare,
-  CheckCircle2,
-  Circle,
-  Eye
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Search, X, Trash2, CheckCircle2, Eye } from "lucide-react";
+import { motion } from "framer-motion";
 import { useAdminStore } from "../../store/useAdminStore";
 import { toast } from "react-toastify";
+import ConfirmDialog from "../../components/admin/ConfirmDialog";
+import ContactDetailDialog from "../../components/admin/ContactDetailDialog";
+import { cn } from "../../utils/cn";
 
 const ContactManagement = () => {
-  const { contacts, fetchContacts, updateContactStatus, deleteContact, loading } = useAdminStore();
+  const { contacts, fetchContacts, updateContactStatus, deleteContact } =
+    useAdminStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedContact, setSelectedContact] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailContact, setDetailContact] = useState(null);
 
   useEffect(() => {
     fetchContacts();
   }, [fetchContacts]);
 
-  const handleStatusUpdate = async (id, currentStatus) => {
-    const newStatus = currentStatus === "Unread" ? "Read" : "Unread";
-    await updateContactStatus(id, newStatus);
-  };
+  const q = searchQuery.trim().toLowerCase();
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this message permanently?")) {
-      const result = await deleteContact(id);
-      if (result.success) toast.success("Message deleted");
+  const filteredContacts = !q
+    ? contacts
+    : contacts.filter((c) => {
+        const msg = String(c.message || "").toLowerCase();
+        return (
+          String(c.name || "")
+            .toLowerCase()
+            .includes(q) ||
+          String(c.email || "")
+            .toLowerCase()
+            .includes(q) ||
+          msg.includes(q)
+        );
+      });
+
+  const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const highlightText = (text = "", query) => {
+    if (!query) return text;
+    try {
+      const re = new RegExp(`(${escapeRegExp(query)})`, "gi");
+      const parts = String(text).split(re);
+      return parts.map((part, i) =>
+        re.test(part) ? (
+          <span key={i} className="bg-yellow-300 text-slate-900 px-1 rounded">
+            {part}
+          </span>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      );
+    } catch (e) {
+      return text;
     }
   };
 
-  const filteredContacts = contacts.filter(
-    (c) =>
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.subject?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-180px)]">
-      {/* Contact List */}
-      <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6 h-full">
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm relative">
-          <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search messages..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
-          />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full overflow-auto no-scrollbar">
+      {/* Sidebar List */}
+      <div className="lg:col-span-12 flex flex-col gap-4 h-full min-h-0">
+        <div className="glass-panel p-3 rounded-2xl relative !bg-transparent !border-0">
+          <div className="relative w-3/4">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+              <Search size={14} />
+            </div>
+            <input
+              type="text"
+              placeholder="Search Inbox..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border-b border-white/20 bg-transparent pl-9 pr-9 py-2 text-[13px] text-white/85 placeholder:text-slate-600 transition-colors duration-150 outline-none focus:outline-0 whiteblink-remover"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2 p-1 text-slate-500 hover:text-slate-400 transition-colors duration-150"
+                title="Clear search"
+                aria-label="Clear search"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+        <div className="grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-1">
           {filteredContacts.map((contact) => (
             <motion.div
               key={contact._id}
-              onClick={() => {
-                setSelectedContact(contact);
-                if (contact.status === "Unread") handleStatusUpdate(contact._id, "Unread");
-              }}
-              className={`p-5 rounded-3xl cursor-pointer border transition-all duration-200 group ${
+              onClick={() => setSelectedContact(contact)}
+              className={cn(
+                "p-4 rounded-2xl transition-all duration-200 group relative shadow-lg",
                 selectedContact?._id === contact._id
-                  ? "bg-blue-600 border-blue-600 shadow-xl shadow-blue-500/20"
-                  : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-blue-500/30 shadow-sm"
-              }`}
+                  ? "bg-blue-600/10 border-blue-500/50"
+                  : "bg-white/[0.02] hover:bg-white/[0.03] border border-white/5",
+              )}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-sm ${
-                    selectedContact?._id === contact._id
-                      ? "bg-white/20 text-white"
-                      : "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                  }`}>
-                    {contact.name[0]}
+                  <div
+                    className={cn(
+                      "w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm",
+                      selectedContact?._id === contact._id
+                        ? "bg-blue-500/25 text-white"
+                        : "bg-white/5 text-slate-400",
+                    )}
+                  >
+                    {String(contact.name || "")[0] || "?"}
                   </div>
                   <div className="min-w-0">
-                    <p className={`font-bold text-sm truncate ${
-                      selectedContact?._id === contact._id ? "text-white" : "text-slate-900 dark:text-white"
-                    }`}>
-                      {contact.name}
+                    <p className="text-[12px] font-black uppercase tracking-widest truncate">
+                      {highlightText(contact.name, searchQuery)}
                     </p>
-                    <p className={`text-[10px] ${
-                      selectedContact?._id === contact._id ? "text-blue-100" : "text-slate-500"
-                    }`}>
-                      {new Date(contact.submittedAt).toLocaleDateString()}
+                    <p className="text-[10px] text-slate-400 font-bold truncate">
+                      {highlightText(contact.email, searchQuery)}
                     </p>
                   </div>
                 </div>
-                {contact.status === "Unread" && (
-                  <div className={`w-2 h-2 rounded-full bg-blue-500 ${selectedContact?._id === contact._id ? "bg-white" : ""}`}></div>
-                )}
+
+                {/* Desktop / large screens: always visible */}
+                <div className="hidden sm:flex items-center gap-2">
+                  {String(contact.message || "").length > 220 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDetailContact(contact);
+                        setDetailOpen(true);
+                      }}
+                      className="p-2 rounded-xl cursor-pointer text-slate-300 hover:text-white"
+                      title="Expand"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const current = contact.status || "Unread";
+                      const next = current === "Unread" ? "Read" : "Unread";
+                      updateContactStatus(contact._id, next).then((res) => {
+                        if (res?.success) toast.success(`Marked ${next}`);
+                      });
+                    }}
+                    className={cn(
+                      "p-2 rounded-xl cursor-pointer transition-all",
+                      contact.status === "Read"
+                        ? "text-emerald-400 bg-emerald-500/10"
+                        : "text-slate-400 hover:text-white",
+                    )}
+                    title={
+                      contact.status === "Read" ? "Mark Unread" : "Mark Read"
+                    }
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPendingDeleteId(contact._id);
+                      setConfirmOpen(true);
+                    }}
+                    className="p-2 rounded-xl cursor-pointer text-rose-400 hover:bg-rose-500/10"
+                    title="Delete"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Mobile: show actions only when this contact is selected */}
+                <div
+                  className={
+                    selectedContact?._id === contact._id
+                      ? "absolute top-2 right-2 z-20 flex sm:hidden items-center gap-0.5 p-0.5 bg-black rounded-xl"
+                      : "hidden sm:hidden"
+                  }
+                >
+                  {String(contact.message || "").length > 220 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDetailContact(contact);
+                        setDetailOpen(true);
+                      }}
+                      className="p-2 rounded-xl cursor-pointer text-slate-300 hover:text-white"
+                      title="Expand"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const current = contact.status || "Unread";
+                      const next = current === "Unread" ? "Read" : "Unread";
+                      updateContactStatus(contact._id, next).then((res) => {
+                        if (res?.success) toast.success(`Marked ${next}`);
+                      });
+                    }}
+                    className={cn(
+                      "p-2 rounded-xl cursor-pointer transition-all",
+                      contact.status === "Read"
+                        ? "text-emerald-400 bg-emerald-500/10"
+                        : "text-slate-400 hover:text-white",
+                    )}
+                    title={
+                      contact.status === "Read" ? "Mark Unread" : "Mark Read"
+                    }
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPendingDeleteId(contact._id);
+                      setConfirmOpen(true);
+                    }}
+                    className="p-2 rounded-xl cursor-pointer text-rose-400 hover:bg-rose-500/10"
+                    title="Delete"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <h4 className={`text-xs font-bold truncate mb-1 ${
-                selectedContact?._id === contact._id ? "text-white" : "text-slate-700 dark:text-slate-300"
-              }`}>
-                {contact.subject}
-              </h4>
-              <p className={`text-xs line-clamp-1 ${
-                selectedContact?._id === contact._id ? "text-blue-100" : "text-slate-500"
-              }`}>
-                {contact.message}
-              </p>
+
+              <div className="mb-2">
+                <p className="text-[11px] text-slate-200 font-medium line-clamp-2">
+                  {highlightText(contact.message, searchQuery)}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between text-[9px] text-slate-500">
+                <div>{new Date(contact.submittedAt).toLocaleString()}</div>
+                <div className="uppercase font-semibold tracking-widest text-[10px] text-slate-500">
+                  {contact.status || "Unread"}
+                </div>
+              </div>
             </motion.div>
           ))}
-          
           {filteredContacts.length === 0 && (
-            <div className="text-center py-20 text-slate-500 text-sm">No messages found.</div>
+            <div className="text-center py-10 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
+              Zero Results
+            </div>
           )}
         </div>
       </div>
+      <ContactDetailDialog
+        open={detailOpen}
+        contact={detailContact}
+        onClose={() => {
+          setDetailOpen(false);
+          setDetailContact(null);
+        }}
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Contact"
+        message="Are you sure you want to permanently delete this contact?"
+        onCancel={() => {
+          setConfirmOpen(false);
+          setPendingDeleteId(null);
+        }}
+        onConfirm={() => {
+          if (!pendingDeleteId) return;
+          deleteContact(pendingDeleteId).then((res) => {
+            if (res?.success) toast.success("DELETED");
+            setConfirmOpen(false);
+            setPendingDeleteId(null);
+            fetchContacts();
+          });
+        }}
+      />
 
-      {/* Message View */}
-      <div className="lg:col-span-7 xl:col-span-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-full">
-        <AnimatePresence mode="wait">
-          {selectedContact ? (
-            <motion.div
-              key={selectedContact._id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="flex flex-col h-full"
-            >
-              {/* Header */}
-              <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg">
-                    {selectedContact.name[0]}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg">{selectedContact.name}</h3>
-                    <p className="text-sm text-slate-500">{selectedContact.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => handleStatusUpdate(selectedContact._id, selectedContact.status)}
-                    className={`p-3 rounded-2xl transition-all ${
-                      selectedContact.status === "Read" 
-                        ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20" 
-                        : "text-slate-400 bg-slate-100 dark:bg-slate-800"
-                    }`}
-                  >
-                    <CheckCircle2 className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(selectedContact._id)}
-                    className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-2xl hover:bg-red-600 hover:text-white transition-all"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Body */}
-              <div className="flex-1 overflow-y-auto p-8 space-y-8">
-                <div className="space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Subject</span>
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{selectedContact.subject}</h2>
-                </div>
-
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700 relative">
-                  <MessageSquare className="absolute right-8 top-8 w-12 h-12 text-slate-200 dark:text-slate-700 -rotate-12" />
-                  <div className="relative z-10">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-4">Message</span>
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-lg">
-                      {selectedContact.message}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-6 text-sm text-slate-500">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    {new Date(selectedContact.submittedAt).toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    UID: {selectedContact._id.slice(-8)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Bar */}
-              <div className="px-8 py-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                <a
-                  href={`mailto:${selectedContact.email}`}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-500/25 transition-all active:scale-95 flex items-center"
-                >
-                  Reply via Email
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </a>
-              </div>
-            </motion.div>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-12">
-              <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-[2.5rem] flex items-center justify-center mb-6">
-                <Mail className="w-10 h-10 text-slate-300" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Select a message to read</h3>
-              <p className="text-slate-500 max-w-sm">
-                Click on a contact message from the sidebar to view its full details and respond.
-              </p>
-            </div>
-          )}
-        </AnimatePresence>
-      </div>
+      {/* Message view removed — contact list is full width */}
     </div>
   );
 };

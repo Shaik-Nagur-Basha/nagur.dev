@@ -3,8 +3,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Loader2 } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ShieldCheck,
+  Loader2,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import { toast } from "react-toastify";
 
@@ -37,75 +45,107 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-[#020617] p-4 font-outfit">
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] p-4 font-outfit">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-sm"
       >
-        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl shadow-blue-500/10 border border-slate-100 dark:border-slate-800 p-8 lg:p-12">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 mb-6">
-              <ShieldCheck className="w-8 h-8" />
+        <div className="rotating-gradient-border">
+          <div className="rotating-gradient-content bg-[#0f172a] p-8 md:p-10">
+            {/* Header */}
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-500 mb-6 shadow-inner">
+                <ShieldCheck className="w-7 h-7" />
+              </div>
+              <h2 className="text-2xl font-black text-white mb-1 tracking-tight">
+                ADMIN PORTAL
+              </h2>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+                Authentication Required
+              </p>
             </div>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Welcome Back</h2>
-            <p className="text-slate-500 dark:text-slate-400">Admin Control Center</p>
-          </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Email</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+            {/* Form */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+              <div className="floating-label-group">
+                <Mail className="input-icon w-4 h-4" />
                 <input
                   {...register("email")}
                   type="email"
-                  placeholder="admin@nagur.dev"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
+                  placeholder=" "
+                  id="email"
+                  autoComplete="email"
                 />
+                <label htmlFor="email">Administrative Email</label>
+                {errors.email && (
+                  <motion.p
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-wider"
+                  >
+                    {errors.email.message}
+                  </motion.p>
+                )}
               </div>
-              {errors.email && <p className="text-xs text-red-500 mt-1 ml-1">{errors.email.message}</p>}
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Password</label>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+              <div className="floating-label-group">
+                <Lock className="input-icon w-4 h-4" />
                 <input
                   {...register("password")}
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
+                  placeholder=" "
+                  id="password"
+                  autoComplete="current-password"
                 />
+                <label htmlFor="password">Security Protocol</label>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                  className="absolute right-2 top-[1.65rem] text-slate-500 hover:text-white transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
+                {errors.password && (
+                  <motion.p
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-wider"
+                  >
+                    {errors.password.message}
+                  </motion.p>
+                )}
               </div>
-              {errors.password && <p className="text-xs text-red-500 mt-1 ml-1">{errors.password.message}</p>}
+
+              <button
+                disabled={loading}
+                type="submit"
+                className="w-full mt-8 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-[0.2em] py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] flex items-center justify-center group disabled:opacity-50 disabled:pointer-events-none"
+              >
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    Initialize Session
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Footer */}
+            <div className="mt-8 text-center">
+              <p className="text-[10px] font-medium text-slate-500 tracking-wide">
+                SYSTEM ID:{" "}
+                <span className="text-slate-400">ADMIN-ALPHA-01</span>
+              </p>
             </div>
-
-            <button
-              disabled={loading}
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/25 transition-all active:scale-95 flex items-center justify-center group disabled:opacity-70 disabled:pointer-events-none"
-            >
-              {loading ? (
-                <Loader2 className="w-6 h-6 animate-spin" />
-              ) : (
-                <>
-                  Sign In
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
-          </form>
-
+          </div>
         </div>
       </motion.div>
     </div>
