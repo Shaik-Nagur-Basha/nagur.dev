@@ -5,11 +5,14 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  updateProjectOrder,
 } from "../controllers/projectController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 import { upload } from "../config/cloudinary.js";
 
 const router = express.Router();
+
+router.put("/order", protect, authorize("admin"), updateProjectOrder);
 
 router
   .route("/")

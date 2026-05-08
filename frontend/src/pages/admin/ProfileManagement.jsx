@@ -27,7 +27,7 @@ const ProfileManagement = () => {
     cv: "https://drive.google.com/uc?export=download&id=1P3IEWXQhUUf6H2VGg1VjRFOOVBrS4DfV",
     profilePicture: "",
     location: "Badvel, Kadapa, Andhra Pradesh, 516227",
-    phone: "8688463959",
+    phone: "9999999999",
     availability: "Available for projects",
     socialLinks: {
       github: "https://github.com/Shaik-Nagur-Basha",

@@ -258,7 +258,7 @@ function Hero() {
                     variant="primary"
                     className="!px-6 md:!px-8 !py-3 md:!py-3.5 !rounded-2xl"
                   >
-                    View My Work{" "}
+                    View Work{" "}
                     <ArrowRight
                       size={20}
                       className="transition-transform group-hover:translate-x-1"
@@ -296,7 +296,7 @@ function Hero() {
                     {downloadStatus === "idle" && (
                       <>
                         <Download size={18} className="transition-transform group-hover:-translate-y-0.5" />
-                        <span>Get My Resume</span>
+                        <span>Get Resume</span>
                       </>
                     )}
                   </ButtonGradient>

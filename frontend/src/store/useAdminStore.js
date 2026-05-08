@@ -8,10 +8,10 @@ export const useAdminStore = create((set, get) => ({
   error: null,
 
   // Projects
-  fetchProjects: async () => {
+  fetchProjects: async (params = {}) => {
     set({ loading: true });
     try {
-      const { data } = await API.get("projects");
+      const { data } = await API.get("projects", { params });
       set({ projects: data.data, loading: false });
     } catch (error) {
       set({ error: error.response?.data?.error, loading: false });
@@ -55,6 +55,20 @@ export const useAdminStore = create((set, get) => ({
       set({ projects: get().projects.filter((p) => p._id !== id) });
       return { success: true };
     } catch (error) {
+      return { success: false, error: error.response?.data?.error };
+    }
+  },
+
+  reorderProjects: async (orders) => {
+    set({ loading: true });
+    try {
+      await API.put("projects/order", { orders });
+      // Refetch projects to get the new order
+      const { data } = await API.get("projects");
+      set({ projects: data.data, loading: false });
+      return { success: true };
+    } catch (error) {
+      set({ loading: false });
       return { success: false, error: error.response?.data?.error };
     }
   },

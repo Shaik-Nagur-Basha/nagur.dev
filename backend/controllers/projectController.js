@@ -7,7 +7,15 @@ import cloudinary from "../config/cloudinary.js";
 // @access  Public
 export const getProjects = async (req, res, next) => {
   try {
-    const projects = await Project.find().sort({ createdAt: -1 });
+    let query = Project.find();
+
+    // Select fields if provided
+    if (req.query.select) {
+      const fields = req.query.select.split(",").join(" ");
+      query = query.select(fields);
+    }
+
+    const projects = await query.sort({ order: 1, createdAt: -1 });
     res.status(200).json({
       success: true,
       count: projects.length,
@@ -54,6 +62,10 @@ export const createProject = async (req, res, next) => {
         req.body.videoPublicId = req.file.filename;
       }
     }
+
+    // Get current max order
+    const lastProject = await Project.findOne().sort("-order");
+    req.body.order = lastProject ? lastProject.order + 1 : 0;
 
     const project = await Project.create(req.body);
 
@@ -158,6 +170,31 @@ export const deleteProject = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+// @desc    Update project order
+// @route   PUT /api/projects/order
+// @access  Private/Admin
+export const updateProjectOrder = async (req, res, next) => {
+  try {
+    const { orders } = req.body; // Array of { id, order }
+
+    if (!orders || !Array.isArray(orders)) {
+      return res.status(400).json({ error: "Please provide an array of orders" });
+    }
+
+    const updatePromises = orders.map((item) =>
+      Project.findByIdAndUpdate(item.id, { order: item.order })
+    );
+
+    await Promise.all(updatePromises);
+
+    res.status(200).json({
+      success: true,
+      message: "Projects order updated successfully",
     });
   } catch (error) {
     next(error);

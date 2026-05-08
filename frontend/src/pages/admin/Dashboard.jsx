@@ -110,7 +110,12 @@ const Dashboard = () => {
             {projects.slice(0, 4).map((project) => (
               <div
                 key={project._id}
-                className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group"
+                onClick={() =>
+                  navigate("/admin/projects", {
+                    state: { expandId: project._id },
+                  })
+                }
+                className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group cursor-pointer"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-lg bg-slate-800 overflow-hidden ring-1 ring-white/10 group-hover:ring-blue-500/50 transition-all">
@@ -175,6 +180,11 @@ const Dashboard = () => {
               {contacts.slice(0, 4).map((contact) => (
                 <div
                   key={contact._id}
+                  onClick={() =>
+                    navigate("/admin/contacts", {
+                      state: { selectId: contact._id },
+                    })
+                  }
                   className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
@@ -187,7 +197,7 @@ const Dashboard = () => {
                       <h4 className="text-sm font-bold group-hover:text-purple-500 transition-colors">
                         {contact.name}
                       </h4>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-tight line-clamp-1">
+                      <p className="text-[10px] text-slate-500 tracking-wider line-clamp-1">
                         {contact.message}
                       </p>
                     </div>

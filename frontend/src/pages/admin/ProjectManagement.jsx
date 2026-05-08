@@ -59,10 +59,15 @@ const ProjectManagement = () => {
     fetchProjects();
   }, [fetchProjects]);
 
-  // Reset state after navigation
+  // Reset state after navigation or handle deep-links
   useEffect(() => {
     if (location?.state?.openForm) {
       setIsFormOpen(true);
+      window.history.replaceState({}, document.title);
+    }
+    if (location?.state?.expandId) {
+      setExpandedId(location.state.expandId);
+      // Optional: Clear state after handling
       window.history.replaceState({}, document.title);
     }
   }, [location]);
@@ -269,7 +274,7 @@ const ProjectManagement = () => {
                   />
 
                   <div
-                    className={`relative z-20 transition-all duration-500 flex flex-col ${expandedId === project._id ? "h-full p-6 backdrop-blur-md rounded-2xl" : "mt-auto hidden lg:flex group-hover:flex pl-3 pb-1 bg-black/40"}`}
+                    className={`relative z-20 transition-all duration-500 flex flex-col ${expandedId === project._id ? "h-full p-6 backdrop-blur-md rounded-2xl" : "mt-auto sm:hidden flex group-hover:flex pl-3 pb-1 bg-black/40"}`}
                     onClick={(e) => handleExpandClick(e, project._id)}
                   >
                     <h3
@@ -307,9 +312,9 @@ const ProjectManagement = () => {
                             >
                               <ExternalLink
                                 size={16}
-                                className="transition-all duration-300 group-hover:scale-110"
+                                className="transition-all shrink-0 duration-300 group-hover:scale-110"
                               />
-                              <span className="hidden sm:inline">DEMO</span>
+                              <span className="hidden sm:inline overflow-hidden truncate">DEMO</span>
                             </a>
                           )}
                           {project.githubLink && (
@@ -321,9 +326,9 @@ const ProjectManagement = () => {
                             >
                               <Github
                                 size={16}
-                                className="transition-all duration-300 group-hover:scale-110"
+                                className="transition-all shrink-0 duration-300 group-hover:scale-110"
                               />
-                              <span className="hidden sm:inline">CODE</span>
+                              <span className="hidden sm:inline overflow-hidden truncate">CODE</span>
                             </a>
                           )}
                           <div className="ml-auto flex items-center gap-2">

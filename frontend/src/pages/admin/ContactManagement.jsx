@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Search, X, Trash2, CheckCircle2, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAdminStore } from "../../store/useAdminStore";
@@ -8,6 +9,7 @@ import ContactDetailDialog from "../../components/admin/ContactDetailDialog";
 import { cn } from "../../utils/cn";
 
 const ContactManagement = () => {
+  const location = useLocation();
   const { contacts, fetchContacts, updateContactStatus, deleteContact } =
     useAdminStore();
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,6 +22,20 @@ const ContactManagement = () => {
   useEffect(() => {
     fetchContacts();
   }, [fetchContacts]);
+
+  useEffect(() => {
+    if (location?.state?.selectId && contacts.length > 0) {
+      const contact = contacts.find((c) => c._id === location.state.selectId);
+      if (contact) {
+        setDetailContact(contact);
+        setDetailOpen(true);
+        if (contact.status === "Unread") {
+          updateContactStatus(contact._id, "Read");
+        }
+      }
+      window.history.replaceState({}, document.title);
+    }
+  }, [location, contacts, updateContactStatus]);
 
   const q = searchQuery.trim().toLowerCase();
 
@@ -122,7 +138,7 @@ const ContactManagement = () => {
                 </div>
 
                 {/* Desktop / large screens: always visible */}
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="hidden 2xl:flex items-center gap-2">
                   {String(contact.message || "").length > 220 && (
                     <button
                       onClick={(e) => {
@@ -176,8 +192,8 @@ const ContactManagement = () => {
                 <div
                   className={
                     selectedContact?._id === contact._id
-                      ? "absolute top-2 right-2 z-20 flex sm:hidden items-center gap-0.5 p-0.5 bg-black rounded-xl"
-                      : "hidden sm:hidden"
+                      ? "absolute top-2 right-2 z-20 flex 2xl:hidden items-center gap-0.5 p-0.5 bg-black rounded-xl"
+                      : "hidden 2xl:hidden"
                   }
                 >
                   {String(contact.message || "").length > 220 && (

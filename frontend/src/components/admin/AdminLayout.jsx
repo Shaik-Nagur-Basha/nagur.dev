@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -9,15 +10,18 @@ import {
   Cpu,
   Plus,
   User,
+  ListOrdered,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/useAuthStore";
 import { cn } from "../../utils/cn";
+import ProjectOrderModal from "./ProjectOrderModal";
 
 const AdminLayout = ({ children }) => {
   const { user, logout } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
   const menuItems = [
     { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -149,15 +153,15 @@ const AdminLayout = ({ children }) => {
                 </span>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-bold truncate">{user?.name}</p>
-                <p className="text-[9px] text-slate-500 uppercase tracking-tighter">
-                  Administrator
+                <p className="text-xs truncate tracking-wider">{user?.name}</p>
+                <p className="text-[9px] text-cyan-500 uppercase tracking-widest">
+                  Admin
                 </p>
               </div>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center py-2 cursor-pointer rounded-lg bg-red-500/10 text-rose-500 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+              className="w-full flex items-center justify-center py-2 cursor-pointer rounded-lg bg-red-500/10 text-rose-500 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all shadow-xl shadow-black/40"
             >
               <LogOut className="w-3 h-3 mr-2" />
               Disconnect
@@ -193,6 +197,16 @@ const AdminLayout = ({ children }) => {
           </div>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsOrderModalOpen(true)}
+              className="rotating-gradient-card new-project mr-3 !px-3 sm:!px-6"
+              title="Change Projects Order"
+            >
+              <span>
+                <ListOrdered className="w-4 h-4" />
+                <span className="hidden sm:inline">Change Order</span>
+              </span>
+            </button>
             {!(
               location.pathname === "/admin" ||
               location.pathname.startsWith("/admin/projects")
@@ -234,6 +248,11 @@ const AdminLayout = ({ children }) => {
             {children}
           </motion.div>
         </div>
+
+        <ProjectOrderModal
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+        />
       </main>
     </div>
   );

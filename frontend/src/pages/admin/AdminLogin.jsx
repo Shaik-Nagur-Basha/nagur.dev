@@ -122,24 +122,24 @@ const AdminLogin = () => {
                 )}
               </div>
 
-              <button
-                disabled={loading}
-                type="submit"
-                className="rotating-gradient-card new-project w-full mt-8 !px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
-              >
-                <span>
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <ArrowRight className="w-4 h-4" />
-                      <span className="hidden sm:inline">
-                        Initialize Session
-                      </span>
-                    </>
-                  )}
-                </span>
-              </button>
+              <div className="flex items-center justify-center">
+                <button
+                  disabled={loading}
+                  type="submit"
+                  className="rotating-gradient-card new-project w-fit mt-8 !px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  <span>
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <ArrowRight className="w-4 h-4" />
+                        <span>Initialize Session</span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
             </form>
 
             {/* Footer */}
