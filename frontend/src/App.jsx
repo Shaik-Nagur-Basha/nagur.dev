@@ -15,6 +15,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import ProjectManagement from "./pages/admin/ProjectManagement";
 import ContactManagement from "./pages/admin/ContactManagement";
 import Security from "./pages/admin/Security";
+import ProfileManagement from "./pages/admin/ProfileManagement";
 
 // Admin Components
 import AdminLayout from "./components/admin/AdminLayout";
@@ -80,6 +81,14 @@ function App() {
               element={
                 <AdminLayout>
                   <Security />
+                </AdminLayout>
+              }
+            />
+            <Route
+              path="/admin/profile"
+              element={
+                <AdminLayout>
+                  <ProfileManagement />
                 </AdminLayout>
               }
             />

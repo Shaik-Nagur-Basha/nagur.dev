@@ -3,13 +3,15 @@ import {
   Mail,
   Phone,
   MapPin,
-  Send,
   MessageCircle,
   CheckCircle,
   ArrowRight,
+  Send,
 } from "lucide-react";
+import { ButtonGradient } from "./Button";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
+import { useProfileStore } from "../store/useProfileStore";
 import "./Contact.css";
 
 function Contact() {
@@ -25,6 +27,11 @@ function Contact() {
   const [focusedField, setFocusedField] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const { profile, fetchProfile } = useProfileStore();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   useEffect(() => {
     // Minimum skeleton display time (prevents flashing)
@@ -123,22 +130,22 @@ function Contact() {
                   {
                     icon: Phone,
                     title: "Phone",
-                    info: "+91 6302504034",
-                    link: "tel:+916302504034",
+                    info: profile?.phone || "+91 6302504034",
+                    link: `tel:${profile?.phone?.replace(/\s+/g, "") || "+916302504034"}`,
                     color: "purple",
                   },
                   {
                     icon: Mail,
                     title: "Email",
-                    info: "sknbasknba@gmail.com",
-                    link: "mailto:sknbasknba@gmail.com",
+                    info: profile?.socialLinks?.email || "sknbasknba@gmail.com",
+                    link: `mailto:${profile?.socialLinks?.email || "sknbasknba@gmail.com"}`,
                     color: "blue",
                   },
                   {
                     icon: MapPin,
                     title: "Location",
-                    info: "Badvel, Kadapa, Andhra Pradesh, 516227",
-                    link: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7",
+                    info: profile?.location || "Badvel, Kadapa, Andhra Pradesh, 516227",
+                    link: "https://maps.google.com/?q=" + encodeURIComponent(profile?.location || "Badvel, Kadapa, Andhra Pradesh, 516227"),
                     color: "pink",
                   },
                 ].map((contact, idx) => {
@@ -356,26 +363,19 @@ function Contact() {
 
                   {/* Submit Button */}
                   <div className="flex justify-center animate-slide-up delay-500">
-                    <button
+                    <ButtonGradient
                       type="submit"
                       disabled={isSubmitting}
-                      className={`relative cursor-pointer py-3 sm:py-4 px-6 sm:px-10 text-sm sm:text-base font-bold rounded-full transition-all duration-300 flex items-center justify-center gap-2 group overflow-hidden border-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-                        darkMode
-                          ? "border-purple-400/50 bg-purple-950/30 text-purple-200 active:bg-purple-800/70 active:border-purple-400"
-                          : "border-blue-400/50 bg-blue-50/50 text-blue-700 active:bg-blue-200 active:border-blue-600"
-                      }`}
+                      className="!px-8 sm:!px-12 !py-3 sm:!py-4"
                     >
-                      {/* Content */}
-                      <span className="relative hover:tracking-wide z-10 flex items-center gap-2 transition-all duration-300">
-                        <Send
-                          size={18}
-                          className="transition-transform duration-300 group-hover:rotate-45"
-                        />
-                        <span>
-                          {isSubmitting ? "Sending..." : "Send Message"}
-                        </span>
+                      <Send
+                        size={18}
+                        className="transition-transform duration-300 group-hover:rotate-45"
+                      />
+                      <span>
+                        {isSubmitting ? "Sending..." : "Send Message"}
                       </span>
-                    </button>
+                    </ButtonGradient>
                   </div>
 
                   {/* Success Message */}

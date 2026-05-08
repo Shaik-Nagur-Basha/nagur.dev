@@ -459,11 +459,34 @@
   transition: all 0.3s ease;
 }
 
+.rotating-gradient-card {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 
+    0 10px 20px -10px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform: translateZ(0);
+}
+
 .rotating-gradient-card:hover {
   box-shadow:
-    0 8px 32px 0 rgba(31, 38, 135, 0.4),
-    inset 0 0 30px rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+    0 20px 40px -15px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.rotating-gradient-card:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 
+    0 5px 15px -5px rgba(0, 0, 0, 0.5);
 }
 
 .rotating-gradient-card::before {
@@ -477,17 +500,42 @@
 .rotating-gradient-card::after {
   content: "";
   position: absolute;
-  inset: 2px;
-  border-radius: 14px;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    ),
-    rgba(10, 10, 10, 0.94);
-  backdrop-filter: blur(20px);
+  inset: 1.5px;
+  border-radius: 14.5px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  ),
+  rgba(15, 15, 20, 0.9);
+  backdrop-filter: blur(12px);
   z-index: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Light Mode Compatibility */
+:root:not(.dark) .rotating-gradient-card::after {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.75) 100%
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  border-left: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+:root:not(.dark) .rotating-gradient-card {
+  box-shadow: 
+    0 10px 20px -10px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+:root:not(.dark) .rotating-gradient-card:hover {
+  box-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .rotating-gradient-card > span {
@@ -520,6 +568,48 @@
     #a855f7
   );
   animation: rotateGradientCard2 5s linear infinite;
+}
+
+/* Hero Primary Gradient (Blue to Purple to Pink) */
+.rotating-gradient-card.hero-primary::before {
+  background: conic-gradient(
+    from var(--card-angle-1),
+    #3b82f6,
+    #8b5cf6,
+    #ec4899,
+    #3b82f6
+  );
+  animation: rotateGradientCard1 4s linear infinite;
+}
+
+/* Hero Secondary Gradient (Purple to Indigo to Cyan) */
+.rotating-gradient-card.hero-secondary::before {
+  background: conic-gradient(
+    from var(--card-angle-2),
+    #8b5cf6,
+    #6366f1,
+    #06b6d4,
+    #8b5cf6
+  );
+  animation: rotateGradientCard2 6s linear infinite;
+}
+
+.rotating-gradient-card > span {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  color: #ffffff;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+:root:not(.dark) .rotating-gradient-card > span {
+  color: #0f172a;
 }
 
 .whiteblink-remover {

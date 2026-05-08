@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Cpu,
   Plus,
+  User,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -20,6 +21,7 @@ const AdminLayout = ({ children }) => {
 
   const menuItems = [
     { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
+    { name: "Profile", path: "/admin/profile", icon: User },
     { name: "Projects", path: "/admin/projects", icon: FolderKanban },
     { name: "Inbox", path: "/admin/contacts", icon: Mail },
     { name: "Security", path: "/admin/security", icon: ShieldCheck },
@@ -223,7 +225,7 @@ const AdminLayout = ({ children }) => {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 lg:p-10 custom-scrollbar scroll-smooth">
+        <div className="flex-1 overflow-y-auto py-6 px-2 lg:p-10 custom-scrollbar scroll-smooth">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

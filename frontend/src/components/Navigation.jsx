@@ -11,6 +11,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import Logo from "./Logo";
+import { useProfileStore } from "../store/useProfileStore";
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,11 @@ function Navigation() {
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const { darkMode, toggleDarkMode } = useTheme();
+  const { profile, fetchProfile } = useProfileStore();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   // Minimum skeleton display time (prevents flashing)
   useEffect(() => {
@@ -127,15 +133,17 @@ function Navigation() {
               {/* Logo - Clickable Link to Home */}
               <Link
                 to="/"
-                className="shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
+                className="shrink-0 flex items-center gap-3 hover:opacity-80 transition-opacity duration-300 cursor-pointer group"
               >
-                <Logo />
+                <div className="relative">
+                  <Logo />
+                </div>
                 <h1
                   className={`text-lg font-bold sm:text-xl bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:to-pink-600 transition-all duration-300 px-3 py-1.5 rounded-lg border-2 border-glow ${
                     !darkMode && "drop-shadow-sm"
                   }`}
                 >
-                  nagur.dev
+                  {profile?.title ? profile.title : "nagur.dev"}
                 </h1>
               </Link>
 

@@ -141,7 +141,7 @@ const ProjectManagement = () => {
       <style>{projectCardStyle}</style>
       {/* Action Bar (hidden when form is open) */}
       <div
-        className={`flex pb-8 flex-col sm:flex-row items-center justify-between gap-4 glass-panel !border-0 !bg-transparent rounded-2xl ${
+        className={`flex pb-8 flex-row items-center justify-between gap-4 glass-panel !border-0 !bg-transparent rounded-2xl ${
           isFormOpen ? "hidden" : ""
         }`}
       >

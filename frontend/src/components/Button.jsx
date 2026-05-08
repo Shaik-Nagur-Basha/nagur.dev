@@ -83,3 +83,15 @@ export function ButtonSmall({ children, className = "", ...props }) {
     </button>
   );
 }
+
+export function ButtonGradient({ children, className = "", variant = "primary", ...props }) {
+  const variantClass = variant === "primary" ? "hero-primary" : "hero-secondary";
+  return (
+    <button
+      className={`rotating-gradient-card ${variantClass} border-none shadow-none ring-0 outline-none ${className}`}
+      {...props}
+    >
+      <span>{children}</span>
+    </button>
+  );
+}

@@ -9,12 +9,18 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
 import SkeletonLoader from "./SkeletonLoader";
+import { useProfileStore } from "../store/useProfileStore";
 
 function Footer() {
   const { darkMode } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
+  const { profile, fetchProfile } = useProfileStore();
   const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   useEffect(() => {
     // Minimum skeleton display time (prevents flashing)
@@ -224,17 +230,17 @@ function Footer() {
     }
 
     .social-btn:nth-child(3) {
-      --icon-color: #1da1f2;
-      --icon-color-hover: #ffffff;
-      --gradient-start: #1da1f2;
-      --gradient-end: #1a8cd8;
-    }
-
-    .social-btn:nth-child(4) {
       --icon-color: #ea4335;
       --icon-color-hover: #ffffff;
       --gradient-start: #ea4335;
       --gradient-end: #c5221f;
+    }
+
+    .social-btn:nth-child(4) {
+      --icon-color: #0088cc;
+      --icon-color-hover: #ffffff;
+      --gradient-start: #0088cc;
+      --gradient-end: #006699;
     }
 
     .social-btn:hover {
@@ -418,6 +424,21 @@ function Footer() {
     }
   `;
 
+  const socialLinks = [
+    {
+      icon: Github,
+      label: "GitHub",
+      href: profile?.socialLinks?.github || "https://github.com/Shaik-Nagur-Basha",
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn",
+      href: profile?.socialLinks?.linkedin || "https://www.linkedin.com/in/nagur-basha",
+    },
+    { icon: Mail, label: "Email", href: `mailto:${profile?.socialLinks?.email || "sknbasknba@gmail.com"}` },
+    { icon: Send, label: "Telegram", href: profile?.socialLinks?.telegram || "https://t.me/sknba" },
+  ];
+
   const linkSections = [
     {
       title: "Quick Links",
@@ -449,30 +470,15 @@ function Footer() {
     {
       title: "Contact",
       links: [
-        { label: "+91 6302504034", href: "tel:+916302504034" },
-        { label: "sknbasknba@gmail.com", href: "mailto:sknbasknba@gmail.com" },
+        { label: profile?.phone || "+91 6302504034", href: `tel:${profile?.phone?.replace(/\s+/g, "") || "+916302504034"}` },
+        { label: profile?.socialLinks?.email || "sknbasknba@gmail.com", href: `mailto:${profile?.socialLinks?.email || "sknbasknba@gmail.com"}` },
         {
-          label: "Badvel, Kadapa, Andhra Pradesh, 516227",
-          href: "https://maps.app.goo.gl/b5FJS9nsc9etuV5f7",
+          label: profile?.location || "Badvel, Kadapa, Andhra Pradesh, 516227",
+          href: "https://maps.google.com/?q=" + encodeURIComponent(profile?.location || "Badvel, Kadapa, Andhra Pradesh, 516227"),
         },
         { label: "Contact Form", href: "/contact" },
       ],
     },
-  ];
-
-  const socialLinks = [
-    {
-      icon: Github,
-      label: "GitHub",
-      href: "https://github.com/Shaik-Nagur-Basha",
-    },
-    {
-      icon: Linkedin,
-      label: "LinkedIn",
-      href: "https://www.linkedin.com/in/nagur-basha",
-    },
-    { icon: Mail, label: "Email", href: "mailto:sknbasknba@gmail.com" },
-    { icon: Send, label: "Telegram", href: "https://t.me/sknba" },
   ];
 
   return (
@@ -511,11 +517,11 @@ function Footer() {
                 ))}
               </div>
               <div className="footer-section min-[1060px]:w-2/5 max-[1050px]:mx-auto xl:translate-x-20 2xl:translate-x-40">
-                <h2 className="footer-title">Sk Nagur Basha</h2>
+                <div className="flex items-center">
+                  <h2 className="footer-title mb-0!">{profile?.name || "Sk Nagur Basha"}</h2>
+                </div>
                 <p className="footer-description">
-                  MERN full stack web developer focused on building fast,
-                  accessible, and visually refined web experiences with modern
-                  technologies.
+                  MERN full stack web developer focused on building fast, accessible, and visually refined web experiences with modern technologies.
                 </p>
                 <div className="social-links">
                   {socialLinks.map((social) => {
@@ -552,7 +558,7 @@ function Footer() {
                   />{" "}
                   by{" "}
                   <span className="bg-linear-to-r from-blue-600 to-purple-600 cursor-pointer bg-clip-text text-transparent animate-pulse">
-                    Sk Nagur Basha
+                    {profile?.name || "Sk Nagur Basha"}
                   </span>
                 </p>
                 <nav className="footer-links-bottom">

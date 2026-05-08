@@ -5,13 +5,15 @@ import {
   Mail,
   Download,
   CheckCircle,
+  Send,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
-import { ButtonPrimary, ButtonSecondary } from "./Button";
+import { ButtonPrimary, ButtonSecondary, ButtonGradient } from "./Button";
 import SkeletonWaveBar from "./SkeletonWaveBar";
+import { useProfileStore } from "../store/useProfileStore";
 
 function Hero() {
   const { darkMode } = useTheme();
@@ -20,12 +22,14 @@ function Hero() {
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState("idle"); // idle, downloading, completed
+  const { profile, fetchProfile } = useProfileStore();
 
   // Minimum skeleton display time (prevents flashing)
   useEffect(() => {
     const minTimer = setTimeout(() => setMinLoadingTime(false), 800);
+    fetchProfile();
     return () => clearTimeout(minTimer);
-  }, []);
+  }, [fetchProfile]);
 
   // Switch to content once minimum time has passed
   useEffect(() => {
@@ -41,10 +45,10 @@ function Hero() {
 
   // Handle CV download
   const handleDownloadCV = () => {
+    if (!profile?.cv) return;
     setDownloadStatus("downloading");
     const link = document.createElement("a");
-    link.href =
-      "https://drive.google.com/uc?export=download&id=1P3IEWXQhUUf6H2VGg1VjRFOOVBrS4DfV"; // Make sure cv.pdf exists in public folder
+    link.href = profile.cv;
     link.download = "Sk_Nagur_Basha_CV.pdf";
     document.body.appendChild(link);
     link.click();
@@ -142,8 +146,8 @@ function Hero() {
 
                     {/* Profile Image - with fallback handling for ORB/CORS issues */}
                     <img
-                      src="/nagur_photo.png"
-                      alt="Sk Nagur Basha"
+                      src={profile?.profilePicture || "/nagur_photo.png"}
+                      alt={profile?.name || "Sk Nagur Basha"}
                       onLoad={() => setImageLoaded(true)}
                       onError={() => {
                         // If image fails (429, ORB blocked, etc), show gradient
@@ -232,7 +236,7 @@ function Hero() {
                 >
                   Hi, I'm{" "}
                   <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
-                    Sk Nagur Basha
+                    {profile?.name || "Sk Nagur Basha"}
                   </span>
                 </h1>
 
@@ -241,43 +245,31 @@ function Hero() {
                     darkMode ? "text-gray-400" : "text-gray-700"
                   }`}
                 >
-                  MERN stack web developer crafting polished, full-stack web
-                  applications with a strong focus on performance, scalability,
-                  and clean architecture.
+                  {profile?.bio ||
+                    `MERN stack web developer crafting polished, full-stack web
+                    applications with a strong focus on performance, scalability,
+                    and clean architecture.`}
                 </p>
 
                 {/* CTA Buttons */}
                 <div className="flex flex-row gap-3 pt-4 md:pt-6 w-fit">
-                  <ButtonPrimary
+                  <ButtonGradient
                     onClick={handleViewWork}
-                    className={`flex items-center justify-center cursor-pointer truncate gap-2 backdrop-blur-md font-semibold text-sm md:text-base px-5 md:px-7 py-2.5 md:py-3 rounded-xl transition-all duration-300 ${
-                      darkMode
-                        ? "bg-linear-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-600/40 hover:shadow-xl hover:shadow-blue-500/60 hover:scale-105 active:scale-95"
-                        : "bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-400/50 hover:shadow-xl hover:shadow-blue-400/70 hover:scale-105 active:scale-95"
-                    }`}
+                    variant="primary"
+                    className="!px-6 md:!px-8 !py-3 md:!py-3.5 !rounded-2xl"
                   >
                     View My Work{" "}
                     <ArrowRight
                       size={20}
                       className="transition-transform group-hover:translate-x-1"
                     />
-                  </ButtonPrimary>
-                  <ButtonSecondary
+                  </ButtonGradient>
+                  
+                  <ButtonGradient
                     onClick={handleDownloadCV}
-                    disabled={downloadStatus === "downloading"}
-                    className={`flex items-center justify-center cursor-pointer truncate font-semibold text-sm md:text-base px-5 md:px-7 py-2.5 md:py-3 rounded-xl font-mono backdrop-blur-md transition-all duration-300 ${
-                      downloadStatus === "downloading"
-                        ? darkMode
-                          ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-blue-500/40 text-blue-300 opacity-75 cursor-not-allowed"
-                          : "bg-transparent! text-blue-500! opacity-75 cursor-not-allowed"
-                        : downloadStatus === "completed"
-                          ? darkMode
-                            ? "bg-linear-to-r from-green-900/50 to-green-800/50 border-2 border-green-500/70 text-green-300"
-                            : "bg-transparent! text-green-600!"
-                          : darkMode
-                            ? "bg-linear-to-r from-gray-700/40 to-gray-800/40 border-2 border-purple-500/40 text-gray-200 hover:from-purple-900/50 hover:to-purple-800/50 hover:border-purple-400/70 hover:text-purple-100 hover:shadow-lg hover:shadow-purple-600/40 hover:scale-105 active:scale-95"
-                            : "hover:bg-transparent! text-gray-700! hover:shadow-lg hover:shadow-purple-400/40 hover:scale-105 active:scale-95"
-                    }`}
+                    variant="secondary"
+                    disabled={downloadStatus === "downloading" || !profile?.cv}
+                    className="!px-6 md:!px-8 !py-3 md:!py-3.5 !rounded-2xl"
                   >
                     {downloadStatus === "downloading" && (
                       <>
@@ -301,14 +293,18 @@ function Hero() {
                         </span>
                       </>
                     )}
-                    {downloadStatus === "idle" && "Download CV"}
-                  </ButtonSecondary>
+                    {downloadStatus === "idle" && (
+                      <>
+                        <Download size={18} className="transition-transform group-hover:-translate-y-0.5" />
+                        <span>Get My Resume</span>
+                      </>
+                    )}
+                  </ButtonGradient>
                 </div>
 
-                {/* Social Links */}
                 <div className="flex gap-3 sm:gap-4 pt-6 md:pt-8">
                   <a
-                    href="https://github.com/Shaik-Nagur-Basha"
+                    href={profile?.socialLinks?.github || "https://github.com/Shaik-Nagur-Basha"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
@@ -343,7 +339,7 @@ function Hero() {
                     ></div>
                   </a>
                   <a
-                    href="https://www.linkedin.com/in/nagur-basha"
+                    href={profile?.socialLinks?.linkedin || "https://www.linkedin.com/in/nagur-basha"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
@@ -378,7 +374,7 @@ function Hero() {
                     ></div>
                   </a>
                   <a
-                    href="mailto:sknbasknba@gmail.com"
+                    href={`mailto:${profile?.socialLinks?.email || "sknbasknba@gmail.com"}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${

@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 
 // Middleware
 import { errorHandler } from "./middleware/errorMiddleware.js";
@@ -102,6 +103,7 @@ const rootDir = path.resolve(__dirname, "..");
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/contacts", contactRoutes);
+app.use("/api/profile", profileRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
