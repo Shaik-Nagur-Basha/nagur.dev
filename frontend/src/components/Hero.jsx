@@ -142,7 +142,7 @@ function Hero() {
 
                     {/* Profile Image - with fallback handling for ORB/CORS issues */}
                     <img
-                      src="https://lh3.googleusercontent.com/d/1_GDWssa-FoPeoW3HaDNJCea9TrG8zgkM"
+                      src="/nagur_photo.png"
                       alt="Sk Nagur Basha"
                       onLoad={() => setImageLoaded(true)}
                       onError={() => {

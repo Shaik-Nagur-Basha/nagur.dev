@@ -125,16 +125,20 @@ const AdminLogin = () => {
               <button
                 disabled={loading}
                 type="submit"
-                className="w-full mt-8 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-[0.2em] py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] flex items-center justify-center group disabled:opacity-50 disabled:pointer-events-none"
+                className="rotating-gradient-card new-project w-full mt-8 !px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
               >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    Initialize Session
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
+                <span>
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <ArrowRight className="w-4 h-4" />
+                      <span className="hidden sm:inline">
+                        Initialize Session
+                      </span>
+                    </>
+                  )}
+                </span>
               </button>
             </form>
 

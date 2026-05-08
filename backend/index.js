@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import helmet from "helmet";
 import path from "path";
+import { fileURLToPath } from "url";
 
 // Route files
 import authRoutes from "./routes/authRoutes.js";
@@ -80,7 +81,9 @@ const connectDB = async () => {
 // Connect to database
 connectDB();
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, "..");
 
 // Mount routers
 app.use("/api/auth", authRoutes);
@@ -98,11 +101,28 @@ app.get("/api/health", (req, res) => {
 });
 
 // Serve static files from frontend dist
-app.use(express.static(path.join(__dirname, "/frontend/dist")));
+const distPath = path.join(rootDir, "frontend", "dist");
+app.use(express.static(distPath));
 
-// SPA fallback
-app.get(/^(?!\/api\/)/, (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+// SPA fallback - should be the last route
+app.use((req, res, next) => {
+  // Skip API routes
+  if (req.url.startsWith("/api/")) {
+    return next();
+  }
+
+  const indexPath = path.join(distPath, "index.html");
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error("Error sending index.html:", err);
+      res.status(404).json({
+        success: false,
+        error:
+          "Frontend build files not found. Please ensure the project is built correctly.",
+        path: indexPath,
+      });
+    }
+  });
 });
 
 // Error handling middleware
