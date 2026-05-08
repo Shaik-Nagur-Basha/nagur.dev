@@ -26,8 +26,18 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Security Middleware
 app.use(
   helmet({
-    contentSecurityPolicy:
-      process.env.NODE_ENV === "production" ? undefined : false,
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        "img-src": ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com"],
+        "font-src": ["'self'", "https://fonts.gstatic.com"],
+        "connect-src": ["'self'", "https://nagur-dev.onrender.com", "https://www.nagur-dev.onrender.com"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   }),
 );
 // app.use(mongoSanitize()); // Prevent NoSQL injection
@@ -35,24 +45,23 @@ app.use(
 // app.use(hpp()); // Prevent HTTP Parameter Pollution
 
 // CORS Configuration
+const allowedOrigins = [
+  "https://nagur-dev.onrender.com",
+  "https://www.nagur-dev.onrender.com",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000",
+];
+
 const corsOptions = {
   origin: (origin, callback) => {
-    const allowedOrigins =
-      process.env.NODE_ENV === "production"
-        ? [
-            "https://nagur-dev.onrender.com",
-            "https://www.nagur-dev.onrender.com",
-          ]
-        : [
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-            "http://localhost:3000",
-          ];
-
-    // Allow requests with no origin (mobile apps, curl requests, internal requests)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked for origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
@@ -101,7 +110,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // Serve static files from frontend dist
-const distPath = path.join(rootDir, "frontend", "dist");
+const distPath = path.resolve(rootDir, "frontend", "dist");
 app.use(express.static(distPath));
 
 // SPA fallback - should be the last route
@@ -111,16 +120,21 @@ app.use((req, res, next) => {
     return next();
   }
 
+  // If the request looks like a file (has an extension), but wasn't found by express.static
+  // Return a 404 instead of serving index.html to avoid MIME type errors
+  if (path.extname(req.url)) {
+    return res.status(404).json({
+      success: false,
+      message: `Asset not found: ${req.url}`,
+    });
+  }
+
   const indexPath = path.join(distPath, "index.html");
   res.sendFile(indexPath, (err) => {
     if (err) {
       console.error("Error sending index.html:", err);
-      res.status(404).json({
-        success: false,
-        error:
-          "Frontend build files not found. Please ensure the project is built correctly.",
-        path: indexPath,
-      });
+      // In production, send a cleaner error or a fallback
+      res.status(404).send("Frontend build files not found. Please ensure the project is built correctly.");
     }
   });
 });
