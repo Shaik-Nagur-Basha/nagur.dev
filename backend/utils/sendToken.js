@@ -11,9 +11,8 @@ export const sendToken = (user, statusCode, res) => {
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // HTTPS only in production
-    sameSite: "Lax", // Allows cross-site requests from same domain
-    path: "/", // Cookie available for all paths
-    // Domain will default to current domain, which is correct
+    sameSite: process.env.NODE_ENV === "production" ? "Lax" : "Lax", 
+    path: "/",
   };
 
   res

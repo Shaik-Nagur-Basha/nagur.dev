@@ -6,10 +6,18 @@ import "nprogress/nprogress.css";
 // In development, Vite proxies /api to http://localhost:5000
 // In production, the backend serves /api and the frontend from the same origin
 const getApiBaseURL = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  const isProd = import.meta.env.MODE === "production";
+  const envUrl = import.meta.env.VITE_API_URL;
+
+  // In production, force relative path if envUrl is missing or points to localhost
+  if (isProd) {
+    if (!envUrl || envUrl.includes("localhost") || envUrl.includes("127.0.0.1")) {
+      return "/api";
+    }
+    return envUrl;
   }
-  return "/api";
+
+  return envUrl || "/api";
 };
 
 const API = axios.create({
