@@ -23,7 +23,11 @@ const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 // Security Middleware
-app.use(helmet()); // Set security headers
+app.use(
+  helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === "production" ? undefined : false,
+  })
+);
 // app.use(mongoSanitize()); // Prevent NoSQL injection
 // app.use(xss()); // Prevent XSS attacks
 // app.use(hpp()); // Prevent HTTP Parameter Pollution
@@ -31,7 +35,9 @@ app.use(helmet()); // Set security headers
 // CORS Configuration
 app.use(
   cors({
-    origin: process.env.NODE_ENV === "production" ? "https://nagur.dev" : "http://localhost:5173",
+    origin: process.env.NODE_ENV === "production" 
+      ? "https://nagur.dev" 
+      : ["http://localhost:5173", "http://127.0.0.1:5173"],
     credentials: true,
   })
 );
