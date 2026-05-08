@@ -103,7 +103,7 @@ const AdminLogin = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-[1.65rem] text-slate-500 hover:text-white transition-colors"
+                  className="absolute right-2 cursor-pointer top-[1.65rem] text-slate-500 hover:text-white transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />

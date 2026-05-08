@@ -25,22 +25,42 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Security Middleware
 app.use(
   helmet({
-    contentSecurityPolicy: process.env.NODE_ENV === "production" ? undefined : false,
-  })
+    contentSecurityPolicy:
+      process.env.NODE_ENV === "production" ? undefined : false,
+  }),
 );
 // app.use(mongoSanitize()); // Prevent NoSQL injection
 // app.use(xss()); // Prevent XSS attacks
 // app.use(hpp()); // Prevent HTTP Parameter Pollution
 
 // CORS Configuration
-app.use(
-  cors({
-    origin: process.env.NODE_ENV === "production" 
-      ? "https://nagur.dev" 
-      : ["http://localhost:5173", "http://127.0.0.1:5173"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins =
+      process.env.NODE_ENV === "production"
+        ? [
+            "https://nagur-dev.onrender.com",
+            "https://www.nagur-dev.onrender.com",
+          ]
+        : [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+          ];
+
+    // Allow requests with no origin (mobile apps, curl requests, internal requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 
 // Body parser
 app.use(express.json({ limit: "50mb" }));
@@ -71,7 +91,8 @@ app.use("/api/contacts", contactRoutes);
 app.get("/api/health", (req, res) => {
   res.json({
     status: "Backend is running!",
-    database: mongoose.connection.readyState === 1 ? "Connected" : "Not Connected",
+    database:
+      mongoose.connection.readyState === 1 ? "Connected" : "Not Connected",
     timestamp: new Date().toISOString(),
   });
 });
@@ -89,5 +110,7 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server running in ${process.env.NODE_ENV} mode on http://localhost:${PORT}`);
+  console.log(
+    `\n🚀 Server running in ${process.env.NODE_ENV} mode on http://localhost:${PORT}`,
+  );
 });

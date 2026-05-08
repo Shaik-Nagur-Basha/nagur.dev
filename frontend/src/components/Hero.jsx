@@ -131,22 +131,31 @@ function Hero() {
                     style={{
                       filter:
                         "drop-shadow(0 20px 25px rgba(0, 0, 0, 0.3)) drop-shadow(0 10px 15px rgba(59, 130, 246, 0.2))",
+                      background: darkMode
+                        ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                     }}
                   >
                     {!imageLoaded && (
                       <SkeletonWaveBar className="w-full h-full transition-all duration-500 group-hover:scale-105 drop-shadow-2xl rounded-full" />
                     )}
 
-                    {/* Profile Image */}
+                    {/* Profile Image - with fallback handling for ORB/CORS issues */}
                     <img
                       src="https://lh3.googleusercontent.com/d/1_GDWssa-FoPeoW3HaDNJCea9TrG8zgkM"
                       alt="Sk Nagur Basha"
                       onLoad={() => setImageLoaded(true)}
+                      onError={() => {
+                        // If image fails (429, ORB blocked, etc), show gradient
+                        setImageLoaded(true);
+                      }}
                       className="w-full h-full transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
                       style={{
                         filter:
                           "drop-shadow(0 20px 25px rgba(0, 0, 0, 0.3)) drop-shadow(0 10px 15px rgba(59, 130, 246, 0.2))",
                       }}
+                      loading="lazy"
+                      crossOrigin="anonymous"
                     />
 
                     {/* Overlay gradient for light mode - only shows when not hovering */}

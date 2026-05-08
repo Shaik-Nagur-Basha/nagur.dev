@@ -171,7 +171,7 @@ const AdminLayout = ({ children }) => {
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center p-3 text-slate-400 hover:text-red-500 rounded-xl transition-all"
+              className="w-full flex cursor-pointer items-center justify-center p-3 text-slate-400 hover:text-red-500 rounded-xl transition-all"
             >
               <LogOut className="w-4 h-4" />
             </button>
