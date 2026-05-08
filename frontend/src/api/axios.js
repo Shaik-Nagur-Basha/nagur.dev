@@ -3,21 +3,12 @@ import nprogress from "nprogress";
 import "nprogress/nprogress.css";
 
 // Determine the API base URL
-// In production: use /api (same-origin) which Express serves from same domain
-// In development: use VITE_API_URL or fallback to /api
+// In development, Vite proxies /api to http://localhost:5000
+// In production, the backend serves /api and the frontend from the same origin
 const getApiBaseURL = () => {
-  // If VITE_API_URL is explicitly set, use it
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-
-  // In production (nagur.dev), frontend and backend are on same domain
-  // So use /api (relative path served by Express)
-  if (import.meta.env.PROD && window.location.hostname !== "localhost") {
-    return "/api";
-  }
-
-  // Default fallback
   return "/api";
 };
 

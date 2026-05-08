@@ -11,7 +11,7 @@ export const useAuthStore = create((set) => ({
   login: async (credentials) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await API.post("/auth/login", credentials);
+      const { data } = await API.post("auth/login", credentials);
       console.log("Login success:", data);
       set({ user: data.user, isAuthenticated: true, loading: false });
       return { success: true };
@@ -26,7 +26,7 @@ export const useAuthStore = create((set) => ({
   updatePassword: async (passwordData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await API.put("/auth/update-password", passwordData);
+      const { data } = await API.put("auth/update-password", passwordData);
       set({ loading: false });
       return { success: true, message: data.message };
     } catch (error) {
@@ -38,7 +38,7 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await API.get("/auth/logout");
+      await API.get("auth/logout");
       set({ user: null, isAuthenticated: false });
     } catch (error) {
       console.error("Logout error", error);
@@ -48,7 +48,7 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true });
     try {
-      const { data } = await API.get("/auth/me");
+      const { data } = await API.get("auth/me");
       set({ user: data.user, isAuthenticated: true, isCheckingAuth: false });
     } catch (error) {
       set({ user: null, isAuthenticated: false, isCheckingAuth: false });

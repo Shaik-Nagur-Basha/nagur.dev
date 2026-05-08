@@ -26,7 +26,7 @@ function ProjectsPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const { data } = await API.get("/projects");
+        const { data } = await API.get("projects");
         if (data.success) {
           setProjects(data.data);
         }

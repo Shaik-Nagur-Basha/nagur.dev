@@ -33,7 +33,13 @@ app.use(
         "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         "img-src": ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com"],
         "font-src": ["'self'", "https://fonts.gstatic.com"],
-        "connect-src": ["'self'", "https://nagur-dev.onrender.com", "https://www.nagur-dev.onrender.com"],
+        "connect-src": [
+          "'self'", 
+          "https://nagur-dev.onrender.com", 
+          "https://www.nagur-dev.onrender.com",
+          "http://localhost:*",
+          "ws://localhost:*"
+        ],
       },
     },
     crossOriginEmbedderPolicy: false,
