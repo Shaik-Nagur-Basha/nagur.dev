@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useMotionValue, useSpring } from "framer-motion";
 import { NavLink, Link } from "react-router-dom";
 import {
   Moon,
@@ -8,6 +9,7 @@ import {
   Mail,
   Layers,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import Logo from "./Logo";
@@ -20,6 +22,10 @@ function Navigation() {
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const { darkMode, toggleDarkMode } = useTheme();
   const { profile, fetchProfile } = useProfileStore();
+
+  // Scroll progress bar
+  const rawProgress = useMotionValue(0);
+  const scrollProgress = useSpring(rawProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
     fetchProfile();
@@ -40,6 +46,13 @@ function Navigation() {
 
   // Animation styles for menu transitions
   const menuAnimationStyle = `
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+
+    .nav-menu-font {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      letter-spacing: 0.07em;
+    }
+
     @keyframes slideInDown {
       from {
         opacity: 0;
@@ -90,11 +103,15 @@ function Navigation() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+      // Calculate scroll progress
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      rawProgress.set(docHeight > 0 ? scrollTop / docHeight : 0);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [rawProgress]);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -110,24 +127,29 @@ function Navigation() {
       {isLoading ? (
         <SkeletonLoader type="navigation" />
       ) : (
-        <nav
-          className={`fixed z-50 transition-all duration-500 ${
-            isScrolled
-              ? "rounded-3xl mx-4 mt-4 w-[calc(100%-32px)] left-0 shadow-md transition-all duration-500 group-hover:shadow-md group-hover:scale-105"
-              : "w-full top-0 border-b-0"
-          } ${
-            isScrolled
-              ? darkMode
-                ? "border border-purple-700/30"
-                : "border border-blue-300/30"
-              : darkMode
-                ? "border-b border-gray-700/30"
-                : "border-b border-linear-to-r from-blue-200/40 to-cyan-200/40"
+        <motion.nav
+          initial={{ y: -80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+            isScrolled ? "px-4 pt-4" : "px-0 pt-0"
           }`}
         >
           <style>{menuAnimationStyle}</style>
           <div
-            className={`px-4 sm:px-6 lg:px-8 w-full  ${isScrolled ? "rounded-3xl backdrop-blur-md" : ""}`}
+            className={`relative overflow-hidden mx-auto transition-all duration-500 ${
+              isScrolled
+                ? "max-w-5xl rounded-2xl px-5"
+                : "max-w-full px-4 sm:px-6 lg:px-8 rounded-none border border-b-0"
+            } ${
+              darkMode
+                ? isScrolled
+                  ? "bg-gray-950/85 border border-b-0 border-purple-700/20 shadow-2xl shadow-black/50"
+                  : "bg-gray-950/70 border-gray-700/30"
+                : isScrolled
+                  ? "bg-white/80 border border-b-0 border-blue-300/25 shadow-xl shadow-black/[0.07]"
+                  : "bg-white/65 border-blue-200/40"
+            } backdrop-blur-2xl`}
           >
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}
@@ -148,20 +170,20 @@ function Navigation() {
               </Link>
 
               {/* Desktop Menu */}
-              <div className="hidden md:flex items-center space-x-8">
+              <div className="hidden md:flex items-center space-x-7">
                 {navLinks.map((link) => (
                   <NavLink
                     key={link.name}
                     to={link.href}
                     className={({ isActive }) =>
-                      `font-medium transition-all duration-200 relative group bg-transparent border-0 cursor-pointer ${
+                      `nav-menu-font relative group pb-0.5 text-[13px] font-[500] tracking-[0.06em] uppercase transition-all duration-200 cursor-pointer ${
                         isActive
                           ? darkMode
                             ? "text-blue-400"
                             : "text-blue-600"
                           : darkMode
-                            ? "text-gray-300 hover:text-blue-400"
-                            : "text-gray-800 hover:text-blue-600"
+                            ? "text-gray-400 hover:text-blue-400"
+                            : "text-gray-600 hover:text-blue-600"
                       }`
                     }
                   >
@@ -169,14 +191,14 @@ function Navigation() {
                       <>
                         {link.name}
                         <span
-                          className={`absolute bottom-0 left-0 h-0.5 transition-all duration-300 ${
+                          className={`absolute -bottom-0.5 left-0 h-[1.5px] rounded-full transition-all duration-300 ${
                             isActive ? "w-full" : "w-0 group-hover:w-full"
                           } ${
                             darkMode
-                              ? "bg-linear-to-r from-blue-600 to-purple-600"
+                              ? "bg-linear-to-r from-blue-500 to-purple-500"
                               : "bg-linear-to-r from-blue-500 to-cyan-500"
                           }`}
-                        ></span>
+                        />
                       </>
                     )}
                   </NavLink>
@@ -185,132 +207,135 @@ function Navigation() {
 
               {/* Right Side - Theme Toggle & Mobile Menu */}
               <div className="flex items-center space-x-4 relative">
-                <button
+                {/* NEW: Theme toggle with AnimatePresence icon swap */}
+                <motion.button
                   onClick={toggleDarkMode}
-                  className={`p-2.5 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 font-semibold bg-transparent ${
-                    darkMode ? "" : "text-blue-700"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  className={`p-2.5 rounded-xl cursor-pointer transition-colors duration-200 ${
+                    darkMode ? "text-amber-400 hover:bg-white/5" : "text-blue-700 hover:bg-blue-50"
                   }`}
                   aria-label="Toggle dark mode"
-                  title={
-                    darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"
-                  }
+                  title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                 >
-                  {darkMode ? (
-                    <Sun
-                      size={20}
-                      className="text-yellow-400 animate-spin"
-                      style={{ animationDuration: "3s" }}
-                    />
-                  ) : (
-                    <Moon size={20} className="text-blue-700" />
-                  )}
-                </button>
-
-                {/* Mobile Menu Button - Circular Morphing SVG */}
-                <button
-                  onClick={toggleMenu}
-                  className={`md:hidden cursor-pointer p-2.5 rounded-xl transition-all duration-500 ease-out relative hover:scale-105 active:scale-95`}
-                  aria-label="Toggle menu"
-                >
-                  <div className="relative w-6 h-6">
-                    {/* Circular glow background */}
-                    <div
-                      className={`absolute inset-0 rounded-full transition-all duration-500 ease-out ${
-                        isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                      }`}
-                      style={{
-                        background: "transparent",
-                      }}
-                    ></div>
-
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={`transition-all duration-500 ease-out relative z-10 ${
-                        darkMode
-                          ? isOpen
-                            ? "text-blue-200"
-                            : "text-gray-300"
-                          : "text-blue-400"
-                      }`}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={darkMode ? "sun" : "moon"}
+                      initial={{ rotate: -90, opacity: 0, scale: 0.7 }}
+                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                      exit={{ rotate: 90, opacity: 0, scale: 0.7 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ display: "block" }}
                     >
-                      {isOpen ? (
-                        // Cross icon for close
-                        <>
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                        </>
+                      {darkMode ? (
+                        <Sun size={20} />
                       ) : (
-                        // Three vertical dots for menu
-                        <>
-                          <circle cx="12" cy="6" r="0.5" fill="currentColor" />
-                          <circle cx="12" cy="12" r="0.5" fill="currentColor" />
-                          <circle cx="12" cy="18" r="0.5" fill="currentColor" />
-                        </>
+                        <Moon size={20} />
                       )}
-                    </svg>
+                    </motion.span>
+                  </AnimatePresence>
+                </motion.button>
+
+                {/* NEW: Hamburger with morphing 3-bar lines */}
+                <motion.button
+                  onClick={toggleMenu}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  className={`md:hidden cursor-pointer p-2.5 rounded-xl transition-colors duration-200 ${
+                    darkMode
+                      ? "text-gray-300 hover:text-white hover:bg-white/5"
+                      : "text-blue-700 hover:bg-blue-50"
+                  }`}
+                  aria-label="Toggle menu"
+                  aria-expanded={isOpen}
+                >
+                  <div className="w-5 h-4 flex flex-col justify-between">
+                    <motion.span
+                      animate={isOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="block h-[1.5px] w-full bg-current rounded-full origin-center"
+                    />
+                    <motion.span
+                      animate={isOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+                      transition={{ duration: 0.2 }}
+                      className="block h-[1.5px] w-3/4 bg-current rounded-full"
+                    />
+                    <motion.span
+                      animate={isOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="block h-[1.5px] w-full bg-current rounded-full origin-center"
+                    />
                   </div>
-                </button>
+                </motion.button>
               </div>
             </div>
+
+            {/* Scroll progress bar — inside glass container, clipped by overflow-hidden */}
+            <motion.div
+              className="absolute bottom-0 left-0 h-[2px] origin-left"
+              style={{
+                scaleX: scrollProgress,
+                background: darkMode
+                  ? "linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4)"
+                  : "linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6)",
+                width: "100%",
+              }}
+            />
           </div>
 
-          {/* Mobile Menu - Tooltip Style */}
-          {isOpen && (
-            <div
-              className={`absolute md:hidden ${
-                isOpen ? "menu-enter" : "menu-exit"
-              } backdrop-blur-md rounded-xl border shadow-2xl ${
-                darkMode
-                  ? "bg-linear-to-br from-gray-800/25 via-gray-900/20 to-purple-900/25 border-gray-600/30 shadow-purple-900/20"
-                  : "bg-linear-to-br from-white/30 via-blue-50/25 to-cyan-50/30 border-blue-300/30 shadow-blue-300/15"
-              }`}
-              style={{
-                right: "1rem",
-                top: isScrolled ? "calc(100% + 0.5rem)" : "calc(64px + 0.5rem)",
-                width: "max-content",
-                minWidth: "200px",
-                zIndex: 40,
-              }}
-            >
-              <div className="px-3 py-2 space-y-1">
-                {navLinks.map((link) => {
-                  const IconComponent = link.icon;
-                  return (
-                    <NavLink
-                      key={link.name}
-                      to={link.href}
-                      className={({ isActive }) =>
-                        `menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border ${
-                          isActive
-                            ? darkMode
-                              ? "text-blue-300 bg-blue-600/20 border-blue-500/40 translate-x-1 shadow-lg shadow-blue-500/20"
-                              : "text-blue-700 bg-blue-400/20 border-blue-400/50 translate-x-1 shadow-lg shadow-blue-400/20"
-                            : darkMode
-                              ? "text-gray-300 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
-                              : "text-gray-700 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
-                        }`
-                      }
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <IconComponent
-                        size={18}
-                        className="transition-all duration-200"
-                      />
-                      {link.name}
-                    </NavLink>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </nav>
+          {/* Scroll progress bar was moved inside the glass container above */}
+
+          {/* Mobile Menu - New glass style with AnimatePresence */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className={`absolute md:hidden right-4 min-w-[220px] rounded-2xl overflow-hidden border shadow-2xl backdrop-blur-2xl ${
+                  darkMode
+                    ? "bg-gray-950/95 border-purple-700/20 shadow-black/60"
+                    : "bg-white/95 border-blue-300/25 shadow-black/10"
+                }`}
+                style={{
+                  top: isScrolled ? "calc(100% + 8px)" : "calc(64px + 8px)",
+                  zIndex: 40,
+                }}
+              >
+                <div className="pl-1 pr-3 py-2 space-y-1">
+                  {navLinks.map((link) => {
+                    const IconComponent = link.icon;
+                    return (
+                      <NavLink
+                        key={link.name}
+                        to={link.href}
+                        className={({ isActive }) =>
+                          `nav-menu-font menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg text-[12.5px] font-[500] tracking-[0.05em] uppercase transition-all duration-200 border ${
+                            isActive
+                              ? darkMode
+                                ? "text-blue-300 bg-blue-600/20 border-blue-500/40 translate-x-1 shadow-lg shadow-blue-500/20"
+                                : "text-blue-700 bg-blue-400/20 border-blue-400/50 translate-x-1 shadow-lg shadow-blue-400/20"
+                              : darkMode
+                                ? "text-gray-400 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
+                                : "text-gray-500 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
+                          }`
+                        }
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <IconComponent
+                          size={18}
+                          className="transition-all duration-200"
+                        />
+                        {link.name}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.nav>
       )}
     </>
   );
