@@ -3,11 +3,13 @@ import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import SkeletonLoader from "../components/SkeletonLoader";
 import SkeletonWaveBlur from "../components/SkeletonWaveBar";
-import { ExternalLink, Github, MoveRightIcon } from "lucide-react";
+import { ExternalLink, Github, MoveRightIcon, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
 function ProjectsPage() {
+  const navigate = useNavigate();
   const { darkMode } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
@@ -353,49 +355,74 @@ function ProjectsPage() {
                           </div>
 
                           {/* Buttons */}
-                          <div className="flex gap-2.5 mt-auto">
-                            <a
-                              href={project.demoLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-medium ${
+                          <div className="flex gap-2 mt-auto">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/projects/${project._id}`);
+                              }}
+                              className={`group relative px-2 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium ${
                                 darkMode
-                                  ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
-                                  : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
+                                  ? "backdrop-blur-md bg-purple-500/15 border border-purple-500/30 hover:border-purple-400/60 hover:-translate-y-0.5 drop-shadow-sm text-purple-300 hover:text-purple-200"
+                                  : "backdrop-blur-md bg-purple-400/15 border border-purple-400/40 hover:border-purple-300/70 hover:-translate-y-0.5 drop-shadow-sm text-purple-500 hover:text-purple-400"
                               }`}
-                              title="View Live Demo"
+                              title="View Full Case Study"
                             >
-                              <ExternalLink
-                                size={16}
+                              <Sparkles
+                                size={12}
                                 className="transition-all duration-300 group-hover:scale-110"
                               />
-                              <span className="hidden sm:inline">DEMO</span>
-                            </a>
-                            <a
-                              href={project.githubLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-mono font-medium ${
-                                darkMode
-                                  ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
-                                  : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
-                              }`}
-                              title="View Code"
-                            >
-                              <Github
-                                size={16}
-                                className="transition-all duration-300 group-hover:scale-110"
-                              />
-                              <span className="hidden sm:inline">
-                                &lt;/&gt;
-                              </span>
-                            </a>
+                              <span>STUDY</span>
+                            </button>
+                            {project.demoLink && (
+                              <a
+                                href={project.demoLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className={`group relative px-2 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium ${
+                                  darkMode
+                                    ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                                    : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
+                                }`}
+                                title="View Live Demo"
+                              >
+                                <ExternalLink
+                                  size={12}
+                                  className="transition-all duration-300 group-hover:scale-110"
+                                />
+                                <span>DEMO</span>
+                              </a>
+                            )}
+                            {project.githubLink && (
+                              <a
+                                href={project.githubLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className={`group relative px-2 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-mono font-medium ${
+                                  darkMode
+                                    ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                                    : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
+                                }`}
+                                title="View Code"
+                              >
+                                <Github
+                                  size={12}
+                                  className="transition-all duration-300 group-hover:scale-110"
+                                />
+                                <span>CODE</span>
+                              </a>
+                            )}
                           </div>
                         </div>
                       ) : (
                         <div
                           className="flex items-center cursor-pointer pl-3 pb-0.5 gap-0.5 hover:gap-1 text-cyan-500 font-bold text-[10px] tracking-widest"
-                          onClick={(e) => handleClick(e, project._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/projects/${project._id}`);
+                          }}
                         >
                           EXPLORE PROJECT
                           <MoveRightIcon size={16} />

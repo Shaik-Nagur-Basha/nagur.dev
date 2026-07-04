@@ -3,6 +3,7 @@ import { useLayoutEffect, useEffect } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
 import ErrorPage from "./pages/ErrorPage";
 import ScrollToTop from "./components/ScrollToTop";
 import AboutPage from "./pages/AboutPage";
@@ -44,6 +45,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:id" element={<ProjectDetailPage />} />
           <Route path="/skills" element={<FoundationsPage />} />
           <Route path="/contact" element={<ContactPage />} />
 

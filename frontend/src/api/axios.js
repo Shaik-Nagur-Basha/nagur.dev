@@ -23,6 +23,7 @@ const getApiBaseURL = () => {
 const API = axios.create({
   baseURL: getApiBaseURL(),
   withCredentials: true, // Send cookies with requests
+  timeout: 10000, // 10 seconds timeout to prevent requests from hanging indefinitely
 });
 
 // Request interceptor

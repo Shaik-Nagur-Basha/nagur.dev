@@ -313,11 +313,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
   if (type === "navigation") {
     return (
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 backdrop-blur-2xl border-b ${
-          darkMode
-            ? "bg-gray-900/80 border-gray-800/50"
-            : "bg-white/80 border-gray-200/50"
-        }`}
+        className={`sticky top-0 z-50 transition-all duration-300 backdrop-blur-2xl`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
@@ -464,6 +460,122 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
           }
         `}</style>
       </section>
+    );
+  }
+
+  if (type === "projectdetail") {
+    return (
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 relative z-10 w-full">
+        {/* Navigation Breadcrumb skeleton */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full mb-8 gap-3">
+          <div
+            className={`h-8 w-32 rounded-full animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+          />
+          <div className="hidden sm:flex gap-3">
+            <div
+              className={`h-6 w-24 rounded-sm animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+            />
+            <div
+              className={`h-6 w-24 rounded-sm animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+            />
+          </div>
+        </div>
+
+        {/* Split Grid Showcase skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 mb-16 items-center">
+          {/* Left Column: Details */}
+          <div className="lg:col-span-6 flex flex-col justify-center space-y-6">
+            <div
+              className={`h-12 w-3/4 rounded-lg animate-pulse ${darkMode ? "bg-gray-700/60" : "bg-gray-200/60"}`}
+            />
+            <div className="space-y-3">
+              <div
+                className={`h-4 w-full rounded animate-pulse ${darkMode ? "bg-gray-700/40" : "bg-gray-200/40"}`}
+              />
+              <div
+                className={`h-4 w-5/6 rounded animate-pulse ${darkMode ? "bg-gray-700/40" : "bg-gray-200/40"}`}
+              />
+              <div
+                className={`h-4 w-4/5 rounded animate-pulse ${darkMode ? "bg-gray-700/40" : "bg-gray-200/40"}`}
+              />
+            </div>
+
+            {/* Tech badges skeleton */}
+            <div className="flex flex-wrap gap-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className={`h-6 w-16 rounded-sm animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+                />
+              ))}
+            </div>
+
+            {/* Action buttons skeleton */}
+            <div className="flex gap-4">
+              <div
+                className={`h-12 w-36 animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+              />
+              <div
+                className={`h-12 w-36 animate-pulse ${darkMode ? "bg-gray-700/40" : "bg-gray-200/40"}`}
+              />
+            </div>
+          </div>
+
+          {/* Right Column: Media Preview */}
+          <div className="lg:col-span-6 w-full aspect-video rounded-3xl overflow-hidden relative">
+            <div
+              className={`w-full h-full animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+            />
+          </div>
+        </div>
+
+        {/* Features list skeleton */}
+        <div
+          className="border-t pt-16 mb-16"
+          style={{
+            borderColor: darkMode
+              ? "rgba(255,255,255,0.08)"
+              : "rgba(0,0,0,0.08)",
+          }}
+        >
+          <div
+            className={`h-8 w-48 rounded mb-8 animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className={`p-6 rounded-2xl border ${darkMode ? "bg-gray-900/50 border-white/5" : "bg-white/5 border-gray-150"} space-y-3`}
+              >
+                <div
+                  className={`h-6 w-1/2 rounded animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+                />
+                <div
+                  className={`h-4 w-full rounded animate-pulse ${darkMode ? "bg-gray-700/40" : "bg-gray-200/40"}`}
+                />
+                <div
+                  className={`h-4 w-5/6 rounded animate-pulse ${darkMode ? "bg-gray-700/40" : "bg-gray-200/40"}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tech Stack Details skeleton */}
+        <div className="mb-16">
+          <div
+            className={`h-8 w-64 rounded mb-8 animate-pulse ${darkMode ? "bg-gray-700/50" : "bg-gray-200/50"}`}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className={`h-48 rounded-3xl border ${darkMode ? "bg-gray-900/50 border-white/5" : "bg-white/5 border-gray-150"} animate-pulse`}
+              />
+            ))}
+          </div>
+        </div>
+      </main>
     );
   }
 

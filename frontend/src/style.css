@@ -619,3 +619,414 @@
   box-shadow: none !important;
   /* border: none !important; */
 }
+
+/* ============================================================
+   Ultra-Modern Animated Border — Project Detail Video Card
+   Uses CSS @property for smooth conic-gradient rotation
+   ============================================================ */
+@property --video-border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes video-border-spin {
+  to {
+    --video-border-angle: 360deg;
+  }
+}
+
+@keyframes video-glow-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    filter: blur(18px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(24px);
+  }
+}
+
+/* ---- Dark-mode wrapper ---- */
+.video-card-dark {
+  position: relative;
+  border-radius: 2px;
+  padding: 2px;                  /* gap between border and content */
+  animation: video-border-spin 6s linear infinite;
+  background: conic-gradient(
+    from var(--video-border-angle),
+    #06b6d4 0%,
+    #8b5cf6 25%,
+    #ec4899 50%,
+    #8b5cf6 75%,
+    #06b6d4 100%
+  );
+  /* Neon glow layers */
+  box-shadow:
+    0 0 0 1px rgba(6, 182, 212, 0.08),
+    0 0 12px 2px rgba(6, 182, 212, 0.10),
+    0 0 30px 4px rgba(139, 92, 246, 0.08),
+    0 0 50px 8px rgba(236, 72, 153, 0.04),
+    inset 0 0 0 1px rgba(255,255,255,0.02);
+  /* Soft ambient bloom below the card */
+  filter: drop-shadow(0 12px 24px rgba(6,182,212,0.07)) drop-shadow(0 4px 10px rgba(139,92,246,0.09));
+}
+
+/* Corner highlight accents — top-left & bottom-right only */
+.video-card-dark::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from calc(var(--video-border-angle) + 180deg),
+    transparent 60%,
+    rgba(255,255,255,0.06) 72%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.video-card-dark__inner {
+  position: relative;
+  z-index: 1;
+  border-radius: 1px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Light-mode wrapper ---- */
+.video-card-light {
+  position: relative;
+  border-radius: 2px;
+  padding: 2px;
+  animation: video-border-spin 8s linear infinite;
+  background: conic-gradient(
+    from var(--video-border-angle),
+    #06b6d4 0%,
+    #7c3aed 30%,
+    #db2777 55%,
+    #7c3aed 80%,
+    #06b6d4 100%
+  );
+  box-shadow:
+    0 0 8px 1px rgba(6, 182, 212, 0.12),
+    0 0 22px 3px rgba(124, 58, 237, 0.07),
+    0 8px 30px rgba(0,0,0,0.08);
+  filter: drop-shadow(0 8px 16px rgba(6,182,212,0.08)) drop-shadow(0 3px 8px rgba(124,58,237,0.08));
+}
+
+.video-card-light::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from calc(var(--video-border-angle) + 180deg),
+    transparent 60%,
+    rgba(255,255,255,0.18) 72%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.video-card-light__inner {
+  position: relative;
+  z-index: 1;
+  border-radius: 1px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* Corner dot accents (via sibling element) */
+.video-card-corner-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* ============================================================
+   Key Architectural Features — Ultra Modern Cards
+   ============================================================ */
+
+/* Section header accent line */
+.features-section-header {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.features-section-header::after {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 3rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #06b6d4, #8b5cf6, transparent);
+}
+
+/* ---- Dark feature card ---- */
+.feature-card-dark {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1.75rem 1.5rem 1.5rem 1.5rem;
+  transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+  cursor: default;
+}
+
+.feature-card-dark:hover {
+  border-color: rgba(6, 182, 212, 0.25);
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 30px rgba(6, 182, 212, 0.07),
+    0 2px 8px rgba(139, 92, 246, 0.08);
+}
+
+/* Top shimmer reveal on hover */
+.feature-card-dark::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.6) 40%,
+    rgba(139, 92, 246, 0.6) 70%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature-card-dark:hover::before {
+  opacity: 1;
+}
+
+/* Subtle inner glow blob */
+.feature-card-dark::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  opacity: 0;
+}
+
+.feature-card-dark:hover::after {
+  opacity: 1;
+}
+
+/* ---- Light feature card ---- */
+.feature-card-light {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1.75rem 1.5rem 1.5rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+  cursor: default;
+}
+
+.feature-card-light:hover {
+  border-color: rgba(6, 182, 212, 0.35);
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 30px rgba(6, 182, 212, 0.10),
+    0 2px 8px rgba(0,0,0,0.06);
+}
+
+.feature-card-light::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.7) 40%,
+    rgba(124, 58, 237, 0.5) 70%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature-card-light:hover::before {
+  opacity: 1;
+}
+
+.feature-card-light::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.10) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature-card-light:hover::after {
+  opacity: 1;
+}
+
+/* Left accent bar */
+.feature-accent-bar {
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Index badge */
+.feature-index-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+}
+
+/* ============================================================
+   Editorial Feature Row Layout
+   ============================================================ */
+
+/* Base row */
+.feat-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 1.1rem 0.25rem;
+  cursor: default;
+  overflow: hidden;
+}
+
+/* Hover wash — slides in from left */
+.feat-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.feat-row-dark::before {
+  background: linear-gradient(
+    90deg,
+    rgba(6, 182, 212, 0.06) 0%,
+    rgba(139, 92, 246, 0.04) 40%,
+    transparent 75%
+  );
+}
+
+.feat-row-light::before {
+  background: linear-gradient(
+    90deg,
+    rgba(6, 182, 212, 0.09) 0%,
+    rgba(139, 92, 246, 0.05) 40%,
+    transparent 75%
+  );
+}
+
+.feat-row:hover::before {
+  opacity: 1;
+}
+
+/* Giant ghost index number */
+.feat-row__num {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 900;
+  font-family: "Courier New", Courier, monospace;
+  line-height: 1;
+  min-width: 3.75rem;
+  text-align: center;
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.13;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.feat-row:hover .feat-row__num {
+  opacity: 0.72;
+}
+
+/* Light mode — number more visible at rest */
+.feat-row-light .feat-row__num {
+  opacity: 0.35;
+}
+
+.feat-row-light:hover .feat-row__num {
+  opacity: 0.85;
+}
+
+/* Vertical gradient rule */
+.feat-row__vline {
+  width: 1px;
+  align-self: stretch;
+  flex-shrink: 0;
+  margin: 0 1rem;
+  position: relative;
+  z-index: 1;
+  min-height: 2.5rem;
+  border-radius: 999px;
+  transition: opacity 0.4s ease;
+}
+
+/* Text content */
+.feat-row__content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feat-row:hover .feat-row__content {
+  transform: translateX(8px);
+}

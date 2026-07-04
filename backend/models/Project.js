@@ -67,6 +67,24 @@ const projectSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    featuresList: [
+      {
+        title: { type: String, default: "" },
+        description: { type: String, default: "" },
+      }
+    ],
+    gallery: [
+      {
+        url: { type: String, default: "" },
+        caption: { type: String, default: "" },
+      }
+    ],
+    techStackDetails: [
+      {
+        category: { type: String, default: "" },
+        items: { type: [String], default: [] },
+      }
+    ],
   },
   { timestamps: true }
 );

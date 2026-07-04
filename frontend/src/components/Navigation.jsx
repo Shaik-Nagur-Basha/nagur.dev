@@ -128,8 +128,6 @@ function Navigation() {
         <SkeletonLoader type="navigation" />
       ) : (
         <motion.nav
-          initial={{ y: -80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
           className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
             isScrolled ? "px-4 pt-4" : "px-0 pt-0"
@@ -145,10 +143,10 @@ function Navigation() {
               darkMode
                 ? isScrolled
                   ? "bg-gray-950/85 shadow-[0_10px_40px_rgba(0,0,0,0.6),_0_0_20px_rgba(139,92,246,0.1)]"
-                  : "bg-gray-950/70"
+                  : ""
                 : isScrolled
                   ? "bg-white/80 shadow-[0_10px_40px_rgba(0,0,0,0.06),_0_0_20px_rgba(59,130,246,0.06)]"
-                  : "bg-white/65"
+                  : ""
             } backdrop-blur-2xl`}
           >
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
