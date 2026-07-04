@@ -2,7 +2,7 @@ import {
   ArrowRight,
   Github,
   Linkedin,
-  Mail,
+  MailPlus,
   Download,
   CheckCircle,
   Send,
@@ -111,9 +111,9 @@ function Hero() {
         >
           <style>{floatingStyle}</style>
           <div className="max-w-7xl mx-auto w-full relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 sm:gap-12 items-center">
               {/* Right - Profile Image (Shows first on mobile) */}
-              <div className="flex items-center justify-center order-first md:order-last">
+              <div className="flex items-center justify-center order-first xl:order-last">
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 group">
                   {/* Animated background blur circles */}
                   <div
@@ -216,7 +216,7 @@ function Hero() {
                   ></div>
                 </div>
               </div>
-              <div className="space-y-6 order-last md:order-first">
+              <div className="space-y-6 order-last xl:order-first px-4 sm:px-8 2xl:px-0">
                 <div className="inline-block">
                   <span
                     className={`px-4 py-2 text-sm font-semibold rounded-full border backdrop-blur-xl transition-all duration-300 shadow-xl ${
@@ -225,12 +225,12 @@ function Hero() {
                         : "bg-blue-100/60 text-blue-700 border-blue-300/60 shadow-blue-200/40 hover:bg-blue-100/80"
                     }`}
                   >
-                    ✨ Welcome to my portfolio
+                    ✨ Welcome to nagur.dev
                   </span>
                 </div>
 
                 <h1
-                  className={`text-3xl sm:text-4xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight transition-all duration-300 ${
+                  className={`text-3xl max-[400px]:text-2xl sm:text-4xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight transition-all duration-300 ${
                     darkMode ? "text-white" : "text-gray-900"
                   }`}
                 >
@@ -241,7 +241,7 @@ function Hero() {
                 </h1>
 
                 <p
-                  className={`text-base sm:text-base md:text-lg lg:text-lg leading-relaxed transition-all duration-300 ${
+                  className={`text-base max-[400px]:text-sm sm:text-base md:text-lg lg:text-lg leading-relaxed transition-all duration-300 ${
                     darkMode ? "text-gray-400" : "text-gray-700"
                   }`}
                 >
@@ -252,13 +252,14 @@ function Hero() {
                 </p>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-row gap-3 pt-4 md:pt-6 w-fit">
+                <div className="flex flex-row gap-3 pt-4 md:pt-6 w-fit text-nowrap">
                   <ButtonGradient
                     onClick={handleViewWork}
                     variant="primary"
-                    className="!px-6 md:!px-8 !py-3 md:!py-3.5 !rounded-2xl"
+                    className="px-2 sm:!px-6 md:!px-8 !py-3 md:!py-3.5 !rounded-2xl"
                   >
-                    View Work{" "}
+                    <span className="max-[400px]:hidden">View Work</span>
+                    <span className="hidden max-[400px]:inline">Work</span>{" "}
                     <ArrowRight
                       size={20}
                       className="transition-transform group-hover:translate-x-1"
@@ -269,7 +270,7 @@ function Hero() {
                     onClick={handleDownloadCV}
                     variant="secondary"
                     disabled={downloadStatus === "downloading" || !profile?.cv}
-                    className="!px-6 md:!px-8 !py-3 md:!py-3.5 !rounded-2xl"
+                    className="px-2 sm:!px-6 md:!px-8 !py-3 md:!py-3.5 !rounded-2xl"
                   >
                     {downloadStatus === "downloading" && (
                       <>
@@ -277,7 +278,7 @@ function Hero() {
                           size={18}
                           className="animate-bounce transition-all duration-300"
                         />
-                        <span className="hidden sm:inline ml-2">
+                        <span className="inline ml-2">
                           Downloading...
                         </span>
                       </>
@@ -288,7 +289,7 @@ function Hero() {
                           size={18}
                           className="transition-all duration-300"
                         />
-                        <span className="hidden sm:inline ml-2">
+                        <span className="inline ml-2">
                           Downloaded!
                         </span>
                       </>
@@ -296,7 +297,8 @@ function Hero() {
                     {downloadStatus === "idle" && (
                       <>
                         <Download size={18} className="transition-transform group-hover:-translate-y-0.5" />
-                        <span>Get Resume</span>
+                        <span className="max-[400px]:hidden">Get Resume</span>
+                        <span className="hidden max-[400px]:inline">Resume</span>
                       </>
                     )}
                   </ButtonGradient>
@@ -309,8 +311,8 @@ function Hero() {
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
-                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-blue-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
-                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-blue-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-blue-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-blue-200/20"
+                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-gray-400/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-gray-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
+                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-gray-50/30 to-white/20 border border-gray-300/50 hover:border-gray-500/80 shadow-lg shadow-gray-200/40 hover:shadow-2xl hover:shadow-gray-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-200/20"
                     }`}
                     aria-label="GitHub"
                     title="GitHub"
@@ -318,23 +320,23 @@ function Hero() {
                     <div
                       className={`absolute inset-0 transition-all duration-500 ${
                         darkMode
-                          ? "bg-linear-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/20 group-hover:via-blue-500/10 group-hover:to-blue-500/0"
-                          : "bg-linear-to-r from-blue-400/0 via-blue-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-blue-400/15 group-hover:to-blue-400/0"
+                          ? "bg-linear-to-r from-gray-500/0 via-gray-500/0 to-gray-500/0 group-hover:from-gray-500/20 group-hover:via-gray-500/10 group-hover:to-gray-500/0"
+                          : "bg-linear-to-r from-gray-400/0 via-gray-400/0 to-gray-400/0 group-hover:from-gray-400/20 group-hover:via-gray-400/15 group-hover:to-gray-400/0"
                       }`}
                     ></div>
                     <Github
                       size={24}
                       className={`relative z-10 transition-all duration-300 group-hover:scale-110 ${
                         darkMode
-                          ? "text-gray-400 group-hover:text-blue-300 drop-shadow-lg group-hover:drop-shadow-2xl"
-                          : "text-gray-600 group-hover:text-blue-600 drop-shadow-md group-hover:drop-shadow-lg"
+                          ? "text-gray-400 group-hover:text-white drop-shadow-lg group-hover:drop-shadow-2xl"
+                          : "text-gray-600 group-hover:text-gray-900 drop-shadow-md group-hover:drop-shadow-lg"
                       }`}
                     />
                     <div
                       className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
                         darkMode
-                          ? "shadow-inset-lg shadow-blue-500/20"
-                          : "shadow-inset-lg shadow-blue-400/20"
+                          ? "shadow-inset-lg shadow-gray-500/20"
+                          : "shadow-inset-lg shadow-gray-500/20"
                       }`}
                     ></div>
                   </a>
@@ -344,8 +346,8 @@ function Hero() {
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
-                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-purple-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-purple-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
-                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-purple-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-purple-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20"
+                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-blue-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-blue-600/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
+                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-blue-600/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:-translate-y-1 drop-shadow-md drop-shadow-blue-200/20"
                     }`}
                     aria-label="LinkedIn"
                     title="LinkedIn"
@@ -353,23 +355,23 @@ function Hero() {
                     <div
                       className={`absolute inset-0 transition-all duration-500 ${
                         darkMode
-                          ? "bg-linear-to-r from-purple-500/0 via-purple-500/0 to-purple-500/0 group-hover:from-purple-500/20 group-hover:via-purple-500/10 group-hover:to-purple-500/0"
-                          : "bg-linear-to-r from-purple-400/0 via-purple-400/0 to-purple-400/0 group-hover:from-purple-400/20 group-hover:via-purple-400/15 group-hover:to-purple-400/0"
+                          ? "bg-linear-to-r from-blue-600/0 via-blue-600/0 to-blue-600/0 group-hover:from-blue-600/20 group-hover:via-blue-600/10 group-hover:to-blue-600/0"
+                          : "bg-linear-to-r from-blue-600/0 via-blue-600/0 to-blue-600/0 group-hover:from-blue-600/20 group-hover:via-blue-600/15 group-hover:to-blue-600/0"
                       }`}
                     ></div>
                     <Linkedin
                       size={24}
                       className={`relative z-10 transition-all duration-300 group-hover:scale-110 ${
                         darkMode
-                          ? "text-gray-400 group-hover:text-purple-300 drop-shadow-lg group-hover:drop-shadow-2xl"
-                          : "text-gray-600 group-hover:text-purple-600 drop-shadow-md group-hover:drop-shadow-lg"
+                          ? "text-gray-400 group-hover:text-blue-400 drop-shadow-lg group-hover:drop-shadow-2xl"
+                          : "text-gray-600 group-hover:text-blue-700 drop-shadow-md group-hover:drop-shadow-lg"
                       }`}
                     />
                     <div
                       className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
                         darkMode
-                          ? "shadow-inset-lg shadow-purple-500/20"
-                          : "shadow-inset-lg shadow-purple-400/20"
+                          ? "shadow-inset-lg shadow-blue-600/20"
+                          : "shadow-inset-lg shadow-blue-600/20"
                       }`}
                     ></div>
                   </a>
@@ -379,8 +381,8 @@ function Hero() {
                     rel="noopener noreferrer"
                     className={`group relative p-3 md:p-4 rounded-2xl transition-all duration-300 transform active:scale-90 overflow-hidden ${
                       darkMode
-                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-pink-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-pink-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
-                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 hover:border-pink-400/80 shadow-lg shadow-blue-200/40 hover:shadow-2xl hover:shadow-pink-400/50 hover:-translate-y-1 drop-shadow-md drop-shadow-pink-200/20"
+                        ? "backdrop-blur-2xl bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 hover:border-red-500/60 shadow-lg shadow-gray-900/50 hover:shadow-2xl hover:shadow-red-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30"
+                        : "backdrop-blur-2xl bg-linear-to-br from-white/40 via-red-50/30 to-white/20 border border-red-200/50 hover:border-red-500/80 shadow-lg shadow-red-100/40 hover:shadow-2xl hover:shadow-red-500/40 hover:-translate-y-1 drop-shadow-md drop-shadow-red-200/20"
                     }`}
                     aria-label="Email"
                     title="Email"
@@ -388,23 +390,23 @@ function Hero() {
                     <div
                       className={`absolute inset-0 transition-all duration-500 ${
                         darkMode
-                          ? "bg-linear-to-r from-pink-500/0 via-pink-500/0 to-pink-500/0 group-hover:from-pink-500/20 group-hover:via-pink-500/10 group-hover:to-pink-500/0"
-                          : "bg-linear-to-r from-pink-400/0 via-pink-400/0 to-pink-400/0 group-hover:from-pink-400/20 group-hover:via-pink-400/15 group-hover:to-pink-400/0"
+                          ? "bg-linear-to-r from-red-500/0 via-red-500/0 to-red-500/0 group-hover:from-red-500/20 group-hover:via-red-500/10 group-hover:to-red-500/0"
+                          : "bg-linear-to-r from-red-500/0 via-red-500/0 to-red-500/0 group-hover:from-red-500/20 group-hover:via-red-500/15 group-hover:to-red-500/0"
                       }`}
                     ></div>
-                    <Mail
+                    <MailPlus
                       size={24}
                       className={`relative z-10 transition-all duration-300 group-hover:scale-110 ${
                         darkMode
-                          ? "text-gray-400 group-hover:text-pink-300 drop-shadow-lg group-hover:drop-shadow-2xl"
-                          : "text-gray-600 group-hover:text-pink-600 drop-shadow-md group-hover:drop-shadow-lg"
+                          ? "text-gray-400 group-hover:text-red-400 drop-shadow-lg group-hover:drop-shadow-2xl"
+                          : "text-gray-600 group-hover:text-red-600 drop-shadow-md group-hover:drop-shadow-lg"
                       }`}
                     />
                     <div
                       className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
                         darkMode
-                          ? "shadow-inset-lg shadow-pink-500/20"
-                          : "shadow-inset-lg shadow-pink-400/20"
+                          ? "shadow-inset-lg shadow-red-500/20"
+                          : "shadow-inset-lg shadow-red-500/20"
                       }`}
                     ></div>
                   </a>

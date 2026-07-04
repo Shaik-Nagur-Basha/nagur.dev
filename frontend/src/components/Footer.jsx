@@ -2,7 +2,7 @@ import {
   Github,
   Linkedin,
   Send,
-  Mail,
+  MailPlus,
   Heart,
   ArrowUpRight,
 } from "lucide-react";
@@ -188,7 +188,7 @@ function Footer() {
         darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"
       };
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.2s ease-out;
       position: relative;
       overflow: visible;
     }
@@ -200,7 +200,7 @@ function Footer() {
       border-radius: 50%;
       background: linear-gradient(45deg, transparent);
       opacity: 0;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.2s ease;
       z-index: -1;
     }
 
@@ -211,7 +211,7 @@ function Footer() {
       border-radius: 50%;
       background: inherit;
       opacity: 0;
-      transition: all 0.4s ease;
+      transition: all 0.2s ease;
       z-index: -2;
     }
 
@@ -435,7 +435,7 @@ function Footer() {
       label: "LinkedIn",
       href: profile?.socialLinks?.linkedin || "https://www.linkedin.com/in/nagur-basha",
     },
-    { icon: Mail, label: "Email", href: `mailto:${profile?.socialLinks?.email || "sknbasknba@gmail.com"}` },
+    { icon: MailPlus, label: "Email", href: `mailto:${profile?.socialLinks?.email || "sknbasknba@gmail.com"}` },
     { icon: Send, label: "Telegram", href: profile?.socialLinks?.telegram || "https://t.me/sknba" },
   ];
 
@@ -494,8 +494,8 @@ function Footer() {
 
           <div className="footer-content">
             {/* Brand Section */}
-            <div className="w-full gap-14 max-[1050px]:flex-col flex">
-              <div className="flex flex-wrap gap-4 justify-between min-[1050px]:w-3/5">
+            <div className="w-full gap-14 max-xl:flex-col flex px-4 sm:px-8 2xl:px-0">
+              <div className="flex flex-wrap gap-4 md:gap-12 xl:gap-16 justify-between xl:justify-baseline xl:w-3/5">
                 {linkSections.map((section) => (
                   <div key={section.title} className="footer-section max-w-fit">
                     <h3 className="footer-title">{section.title}</h3>
@@ -516,7 +516,7 @@ function Footer() {
                   </div>
                 ))}
               </div>
-              <div className="footer-section min-[1060px]:w-2/5 max-[1050px]:mx-auto xl:translate-x-20 2xl:translate-x-40">
+              <div className="footer-section xl:w-2/5 xl:translate-x-20 2xl:translate-x-40">
                 <div className="flex items-center">
                   <h2 className="footer-title mb-0!">{profile?.name || "Sk Nagur Basha"}</h2>
                 </div>
@@ -545,10 +545,10 @@ function Footer() {
             </div>
 
             {/* Divider */}
-            <div className="footer-divider"></div>
+            <div className="footer-divider px-4 sm:px-8 2xl:px-0"></div>
 
             {/* Bottom Section */}
-            <div className="footer-bottom">
+            <div className="footer-bottom px-4 sm:px-8 2xl:px-0">
               <div className="bottom-row">
                 <p className="copyright">
                   &copy; {currentYear} Made with

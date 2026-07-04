@@ -140,22 +140,22 @@ function Navigation() {
             className={`relative overflow-hidden mx-auto transition-all duration-500 ${
               isScrolled
                 ? "max-w-5xl rounded-2xl px-5"
-                : "max-w-full px-4 sm:px-6 lg:px-8 rounded-none border border-b-0"
+                : "max-w-full px-4 sm:px-6 lg:px-8 rounded-none"
             } ${
               darkMode
                 ? isScrolled
-                  ? "bg-gray-950/85 border border-b-0 border-purple-700/20 shadow-2xl shadow-black/50"
-                  : "bg-gray-950/70 border-gray-700/30"
+                  ? "bg-gray-950/85 shadow-[0_10px_40px_rgba(0,0,0,0.6),_0_0_20px_rgba(139,92,246,0.1)]"
+                  : "bg-gray-950/70"
                 : isScrolled
-                  ? "bg-white/80 border border-b-0 border-blue-300/25 shadow-xl shadow-black/[0.07]"
-                  : "bg-white/65 border-blue-200/40"
+                  ? "bg-white/80 shadow-[0_10px_40px_rgba(0,0,0,0.06),_0_0_20px_rgba(59,130,246,0.06)]"
+                  : "bg-white/65"
             } backdrop-blur-2xl`}
           >
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}
               <Link
                 to="/"
-                className="shrink-0 flex items-center gap-3 hover:opacity-80 transition-opacity duration-300 cursor-pointer group"
+                className="shrink-0 flex items-center hover:opacity-80 transition-opacity duration-300 cursor-pointer group"
               >
                 <div className="relative">
                   <Logo />
