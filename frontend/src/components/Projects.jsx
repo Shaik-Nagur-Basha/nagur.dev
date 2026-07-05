@@ -27,7 +27,15 @@ function Projects() {
       try {
         const { data } = await API.get("/projects");
         if (data.success) {
-          setProjects(data.data);
+          const sorted = [...data.data].sort((a, b) => {
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            const orderA = a.order ?? 0;
+            const orderB = b.order ?? 0;
+            if (orderA !== orderB) return orderA - orderB;
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
+          setProjects(sorted);
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -80,6 +88,14 @@ function Projects() {
       --mouse-y: 50%;
       perspective: 1200px;
       transition: transform 0.1s ease-out;
+      
+    }
+
+    /* Hide right arrow when card is narrower than 467px */
+    @media (max-width: 466px) {
+      .project-move-right {
+        display: none !important;
+      }
     }
 
     /* 3D Transform and Spotlight Effect */
@@ -192,6 +208,14 @@ function Projects() {
       background: radial-gradient(circle, rgba(255,255,255,0.6), rgba(255,255,255,0));
       pointer-events: none;
       animation: ripple 0.6s ease-out;
+    }
+
+    @media (max-width: 500px) {
+      .project-gallery {
+        height: auto !important;
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+      }
     }
   `;
 
@@ -399,7 +423,7 @@ function Projects() {
                           <div className="project-card-shine" />
                            {/* Glassy Featured Hover Badge (Featured projects only, hidden when expanded) */}
                            {project.featured && expandedId !== project._id && (
-                             <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
+                             <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
                                <Sparkles size={8} className="animate-pulse text-neutral-950 shrink-0" />
                                <span>FEATURED</span>
                              </div>
@@ -407,7 +431,7 @@ function Projects() {
                            {/* Glassy Category Hover Badge (Hidden when expanded) */}
                            {project.category && expandedId !== project._id && (
                              <div
-                               className={`absolute top-0 left-0 z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-0 group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
+                               className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
                                  project.featured
                                    ? "border-amber-500/40 text-amber-300"
                                    : "border-cyan-500/40 text-cyan-300"
@@ -481,7 +505,9 @@ function Projects() {
                             }`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleClick(e, project._id);
+                              if (window.innerWidth >= 467) {
+                                handleClick(e, project._id);
+                              }
                             }}
                           >
                             <div className="flex justify-between items-center w-full pr-3 mb-1">
@@ -497,7 +523,7 @@ function Projects() {
                               {expandedId !== project._id && (
                                 <MoveRightIcon
                                   size={16}
-                                  className={`transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
+                                  className={`project-move-right transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
                                     project.featured
                                       ? "text-amber-400"
                                       : "text-cyan-400"
@@ -590,7 +616,7 @@ function Projects() {
                                         `/projects/${project.slug || project._id}`,
                                       );
                                     }}
-                                    className={`group relative px-2.5 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
+                                    className={`group relative px-2.5 py-1.5 rounded-lg text-nowrap transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
                                       project.featured
                                         ? darkMode
                                           ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
@@ -717,3 +743,4 @@ function Projects() {
 }
 
 export default Projects;
+

@@ -10,6 +10,7 @@ import {
   Plus,
   User,
   ListOrdered,
+  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -21,7 +22,8 @@ const AdminLayout = ({ children }) => {
   const { user, logout } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
-  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  // null | "featured" | "nonfeatured"
+  const [orderModalMode, setOrderModalMode] = useState(null);
 
   const menuItems = [
     { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -180,16 +182,25 @@ const AdminLayout = ({ children }) => {
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Featured Order Button — amber */}
             <button
-              onClick={() => setIsOrderModalOpen(true)}
-              className="rotating-gradient-card new-project mr-3 !px-3 sm:!px-6"
-              title="Change Projects Order"
+              onClick={() => setOrderModalMode("featured")}
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 backdrop-blur-md cursor-pointer border bg-amber-500/15 border-amber-400/40 text-amber-300 hover:bg-amber-500/25 hover:border-amber-400/60 shadow-md shadow-amber-500/10 hover:-translate-y-0.5 active:scale-95"
+              title="Change Featured Projects Order"
             >
-              <span>
-                <ListOrdered className="w-4 h-4" />
-                <span className="hidden sm:inline">Change Order</span>
-              </span>
+              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+              <span className="hidden sm:inline">Featured Order</span>
+            </button>
+
+            {/* Non-Featured Order Button — cyan */}
+            <button
+              onClick={() => setOrderModalMode("nonfeatured")}
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 backdrop-blur-md cursor-pointer border bg-cyan-500/15 border-cyan-400/40 text-cyan-300 hover:bg-cyan-500/25 hover:border-cyan-400/60 shadow-md shadow-cyan-500/10 hover:-translate-y-0.5 active:scale-95"
+              title="Change Non-Featured Projects Order"
+            >
+              <ListOrdered className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Standard Order</span>
             </button>
             {!(
               location.pathname === "/admin" ||
@@ -234,8 +245,9 @@ const AdminLayout = ({ children }) => {
         </div>
 
         <ProjectOrderModal
-          isOpen={isOrderModalOpen}
-          onClose={() => setIsOrderModalOpen(false)}
+          isOpen={orderModalMode !== null}
+          onClose={() => setOrderModalMode(null)}
+          mode={orderModalMode || "featured"}
         />
       </main>
     </div>

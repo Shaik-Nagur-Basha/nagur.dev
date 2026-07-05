@@ -8,18 +8,98 @@ import cloudinary from "../config/cloudinary.js";
 // @access  Public
 export const getProjects = async (req, res, next) => {
   try {
-    let query = Project.find();
+    let queryObj = {};
 
-    // Select fields if provided
+    // For public requests, show only Published projects.
+    // If status is "all" or admin mode is requested, show all projects.
+    if (req.query.status !== "all" && req.query.isAdmin !== "true") {
+      queryObj.status = "Published";
+    }
+
+    // Category filter
+    if (req.query.category && req.query.category !== "ALL") {
+      queryObj.category = new RegExp(`^${req.query.category}$`, "i");
+    }
+
+    // Search query
+    if (req.query.search) {
+      const searchRegex = new RegExp(req.query.search, "i");
+      queryObj.$or = [
+        { title: searchRegex },
+        { shortDescription: searchRegex },
+        { description: searchRegex },
+        { category: searchRegex },
+        { skills: searchRegex },
+        { "featuresList.title": searchRegex },
+        { "featuresList.description": searchRegex },
+        { "techStackDetails.category": searchRegex },
+        { "techStackDetails.items": searchRegex },
+      ];
+    }
+
+    // Get unique categories for project metadata based on status
+    let categoriesObj = {};
+    if (req.query.status !== "all" && req.query.isAdmin !== "true") {
+      categoriesObj.status = "Published";
+    }
+    const allCategories = await Project.distinct("category", categoriesObj);
+    const categoryList = ["ALL", ...new Set(allCategories.filter(Boolean).map(c => c.toUpperCase()))];
+
+    let query = Project.find(queryObj);
+
+    // Determine sort
+    // Admin: recently added or updated first (updatedAt covers both cases)
+    // Public: featured first, then priority order, then newest
+    let sortObj = { featured: -1, order: 1, createdAt: -1 };
+    if (req.query.status === "all" || req.query.isAdmin === "true") {
+      sortObj = { updatedAt: -1 };
+    }
+    query = query.sort(sortObj);
+
+    // Select fields: if a specific select parameter is provided, use it.
+    // Otherwise, restrict by context:
+    //   - admin requests (status=all): full form fields minus Cloudinary internals
+    //   - public requests: minimal card fields only
     if (req.query.select) {
       const fields = req.query.select.split(",").join(" ");
       query = query.select(fields);
+    } else if (req.query.status === "all" || req.query.isAdmin === "true") {
+      // Admin list + edit form fields — exclude Cloudinary publicIds and internal fields
+      query = query.select("-imagePublicId -videoPublicId -createdBy -__v");
+    } else {
+      // Limit fields for public card views to minimize payload
+      query = query.select("title slug shortDescription description mediaType image video skills demoLink githubLink category featured order createdAt");
     }
 
-    const projects = await query.sort({ order: 1, createdAt: -1 });
+    const page = req.query.page ? parseInt(req.query.page, 10) : null;
+    const limit = req.query.limit ? parseInt(req.query.limit, 10) : null;
+
+    if (page && limit) {
+      const startIndex = (page - 1) * limit;
+      const total = await Project.countDocuments(queryObj);
+      
+      query = query.skip(startIndex).limit(limit);
+      const projects = await query;
+      
+      return res.status(200).json({
+        success: true,
+        count: projects.length,
+        categories: categoryList,
+        pagination: {
+          total,
+          totalPages: Math.ceil(total / limit),
+          currentPage: page,
+          limit,
+        },
+        data: projects,
+      });
+    }
+
+    const projects = await query;
     res.status(200).json({
       success: true,
       count: projects.length,
+      categories: categoryList,
       data: projects,
     });
   } catch (error) {

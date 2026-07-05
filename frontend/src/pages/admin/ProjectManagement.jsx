@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Plus,
   Search,
@@ -11,6 +11,11 @@ import {
   FolderKanban,
   X,
   Layers,
+  Sparkles,
+  MoveRightIcon,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAdminStore } from "../../store/useAdminStore";
@@ -21,13 +26,18 @@ import { cn } from "../../utils/cn";
 
 const ProjectManagement = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(
     location?.state?.openForm || false,
   );
   const [editingProject, setEditingProject] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { projects, fetchProjects, deleteProject, loading } = useAdminStore();
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const { projects, categories, totalPages, fetchProjects, deleteProject, loading } = useAdminStore();
   const [expandedId, setExpandedId] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showDraftOnly, setShowDraftOnly] = useState(false);
 
   const handleMouseMove = (e) => {
     const card = e.currentTarget;
@@ -56,8 +66,29 @@ const ProjectManagement = () => {
   };
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, showDraftOnly]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const loadProjects = () => {
+    fetchProjects({
+      page: currentPage,
+      limit: 6,
+      category: selectedCategory,
+      search: debouncedSearch.trim(),
+      status: showDraftOnly ? "Draft" : "all",
+    });
+  };
+
+  useEffect(() => {
+    loadProjects();
+  }, [fetchProjects, currentPage, selectedCategory, showDraftOnly, debouncedSearch]);
 
   // Reset state after navigation or handle deep-links
   useEffect(() => {
@@ -92,18 +123,39 @@ const ProjectManagement = () => {
 
   const q = searchQuery.trim().toLowerCase();
 
-  const filteredProjects = !q
-    ? projects
-    : projects.filter((p) => {
-        const inTitle = p.title?.toLowerCase().includes(q);
-        const inCategory = p.category?.toLowerCase().includes(q);
-        const inDescription = p.description?.toLowerCase().includes(q);
-        const inTags = Array.isArray(p.tags)
-          ? p.tags.some((t) => String(t).toLowerCase().includes(q))
-          : false;
-
-        return inTitle || inCategory || inDescription || inTags;
+  const searchInObject = (obj, query) => {
+    if (!obj || !query) return false;
+    if (typeof obj === "string") {
+      return obj.toLowerCase().includes(query);
+    }
+    if (typeof obj === "number" || typeof obj === "boolean") {
+      return String(obj).toLowerCase().includes(query);
+    }
+    if (Array.isArray(obj)) {
+      return obj.some((item) => searchInObject(item, query));
+    }
+    if (typeof obj === "object") {
+      const ignoredKeys = [
+        "_id",
+        "createdBy",
+        "createdAt",
+        "updatedAt",
+        "imagePublicId",
+        "videoPublicId",
+        "image",
+        "video",
+        "thumbnail",
+        "url"
+      ];
+      return Object.entries(obj).some(([key, val]) => {
+        if (ignoredKeys.includes(key)) return false;
+        return searchInObject(val, query);
       });
+    }
+    return false;
+  };
+
+  const paginatedProjects = projects;
 
   // Highlight matching query substrings in text
   const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -128,16 +180,108 @@ const ProjectManagement = () => {
   };
 
   const projectCardStyle = `
-    @keyframes rotate-gradient { to { --gradient-angle: 360deg; } }
-    @keyframes glow-pulse { 0%,100%{opacity:0.15;transform:scale(1);}50%{opacity:0.25;transform:scale(1.05);} }
-    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
-    .ripple { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.6), rgba(255,255,255,0)); pointer-events: none; animation: ripple 0.6s ease-out; }
-    .project-card-grid { --mouse-x: 50%; --mouse-y: 50%; perspective: 1200px; transition: transform 0.1s ease-out; }
-    .project-card-inner { position: relative; height: 100%; width: 100%; transition: all 0.5s cubic-bezier(0.23,1,0.32,1); transform-style: preserve-3d; background: rgba(15,23,42,0.45); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(12px); box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.45);}
-    .project-card-inner::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.04), transparent 40%); z-index:3; pointer-events:none; }
-    .project-card-inner::after { content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; animation: rotate-gradient 4s linear infinite; opacity: 0; transition: opacity .3s; }
-    .project-card-grid:hover .project-card-inner::after { opacity: 1; }
-    .project-card-grid:hover .project-card-inner { transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y));  box-shadow: 0 14px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.55);}
+    @property --ts-angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes ts-spin {
+      to { --ts-angle: 360deg; }
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% { opacity: 0.15; transform: scale(1); }
+      50% { opacity: 0.25; transform: scale(1.05); }
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.6), rgba(255,255,255,0));
+      pointer-events: none;
+      animation: ripple 0.6s ease-out;
+    }
+
+    .project-card-grid {
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+      perspective: 1200px;
+      transition: transform 0.1s ease-out;
+      
+    }
+
+    /* Hide right arrow when card is narrower than 467px */
+    @media (max-width: 466px) {
+      .project-move-right {
+        display: none !important;
+      }
+    }
+
+    /* 3D Transform and Spotlight Effect */
+    .project-card-inner {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-style: preserve-3d;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(15px);
+    }
+
+    /* Moving Spotlight */
+    .project-card-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        800px circle at var(--mouse-x) var(--mouse-y), 
+        rgba(255, 255, 255, 0.06),
+        transparent 40%
+      );
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* Rotating Conic Gradient Border Hover Effect */
+    .project-card-inner::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: conic-gradient(
+        from var(--ts-angle),
+        transparent 55%,
+        var(--ts-c1, rgba(6, 182, 212, 0.8)) 75%,
+        var(--ts-c2, rgba(139, 92, 246, 0.8)) 88%,
+        transparent 100%
+      );
+      animation: ts-spin 5s linear infinite;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+      padding: 2px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .project-card-grid:hover .project-card-inner::after {
+      opacity: 1;
+    }
+
+    .project-card-grid:hover .project-card-inner {
+      transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y));
+    }
 
     /* Badge shimmer sweep reference from ts-pill */
     @keyframes ts-badge-shine {
@@ -169,7 +313,19 @@ const ProjectManagement = () => {
       animation: ts-badge-shine 0.7s ease-in 2 forwards;
     }
 
-    .tech-badge { transform: translateZ(20px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    /* Tech Badge */
+    .tech-badge {
+      transform: translateZ(20px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 500px) {
+      .project-card-grid {
+        height: auto !important;
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+      }
+    }
   `;
 
   return (
@@ -266,148 +422,363 @@ const ProjectManagement = () => {
               onSuccess={() => {
                 setIsFormOpen(false);
                 setEditingProject(null);
-                fetchProjects();
+                loadProjects();
               }}
             />
           </motion.div>
         ) : (
-          <motion.div
-            key="list"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-          >
-            {filteredProjects.map((project, index) => (
-              <motion.div
-                key={project._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                className="project-card-grid relative p-2 rounded-2xl overflow-hidden group h-80 cursor-pointer"
-                style={{
-                  "--ts-shine-color": project.featured ? "rgba(245, 158, 11, 0.18)" : "rgba(6, 182, 212, 0.18)"
-                }}
-              >
-                <div className="project-card-inner shadow-md rounded-2xl overflow-hidden flex flex-col relative h-full">
-                  {/* Extra shimmer sweep effect on hover */}
-                  <div className="project-card-shine" />
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none z-20" />
-
-                  {project.mediaType === "video" || project.video ? (
-                    <video
-                      className="absolute inset-0 w-full h-full object-cover"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                    >
-                      <source src={project.video} type="video/mp4" />
-                    </video>
-                  ) : (
-                    <img
-                      src={project.image || project.thumbnail}
-                      alt={project.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  )}
-
-                  <div
-                    className={`absolute inset-0 z-10 transition-opacity duration-300 ${expandedId === project._id ? "bg-black/70" : ""}`}
-                  />
-
-                  <div
-                    className={`relative z-20 transition-all duration-500 flex flex-col ${expandedId === project._id ? "h-full p-6 backdrop-blur-md rounded-2xl" : "mt-auto sm:hidden flex group-hover:flex pl-3 pb-1 bg-black/40"}`}
-                    onClick={(e) => handleExpandClick(e, project._id)}
+          <>
+            {/* Category Filter & Status Tabs */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      setCurrentPage(1);
+                    }}
+                    className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wider transition-all duration-300 backdrop-blur-md cursor-pointer border ${
+                      selectedCategory === cat
+                        ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-md shadow-cyan-500/10"
+                        : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                    }`}
                   >
-                    <h3
-                      className={`text-lg tracking-wide font-black transition-colors duration-300 ${expandedId === project._id ? "text-cyan-400 mb-3" : "text-white mb-1"}`}
-                    >
-                      {highlightText(project.title, q)}
-                    </h3>
+                    {cat}
+                  </button>
+                ))}
+              </div>
 
-                    {expandedId === project._id ? (
-                      <div className="flex flex-col h-full space-y-4">
-                        <p className="text-gray-300 text-sm font-medium">
-                          {project.description}
-                        </p>
+              {/* Draft Filter Toggle Button */}
+              <button
+                onClick={() => {
+                  setShowDraftOnly((prev) => !prev);
+                  setCurrentPage(1);
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold font-sans tracking-widest transition-all duration-300 backdrop-blur-md cursor-pointer border ${
+                  showDraftOnly
+                    ? "bg-amber-500/25 border-amber-400/60 text-amber-300 shadow-md shadow-amber-500/10"
+                    : "bg-white/5 border-amber-400/40 text-slate-400 hover:bg-white/10 hover:border-amber-400/60 hover:text-white"
+                }`}
+              >
+                <span>Drafts Only</span>
+              </button>
+            </div>
 
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          {(project.tags || project.skills || []).map(
-                            (tag, idx) => (
-                              <span
-                                key={idx}
-                                className="tech-badge px-3 py-1 bg-white/10 text-cyan-400 rounded-full text-[10px] font-bold border border-cyan-400/30"
-                              >
-                                {tag}
-                              </span>
-                            ),
-                          )}
+            <motion.div
+              key="list"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-[500px]:gap-3"
+            >
+              {paginatedProjects.map((project, index) => (
+                <motion.div
+                  key={project._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={() => navigate(`/projects/${project.slug || project._id}`)}
+                  className="project-card-grid relative p-2 rounded-none group aspect-video isolate z-0 cursor-pointer"
+                  style={{
+                    "--ts-c1": project.featured ? "#f59e0b" : "#06b6d4",
+                    "--ts-c2": project.featured ? "#ec4899" : "#3b82f6",
+                    "--ts-shine-color": project.featured ? "rgba(245, 158, 11, 0.18)" : "rgba(6, 182, 212, 0.18)"
+                  }}
+                >
+                  <div className="project-card-inner shadow-md shadow-black/70 rounded-none flex flex-col relative h-full z-10">
+                    {/* Extra shimmer sweep effect on hover */}
+                    <div className="project-card-shine" />
+                    
+                     {/* Floating Action Controls (Top-Right, below Featured Badge if featured) */}
+                    {expandedId !== project._id && (
+                      <div 
+                        className="absolute top-4 right-4 z-30 flex flex-col items-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {project.featured && (
+                          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
+                            <Sparkles size={8} className="animate-pulse text-neutral-950 shrink-0" />
+                            <span>FEATURED</span>
+                          </div>
+                        )}
+                        <div className="flex flex-row lg:flex-col gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingProject(project);
+                              setIsFormOpen(true);
+                            }}
+                            className="p-2 rounded-xl backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:bg-cyan-500/25 text-cyan-300 hover:text-cyan-200 shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center"
+                            title="Edit Project"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(project._id);
+                            }}
+                            className="p-2 rounded-xl backdrop-blur-md bg-red-500/15 border border-red-500/30 hover:border-red-400/60 hover:bg-red-500/25 text-red-300 hover:text-red-200 shadow-md hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center"
+                            title="Delete Project"
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         </div>
+                      </div>
+                    )}
 
-                        <div className="flex gap-2.5 mt-auto">
-                          {project.demoLink && (
-                            <a
-                              href={project.demoLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-medium backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 text-cyan-500 hover:text-cyan-400"
-                            >
-                              <ExternalLink
-                                size={16}
-                                className="transition-all shrink-0 duration-300 group-hover:scale-110"
-                              />
-                              <span className="hidden sm:inline overflow-hidden truncate">DEMO</span>
-                            </a>
-                          )}
-                          {project.githubLink && (
-                            <a
-                              href={project.githubLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-mono font-medium backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 text-cyan-500 hover:text-cyan-400"
-                            >
-                              <Github
-                                size={16}
-                                className="transition-all shrink-0 duration-300 group-hover:scale-110"
-                              />
-                              <span className="hidden sm:inline overflow-hidden truncate">CODE</span>
-                            </a>
-                          )}
-                          <div className="ml-auto flex items-center gap-2">
+                    {/* Glassy Category Hover Badge */}
+                    {project.category && expandedId !== project._id && (
+                      <div className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
+                        project.featured ? "border-amber-500/40 text-amber-300" : "border-cyan-500/40 text-cyan-300"
+                      }`}>
+                        {project.category}
+                      </div>
+                    )}
+
+                    {/* Media Wrapper */}
+                    <div className="absolute inset-0 rounded-none overflow-hidden z-0">
+                      {project.mediaType === "video" || project.video ? (
+                        <video
+                          className="absolute inset-0 w-full h-full object-cover"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                        >
+                          <source src={project.video} type="video/mp4" />
+                        </video>
+                      ) : (
+                        <img
+                          src={project.image || project.thumbnail}
+                          alt={project.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      )}
+
+                      {/* Overlay for expanded state */}
+                      <div
+                        className={`absolute inset-0 z-10 transition-opacity duration-300 ${
+                          expandedId === project._id ? "bg-black/80 backdrop-blur-md" : ""
+                        }`}
+                      />
+                    </div>
+
+                    {/* Content Area */}
+                    <div
+                      className={`relative z-20 transition-all duration-500 flex flex-col ${
+                        expandedId === project._id
+                          ? "h-full p-4"
+                          : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-2 bg-black/50 backdrop-blur-xs"
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.innerWidth >= 467) {
+                          setExpandedId((prev) => (prev === project._id ? null : project._id));
+                        }
+                      }}
+                    >
+                      <div className="flex justify-between items-center w-full pr-3 mb-1">
+                        <h3
+                          className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 ${
+                            expandedId === project._id
+                              ? project.featured ? "text-amber-400" : "text-cyan-400"
+                              : project.featured ? "text-amber-400" : "text-cyan-400"
+                          }`}
+                        >
+                          {highlightText(project.title, q)}
+                        </h3>
+                        {expandedId !== project._id && (
+                          <MoveRightIcon
+                            size={16}
+                            className={`project-move-right transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
+                              project.featured ? "text-amber-400" : "text-cyan-400"
+                            }`}
+                          />
+                        )}
+                      </div>
+
+                      {expandedId === project._id ? (
+                        <div className="flex flex-col h-full space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                          <p className="text-slate-300 dark:text-slate-300 font-normal font-sans text-xs tracking-normal line-clamp-3 leading-relaxed">
+                            {project.description}
+                          </p>
+
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {(project.tags || project.skills || []).slice(0, 4).map(
+                              (tag, idx) => (
+                                <span
+                                  key={idx}
+                                  className={`tech-badge px-2.5 py-0.5 border border-dashed rounded text-[9px] font-mono tracking-wider transition-all duration-300 ${
+                                    project.featured
+                                      ? "text-amber-400 border-amber-500/40 hover:border-amber-300 hover:bg-amber-400/10"
+                                      : "text-cyan-400 border-cyan-500/40 hover:border-cyan-300 hover:bg-cyan-400/10"
+                                  }`}
+                                >
+                                    {tag}
+                                </span>
+                              ),
+                            )}
+                          </div>
+
+                          <div className="flex justify-between items-center mt-auto w-full">
+                            <div className="flex gap-2">
+                              {project.demoLink && (
+                                <a
+                                  href={project.demoLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className={`group relative px-2.5 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium ${
+                                    project.featured
+                                      ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
+                                      : "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                                  }`}
+                                >
+                                  <ExternalLink
+                                    size={12}
+                                    className="transition-all shrink-0 duration-300 group-hover:scale-110"
+                                  />
+                                  <span className="overflow-hidden truncate">DEMO</span>
+                                </a>
+                              )}
+                              {project.githubLink && (
+                                <a
+                                  href={project.githubLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className={`group relative px-2.5 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-mono font-medium ${
+                                    project.featured
+                                      ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
+                                      : "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                                  }`}
+                                >
+                                  <Github
+                                    size={12}
+                                    className="transition-all shrink-0 duration-300 group-hover:scale-110"
+                                  />
+                                  <span className="overflow-hidden truncate">CODE</span>
+                                </a>
+                              )}
+                            </div>
+
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setEditingProject(project);
-                                setIsFormOpen(true);
+                                navigate(`/projects/${project.slug || project._id}`);
                               }}
-                              className="px-3 py-2 rounded cursor-pointer bg-white/8 text-white text-sm font-semibold"
+                              className={`group relative px-2.5 py-1.5 rounded-lg text-nowrap transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
+                                project.featured
+                                  ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
+                                  : "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                              }`}
+                              title="View Full Project Details"
                             >
-                              Edit
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(project._id);
-                              }}
-                              className="px-3 py-2 rounded cursor-pointer bg-red-600 text-white text-sm font-semibold"
-                            >
-                              Delete
+                              <span>MORE INFO</span>
+                              <ArrowUpRight
+                                size={12}
+                                className="transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                              />
                             </button>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center cursor-pointer pl-3 pb-0.5 gap-0.5 text-cyan-500 font-bold text-[10px] tracking-widest">
-                        EXPLORE PROJECT
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug">
+                          {project.description}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <>
+                {/* Desktop Pagination */}
+                <div className="hidden sm:flex justify-center items-center gap-3 mt-12">
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
+                      currentPage === 1
+                        ? "bg-white/5 border-white/5 text-slate-600 cursor-not-allowed opacity-50"
+                        : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                    }`}
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  
+                  <div className="flex items-center gap-1.5">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-9 h-9 rounded-xl text-xs font-bold transition-all duration-300 backdrop-blur-md cursor-pointer border ${
+                          currentPage === page
+                            ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-md shadow-cyan-500/10"
+                            : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
+                      currentPage === totalPages
+                        ? "bg-white/5 border-white/5 text-slate-600 cursor-not-allowed opacity-50"
+                        : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                    }`}
+                    aria-label="Next page"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+
+                {/* Compact Mobile Pagination */}
+                <div className="flex sm:hidden justify-center items-center gap-4 mt-8">
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
+                      currentPage === 1
+                        ? "bg-white/5 border-white/5 text-slate-600 cursor-not-allowed opacity-50"
+                        : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                    }`}
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  
+                  <span className="text-xs font-medium text-slate-400">
+                    {currentPage} <span className="text-slate-600">/</span> {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
+                      currentPage === totalPages
+                        ? "bg-white/5 border-white/5 text-slate-600 cursor-not-allowed opacity-50"
+                        : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                    }`}
+                    aria-label="Next page"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </>
+            )}
+          </>
         )}
       </AnimatePresence>
       <ConfirmDialog
@@ -425,3 +796,4 @@ const ProjectManagement = () => {
 };
 
 export default ProjectManagement;
+

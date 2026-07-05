@@ -3,8 +3,8 @@ import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import SkeletonLoader from "../components/SkeletonLoader";
 import SkeletonWaveBlur from "../components/SkeletonWaveBar";
-import { ExternalLink, Github, MoveRightIcon, Sparkles, ChevronDown, ArrowUpRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ExternalLink, Github, MoveRightIcon, Sparkles, ChevronDown, ArrowUpRight, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
@@ -24,13 +24,30 @@ function ProjectsPage() {
   }, []);
 
   const [projects, setProjects] = useState([]);
+  const [categories, setCategories] = useState(["ALL"]);
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
+  // Search dropdown state (independent from main grid)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dropdownResults, setDropdownResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [dropdownLoading, setDropdownLoading] = useState(false);
+  const searchRef = useRef(null);
+
+  // Main grid fetch — never affected by search
   useEffect(() => {
     const fetchProjects = async () => {
+      setIsLoading(true);
       try {
-        const { data } = await API.get("projects");
+        const { data } = await API.get("projects", {
+          params: { page: currentPage, limit: 6, category: selectedCategory },
+        });
         if (data.success) {
           setProjects(data.data);
+          if (data.categories) setCategories(data.categories);
+          if (data.pagination) setTotalPages(data.pagination.totalPages);
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -38,8 +55,36 @@ function ProjectsPage() {
         setIsLoading(false);
       }
     };
-
     fetchProjects();
+  }, [currentPage, selectedCategory]);
+
+  // Dropdown search — debounced 350ms, top 5 results only
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q) { setDropdownResults([]); setShowDropdown(false); return; }
+    const timer = setTimeout(async () => {
+      setDropdownLoading(true);
+      try {
+        const { data } = await API.get("projects", {
+          params: { search: q, limit: 5, page: 1, select: "title,slug,image,thumbnail,category,featured" },
+        });
+        setDropdownResults(data.data || []);
+        setShowDropdown(true);
+      } catch { setDropdownResults([]); }
+      finally { setDropdownLoading(false); }
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   const projectCardStyle = `
@@ -78,6 +123,14 @@ function ProjectsPage() {
       --mouse-y: 50%;
       perspective: 1200px;
       transition: transform 0.1s ease-out;
+      
+    }
+
+    /* Hide right arrow when card is narrower than 467px */
+    @media (max-width: 466px) {
+      .project-move-right {
+        display: none !important;
+      }
     }
 
     /* 3D Transform and Spotlight Effect */
@@ -175,6 +228,14 @@ function ProjectsPage() {
       transform: translateZ(20px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
+
+    @media (max-width: 500px) {
+      .project-card-grid {
+        height: auto !important;
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+      }
+    }
   `;
 
   const handleMouseMove = (e) => {
@@ -231,6 +292,8 @@ function ProjectsPage() {
   };
 
 
+  const paginatedProjects = projects;
+
   return (
     <>
       {isLoading ? (
@@ -272,29 +335,204 @@ function ProjectsPage() {
               }}
             />
 
-            <div className="pt-10 mx-auto relative z-10">
-              <div className="text-center mb-16">
-                <h1
-                  className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-colors duration-300 ${
-                    darkMode ? "text-white/80" : "text-black/80"
+            {/* ── Hero ── */}
+            <div className="pt-8 sm:pt-12 mx-auto relative z-20 text-center mb-6">
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.22em] border backdrop-blur-md mb-3 ${
+                  darkMode
+                    ? "bg-cyan-500/10 border-cyan-400/25 text-cyan-400"
+                    : "bg-cyan-500/10 border-cyan-400/30 text-cyan-600"
+                }`}
+              >
+                <Sparkles size={9} className="animate-pulse" />
+                Portfolio
+              </span>
+
+              <h1
+                className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-2 transition-colors duration-300 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                All{" "}
+                <span
+                  className={`text-transparent bg-clip-text ${
+                    darkMode
+                      ? "bg-gradient-to-r from-cyan-400 to-blue-500"
+                      : "bg-gradient-to-r from-cyan-500 to-blue-600"
                   }`}
                 >
-                  All Projects
-                </h1>
-                <p
-                  className={`text-base md:text-lg transition-colors duration-300 ${
-                    darkMode ? "text-white/60" : "text-black/60"
+                  Projects
+                </span>
+              </h1>
+
+              <p
+                className={`text-sm md:text-base max-w-md mx-auto mb-6 transition-colors duration-300 ${
+                  darkMode ? "text-white/45" : "text-black/45"
+                }`}
+              >
+                Built with passion — from frontend finesse to backend depth
+              </p>
+
+              {/* ── Search with Dropdown ── */}
+              <div ref={searchRef} className="relative z-30 max-w-sm sm:max-w-md mx-auto mb-6">
+                <div
+                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-300 ${
+                    darkMode
+                      ? "bg-white/5 border-white/10 focus-within:border-cyan-400/50 shadow-lg shadow-black/20"
+                      : "bg-black/5 border-black/10 focus-within:border-cyan-500/40 shadow-lg shadow-black/5"
                   }`}
                 >
-                  Explore the complete collection of my work and technical
-                  expertise
-                </p>
+                  {dropdownLoading
+                    ? <div className={`w-3.5 h-3.5 shrink-0 rounded-full border-2 animate-spin ${darkMode ? "border-white/10 border-t-cyan-400" : "border-black/10 border-t-cyan-600"}`} />
+                    : <Search size={14} className={`shrink-0 transition-colors ${
+                        searchQuery
+                          ? darkMode ? "text-cyan-400" : "text-cyan-600"
+                          : darkMode ? "text-slate-500" : "text-slate-400"
+                      }`} />
+                  }
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setShowDropdown(false); }}
+                    onFocus={() => { if (dropdownResults.length > 0) setShowDropdown(true); }}
+                    onKeyDown={(e) => { if (e.key === "Escape") { setShowDropdown(false); setSearchQuery(""); } }}
+                    placeholder="Search projects, skills, tech..."
+                    className={`flex-1 bg-transparent outline-none text-sm font-medium placeholder:font-normal placeholder:text-[13px] transition-colors whiteblink-remover ${
+                      darkMode ? "text-white placeholder:text-slate-600" : "text-gray-900 placeholder:text-slate-400"
+                    }`}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => { setSearchQuery(""); setShowDropdown(false); setDropdownResults([]); }}
+                      className={`shrink-0 p-0.5 rounded-full transition-all cursor-pointer ${
+                        darkMode ? "text-slate-500 hover:text-white hover:bg-white/10" : "text-slate-400 hover:text-gray-900 hover:bg-black/10"
+                      }`}
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Dropdown */}
+                {showDropdown && (
+                  <div
+                    className={`absolute left-0 right-0 top-full mt-2 rounded-xl border overflow-hidden z-50 backdrop-blur-xl shadow-2xl ${
+                      darkMode ? "bg-slate-900/95 border-white/10" : "bg-white/95 border-black/10"
+                    }`}
+                  >
+                    {dropdownResults.length === 0 ? (
+                      <div className={`px-4 py-5 text-center text-xs font-medium ${
+                        darkMode ? "text-slate-500" : "text-slate-400"
+                      }`}>
+                        No results for &ldquo;{searchQuery}&rdquo;
+                      </div>
+                    ) : (
+                      <ul>
+                        {dropdownResults.map((p, i) => (
+                          <li key={p._id}>
+                            <button
+                              onClick={() => { navigate(`/projects/${p.slug || p._id}`); setShowDropdown(false); setSearchQuery(""); }}
+                              className={`w-full flex items-center gap-3 px-3.5 py-2.5 text-left transition-colors cursor-pointer ${
+                                i !== dropdownResults.length - 1
+                                  ? darkMode ? "border-b border-white/5" : "border-b border-black/5"
+                                  : ""
+                              } ${
+                                darkMode ? "hover:bg-white/5" : "hover:bg-black/5"
+                              }`}
+                            >
+                              {/* Thumbnail */}
+                              <div className={`w-9 h-9 shrink-0 rounded-lg overflow-hidden border ${
+                                darkMode ? "border-white/10 bg-white/5" : "border-black/10 bg-black/5"
+                              }`}>
+                                {(p.image || p.thumbnail) ? (
+                                  <img src={p.image || p.thumbnail} alt={p.title} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className={`w-full h-full flex items-center justify-center ${
+                                    p.featured ? "text-amber-400" : "text-cyan-400"
+                                  }`}>
+                                    <Sparkles size={14} />
+                                  </div>
+                                )}
+                              </div>
+                              {/* Info */}
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-xs font-semibold truncate ${
+                                  darkMode ? "text-white" : "text-gray-900"
+                                }`}>{p.title}</p>
+                                {p.category && (
+                                  <p className={`text-[10px] font-medium mt-0.5 ${
+                                    p.featured
+                                      ? darkMode ? "text-amber-400/70" : "text-amber-600/70"
+                                      : darkMode ? "text-cyan-400/70" : "text-cyan-600/70"
+                                  }`}>{p.category}</p>
+                                )}
+                              </div>
+                              <ArrowUpRight size={12} className={darkMode ? "text-slate-600" : "text-slate-400"} />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
+            {/* ── Category Filter ── */}
+            <div className="flex flex-wrap justify-center gap-1.5 mb-8 relative z-10 max-w-3xl mx-auto px-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 backdrop-blur-md cursor-pointer border ${
+                    selectedCategory === cat
+                      ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-sm shadow-cyan-500/10"
+                      : darkMode
+                        ? "bg-white/5 border-white/8 text-slate-400 hover:bg-white/10 hover:text-white"
+                        : "bg-black/5 border-black/8 text-slate-600 hover:bg-black/10 hover:text-black"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
             {/* Projects Grid */}
-            <div className="flex flex-wrap justify-evenly gap-8">
-              {projects.map((project) => {
+            <div className="flex flex-wrap justify-evenly gap-8 max-[500px]:gap-4">
+              {!isLoading && paginatedProjects.length === 0 && (
+                <div className="w-full py-24 flex flex-col items-center justify-center text-center">
+                  <div
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-5 border ${
+                      darkMode
+                        ? "bg-white/5 border-white/10"
+                        : "bg-black/5 border-black/10"
+                    }`}
+                  >
+                    <Search size={28} className={darkMode ? "text-slate-600" : "text-slate-400"} />
+                  </div>
+                  <p className={`text-lg font-bold mb-2 ${darkMode ? "text-white/60" : "text-black/60"}`}>
+                    No projects found
+                  </p>
+                  <p className={`text-sm ${darkMode ? "text-white/30" : "text-black/30"}`}>
+                    {debouncedSearch
+                      ? `No results for "${debouncedSearch}" — try a different keyword`
+                      : "No projects in this category yet"}
+                  </p>
+                  {debouncedSearch && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className={`mt-5 px-4 py-2 rounded-xl text-xs font-bold tracking-wide border transition-all cursor-pointer ${
+                        darkMode
+                          ? "bg-white/5 border-white/10 text-slate-400 hover:text-white hover:bg-white/10"
+                          : "bg-black/5 border-black/10 text-slate-600 hover:text-black hover:bg-black/10"
+                      }`}
+                    >
+                      Clear search
+                    </button>
+                  )}
+                </div>
+              )}
+              {paginatedProjects.map((project) => {
                 const c1 = project.featured ? "#f59e0b" : "#06b6d4";
                 const c2 = project.featured ? "#ec4899" : "#3b82f6";
                 return (
@@ -316,7 +554,7 @@ function ProjectsPage() {
                       {/* Glassy Featured Hover Badge (Featured projects only, hidden when expanded) */}
                       {project.featured && expandedId !== project._id && (
                         <div
-                          className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30"
+                          className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30"
                         >
                           <Sparkles size={8} className="animate-pulse text-neutral-950 shrink-0" />
                           <span>FEATURED</span>
@@ -325,7 +563,7 @@ function ProjectsPage() {
                       {/* Glassy Category Hover Badge (Hidden when expanded) */}
                       {project.category && expandedId !== project._id && (
                         <div
-                          className={`absolute top-0 left-0 z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-0 group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
+                          className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
                             project.featured
                               ? "border-amber-500/40 text-amber-300"
                               : "border-cyan-500/40 text-cyan-300"
@@ -404,7 +642,9 @@ function ProjectsPage() {
                         }`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleClick(e, project._id);
+                          if (window.innerWidth >= 467) {
+                            handleClick(e, project._id);
+                          }
                         }}
                       >
                         <div className="flex justify-between items-center w-full pr-3 mb-1">
@@ -418,7 +658,7 @@ function ProjectsPage() {
                           {expandedId !== project._id && (
                             <MoveRightIcon
                               size={16}
-                              className={`transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
+                              className={`project-move-right transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
                                 project.featured ? "text-amber-400" : "text-cyan-400"
                               }`}
                             />
@@ -505,7 +745,7 @@ function ProjectsPage() {
                                   e.stopPropagation();
                                   navigate(`/projects/${project.slug || project._id}`);
                                 }}
-                                className={`group relative px-2.5 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
+                                className={`group relative px-2.5 py-1.5 rounded-lg text-nowrap transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
                                   project.featured
                                     ? darkMode
                                       ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
@@ -535,6 +775,65 @@ function ProjectsPage() {
               );
               })}
             </div>
+
+            {/* ── Pagination ── */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-10 mb-2 relative z-10 flex-wrap">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  aria-label="Previous page"
+                  className={`p-2 rounded-lg border transition-all duration-200 backdrop-blur-md cursor-pointer ${
+                    currentPage === 1
+                      ? darkMode ? "bg-white/5 border-white/5 text-slate-700 opacity-40 cursor-not-allowed" : "bg-black/5 border-black/5 text-slate-400 opacity-40 cursor-not-allowed"
+                      : darkMode ? "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white" : "bg-black/5 border-black/10 text-slate-700 hover:bg-black/10 hover:text-black"
+                  }`}
+                >
+                  <ChevronLeft size={15} />
+                </button>
+
+                {/* Page numbers — hidden on xs, visible sm+ */}
+                <div className="hidden sm:flex items-center gap-1.5">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-8 h-8 rounded-lg text-xs font-bold transition-all duration-200 backdrop-blur-md cursor-pointer border ${
+                        currentPage === page
+                          ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-sm shadow-cyan-500/10"
+                          : darkMode
+                            ? "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white"
+                            : "bg-black/5 border-black/10 text-slate-600 hover:bg-black/10 hover:text-black"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Compact page counter — xs only */}
+                <span className={`sm:hidden text-xs font-semibold px-3 py-1.5 rounded-lg border ${
+                  darkMode ? "bg-white/5 border-white/8 text-slate-300" : "bg-black/5 border-black/8 text-slate-600"
+                }`}>
+                  {currentPage}
+                  <span className={darkMode ? " text-slate-600" : " text-slate-400"}> / </span>
+                  {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  aria-label="Next page"
+                  className={`p-2 rounded-lg border transition-all duration-200 backdrop-blur-md cursor-pointer ${
+                    currentPage === totalPages
+                      ? darkMode ? "bg-white/5 border-white/5 text-slate-700 opacity-40 cursor-not-allowed" : "bg-black/5 border-black/5 text-slate-400 opacity-40 cursor-not-allowed"
+                      : darkMode ? "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white" : "bg-black/5 border-black/10 text-slate-700 hover:bg-black/10 hover:text-black"
+                  }`}
+                >
+                  <ChevronRight size={15} />
+                </button>
+              </div>
+            )}
           </section>
 
           <Footer />
@@ -545,3 +844,4 @@ function ProjectsPage() {
 }
 
 export default ProjectsPage;
+

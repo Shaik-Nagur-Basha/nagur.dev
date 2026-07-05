@@ -3,6 +3,8 @@ import API from "../api/axios";
 
 export const useAdminStore = create((set, get) => ({
   projects: [],
+  categories: ["ALL"],
+  totalPages: 1,
   contacts: [],
   loading: false,
   error: null,
@@ -11,8 +13,14 @@ export const useAdminStore = create((set, get) => ({
   fetchProjects: async (params = {}) => {
     set({ loading: true });
     try {
-      const { data } = await API.get("projects", { params });
-      set({ projects: data.data, loading: false });
+      const mergedParams = { status: "all", ...params };
+      const { data } = await API.get("projects", { params: mergedParams });
+      set({
+        projects: data.data,
+        categories: data.categories || ["ALL"],
+        totalPages: data.pagination?.totalPages || 1,
+        loading: false,
+      });
     } catch (error) {
       set({ error: error.response?.data?.error, loading: false });
     }
@@ -63,9 +71,13 @@ export const useAdminStore = create((set, get) => ({
     set({ loading: true });
     try {
       await API.put("projects/order", { orders });
-      // Refetch projects to get the new order
-      const { data } = await API.get("projects");
-      set({ projects: data.data, loading: false });
+      const { data } = await API.get("projects", { params: { status: "all" } });
+      set({
+        projects: data.data,
+        categories: data.categories || ["ALL"],
+        totalPages: data.pagination?.totalPages || 1,
+        loading: false,
+      });
       return { success: true };
     } catch (error) {
       set({ loading: false });
