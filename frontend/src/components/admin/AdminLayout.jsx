@@ -7,7 +7,6 @@ import {
   LogOut,
   ExternalLink,
   ShieldCheck,
-  Cpu,
   Plus,
   User,
   ListOrdered,
@@ -15,6 +14,7 @@ import {
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/useAuthStore";
 import { cn } from "../../utils/cn";
+import Logo from "../Logo";
 import ProjectOrderModal from "./ProjectOrderModal";
 
 const AdminLayout = ({ children }) => {
@@ -38,22 +38,6 @@ const AdminLayout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 flex font-outfit overflow-hidden">
-      {/* SVG Gradient Definitions */}
-      <svg width="0" height="0" className="absolute">
-        <defs>
-          <linearGradient
-            id="brand-gradient"
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="100%"
-          >
-            <stop offset="0%" stopColor="#60a5fa" />
-            <stop offset="100%" stopColor="#a855f7" />
-          </linearGradient>
-        </defs>
-      </svg>
-
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
@@ -63,16 +47,16 @@ const AdminLayout = ({ children }) => {
       {/* Sidebar */}
       <aside className="sticky top-0 h-screen z-50 w-16 lg:w-64 glass-panel border-r border-white/5 transition-all duration-300 flex flex-col shrink-0">
         {/* Sidebar Header */}
-        <div className="h-16 flex items-center px-4 lg:px-6 border-b border-white/5">
-          <div className="w-10 h-10 flex items-center justify-center shrink-0 mx-auto lg:mx-0">
-            <Cpu
-              className="w-6 h-6 transition-all duration-300"
-              style={{ stroke: "url(#brand-gradient)" }}
-            />
-          </div>
-          <span className="ml-2 text-sm font-black tracking-widest uppercase bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent hidden lg:block">
-            nagur.dev
-          </span>
+        <div className="h-16 flex items-center px-4 lg:px-6 border-white/5">
+          <Link
+            to="/"
+            className="flex items-center justify-center gap-2 opacity-80 transition-opacity hover:opacity-100"
+          >
+            <Logo theme="golden" />
+            <span className="text-sm font-black tracking-widest uppercase bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent hidden lg:block">
+              nagur.dev
+            </span>
+          </Link>
         </div>
 
         {/* Navigation */}

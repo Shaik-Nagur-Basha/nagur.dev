@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Project from "../models/Project.js";
 import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
@@ -31,7 +32,13 @@ export const getProjects = async (req, res, next) => {
 // @access  Public
 export const getProject = async (req, res, next) => {
   try {
-    const project = await Project.findById(req.params.id);
+    let project;
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      project = await Project.findById(req.params.id);
+    } else {
+      project = await Project.findOne({ slug: req.params.id });
+    }
+
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }

@@ -1,65 +1,51 @@
 import { useTheme } from "../context/ThemeContext";
 
-function Logo() {
+function Logo({ theme = "default" }) {
   const { darkMode } = useTheme();
+
+  const getThemeGlowStyle = () => {
+    if (theme === "golden") {
+      return `
+        filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
+      `;
+    }
+    return `
+      filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+    `;
+  };
+
+  const getThemeGlowAnimEnd = () => {
+    if (theme === "golden") {
+      return `
+        filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.8)) drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+      `;
+    }
+    return `
+      filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 8px rgba(124, 58, 237, 0.6));
+    `;
+  };
 
   const logoAnimationStyle = `
     @keyframes logoFloat {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-4px);
-      }
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
     }
     @keyframes logoGlow {
-      0%, 100% {
-        filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
-      }
-      50% {
-        filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 8px rgba(124, 58, 237, 0.6));
-      }
+      0%, 100% { ${getThemeGlowStyle()} }
+      50% { ${getThemeGlowAnimEnd()} }
     }
     @keyframes rotateOuter {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     @keyframes rotatePulse {
-      0%, 100% {
-        opacity: 0.6;
-      }
-      50% {
-        opacity: 1;
-      }
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
-    @keyframes codeFlash {
-      0%, 100% {
-        stroke-dashoffset: 100;
-      }
-      50% {
-        stroke-dashoffset: 0;
-      }
-    }
-    .logo-container {
-      animation: logoFloat 3s ease-in-out infinite;
-    }
-    .logo-glow {
-      animation: logoGlow 3s ease-in-out infinite;
-    }
-    .logo-rotate {
-      animation: rotateOuter 12s linear infinite;
-      transform-origin: center;
-    }
-    .logo-pulse {
-      animation: rotatePulse 2.5s ease-in-out infinite;
-    }
-    .logo-flash {
-      animation: codeFlash 2.5s ease-in-out infinite;
-    }
+    .logo-container { animation: logoFloat 3s ease-in-out infinite; }
+    .logo-glow { animation: logoGlow 3s ease-in-out infinite; }
+    .logo-rotate { animation: rotateOuter 12s linear infinite; transform-origin: center; }
+    .logo-pulse { animation: rotatePulse 2.5s ease-in-out infinite; }
   `;
 
   return (
@@ -79,7 +65,13 @@ function Logo() {
             cy="20"
             r="18"
             stroke={
-              darkMode ? "url(#techGradientDark)" : "url(#techGradientLight)"
+              theme === "golden"
+                ? darkMode
+                  ? "url(#techGradientDarkGolden)"
+                  : "url(#techGradientLightGolden)"
+                : darkMode
+                  ? "url(#techGradientDark)"
+                  : "url(#techGradientLight)"
             }
             strokeWidth="1"
             opacity="0.25"
@@ -91,7 +83,15 @@ function Logo() {
           <g className="logo-pulse">
             <polyline
               points="12,14 8,20 12,26"
-              stroke={darkMode ? "#3b82f6" : "#2563eb"}
+              stroke={
+                theme === "golden"
+                  ? darkMode
+                    ? "#fbbf24"
+                    : "#f59e0b"
+                  : darkMode
+                    ? "#3b82f6"
+                    : "#2563eb"
+              }
               strokeWidth="2.2"
               fill="none"
               strokeLinecap="round"
@@ -106,7 +106,13 @@ function Logo() {
               cy="15"
               r="1.8"
               fill={
-                darkMode ? "url(#techGradientDark)" : "url(#techGradientLight)"
+                theme === "golden"
+                  ? darkMode
+                    ? "url(#techGradientDarkGolden)"
+                    : "url(#techGradientLightGolden)"
+                  : darkMode
+                    ? "url(#techGradientDark)"
+                    : "url(#techGradientLight)"
               }
               opacity="0.9"
             />
@@ -115,7 +121,13 @@ function Logo() {
               cy="20"
               r="1.8"
               fill={
-                darkMode ? "url(#techGradientDark)" : "url(#techGradientLight)"
+                theme === "golden"
+                  ? darkMode
+                    ? "url(#techGradientDarkGolden)"
+                    : "url(#techGradientLightGolden)"
+                  : darkMode
+                    ? "url(#techGradientDark)"
+                    : "url(#techGradientLight)"
               }
               opacity="1"
             />
@@ -124,7 +136,13 @@ function Logo() {
               cy="25"
               r="1.8"
               fill={
-                darkMode ? "url(#techGradientDark)" : "url(#techGradientLight)"
+                theme === "golden"
+                  ? darkMode
+                    ? "url(#techGradientDarkGolden)"
+                    : "url(#techGradientLightGolden)"
+                  : darkMode
+                    ? "url(#techGradientDark)"
+                    : "url(#techGradientLight)"
               }
               opacity="0.9"
             />
@@ -134,7 +152,15 @@ function Logo() {
           <g className="logo-pulse" style={{ animationDelay: "0.4s" }}>
             <polyline
               points="28,14 32,20 28,26"
-              stroke={darkMode ? "#7c3aed" : "#a855f7"}
+              stroke={
+                theme === "golden"
+                  ? darkMode
+                    ? "#f59e0b"
+                    : "#d97706"
+                  : darkMode
+                    ? "#7c3aed"
+                    : "#a855f7"
+              }
               strokeWidth="2.2"
               fill="none"
               strokeLinecap="round"
@@ -148,7 +174,15 @@ function Logo() {
             y1="20"
             x2="18"
             y2="20"
-            stroke={darkMode ? "#3b82f6" : "#2563eb"}
+            stroke={
+              theme === "golden"
+                ? darkMode
+                  ? "#fbbf24"
+                  : "#f59e0b"
+                : darkMode
+                  ? "#3b82f6"
+                  : "#2563eb"
+            }
             strokeWidth="1.5"
             opacity="0.6"
             className="logo-pulse"
@@ -158,7 +192,15 @@ function Logo() {
             y1="20"
             x2="26"
             y2="20"
-            stroke={darkMode ? "#7c3aed" : "#a855f7"}
+            stroke={
+              theme === "golden"
+                ? darkMode
+                  ? "#f59e0b"
+                  : "#d97706"
+                : darkMode
+                  ? "#7c3aed"
+                  : "#a855f7"
+            }
             strokeWidth="1.5"
             opacity="0.6"
             className="logo-pulse"
@@ -186,6 +228,26 @@ function Logo() {
             >
               <stop offset="0%" stopColor="#3b82f6" />
               <stop offset="100%" stopColor="#7c3aed" />
+            </linearGradient>
+            <linearGradient
+              id="techGradientLightGolden"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor="#f59e0b" />
+              <stop offset="100%" stopColor="#d97706" />
+            </linearGradient>
+            <linearGradient
+              id="techGradientDarkGolden"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor="#fbbf24" />
+              <stop offset="100%" stopColor="#f59e0b" />
             </linearGradient>
           </defs>
         </svg>

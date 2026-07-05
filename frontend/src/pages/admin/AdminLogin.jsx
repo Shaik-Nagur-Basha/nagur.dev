@@ -130,7 +130,10 @@ const AdminLogin = () => {
                 >
                   <span>
                     {loading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="ml-2">Initializing...</span>
+                      </>
                     ) : (
                       <>
                         <ArrowRight className="w-4 h-4" />

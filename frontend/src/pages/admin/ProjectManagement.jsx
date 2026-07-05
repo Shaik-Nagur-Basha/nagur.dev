@@ -202,7 +202,7 @@ const ProjectManagement = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="glass-panel !bg-transparent !border-0"
+            className="!bg-transparent !border-0"
           >
             <div className="flex items-center bg-transparent justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -210,9 +210,17 @@ const ProjectManagement = () => {
                   <Layers className="w-4 h-4" />
                 </div>
                 <h2 className="text-sm font-black uppercase tracking-[0.2em]">
-                  {editingProject
-                    ? "Reconfigure Asset"
-                    : "Initialize New Asset"}
+                  {editingProject ? (
+                    <>
+                      <span className="hidden sm:inline">Reconfigure Asset</span>
+                      <span className="sm:hidden">Reconfigure</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="hidden sm:inline">Initialize New Asset</span>
+                      <span className="sm:hidden">Initialize</span>
+                    </>
+                  )}
                 </h2>
               </div>
               <button

@@ -164,7 +164,7 @@ const ProjectOrderModal = ({ isOpen, onClose }) => {
             </div>
             <button
               onClick={onClose}
-              className="absolute right-4 p-2 hover:bg-white/10 cursor-pointer rounded-xl transition-all duration-200 text-slate-400 hover:text-white group active:scale-90"
+              className="absolute right-4 p-2 hover:bg-white/5 bg-white/10 cursor-pointer rounded-xl transition-all duration-200 text-slate-400 hover:text-white group active:scale-90"
             >
               <X className="w-5 h-5 transition-transform" />
             </button>
@@ -216,7 +216,7 @@ const ProjectOrderModal = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <button
                 onClick={onClose}
-                className="flex-1 sm:flex-none px-6 py-2.5 hover:bg-white/10 cursor-pointer rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-slate-200 transition-all active:scale-95"
+                className="flex-1 sm:flex-none px-6 py-2.5 bg-white/10 hover:bg-white/5 cursor-pointer rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 hover:text-slate-100 group-hover:scale-110 transition-all"
               >
                 Cancel
               </button>

@@ -7,6 +7,18 @@ const projectSchema = new mongoose.Schema(
       required: [true, "Project title is required"],
       trim: true,
     },
+    slug: {
+      type: String,
+      required: [true, "Slug is required"],
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    shortDescription: {
+      type: String,
+      required: [true, "Short description is required"],
+      trim: true,
+    },
     description: {
       type: String,
       required: [true, "Project description is required"],
@@ -38,7 +50,7 @@ const projectSchema = new mongoose.Schema(
     },
     githubLink: {
       type: String,
-      required: [true, "GitHub link is required"],
+      default: "",
     },
     demoLink: {
       type: String,
@@ -46,7 +58,7 @@ const projectSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      required: [true, "Category is required"],
+      default: "",
       trim: true,
     },
     featured: {
@@ -88,6 +100,14 @@ const projectSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+projectSchema.pre("validate", function (next) {
+  if (!this.image && !this.video) {
+    this.invalidate("image", "Either image or video is required");
+    this.invalidate("video", "Either image or video is required");
+  }
+  next();
+});
 
 const Project = mongoose.model("Project", projectSchema);
 

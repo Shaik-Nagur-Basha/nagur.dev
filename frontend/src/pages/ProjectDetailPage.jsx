@@ -70,6 +70,8 @@ function FilmstripLayout({ gallery, darkMode }) {
     const el = containerRef.current;
     if (!el || gallery.length <= 1) return;
 
+    const isScrollable = gallery.length >= 4;
+
     // Start at scrollLeft = 0
     el.scrollLeft = 0;
 
@@ -77,12 +79,12 @@ function FilmstripLayout({ gallery, darkMode }) {
     const gap = 20; // gap-5 is 1.25rem = 20px
 
     const tick = () => {
-      if (!hovering.current) {
+      if (isScrollable && !hovering.current) {
         el.scrollLeft += SPEED;
       }
 
       // Only perform infinite loop card cycling if we aren't in the middle of a smooth scroll transition
-      if (!isSmoothScrolling.current) {
+      if (isScrollable && !isSmoothScrolling.current) {
         const maxCycles = el.children.length;
 
         // Loop rightwards (cycle all cards that went off-screen to the left)
@@ -192,28 +194,34 @@ function FilmstripLayout({ gallery, darkMode }) {
   return (
     <div className="relative">
       {/* Left depth fade */}
-      <div
-        className="absolute left-0 top-0 bottom-4 w-36 z-20 pointer-events-none"
-        style={{
-          background: darkMode
-            ? "linear-gradient(to right, rgba(3,7,18,0.95) 0%, transparent 100%)"
-            : "linear-gradient(to right, rgba(249,250,251,0.97) 0%, transparent 100%)",
-        }}
-      />
+      {gallery.length >= 4 && (
+        <div
+          className="absolute left-0 top-0 bottom-4 w-36 z-20 pointer-events-none"
+          style={{
+            background: darkMode
+              ? "linear-gradient(to right, rgba(3,7,18,0.95) 0%, transparent 100%)"
+              : "linear-gradient(to right, rgba(249,250,251,0.97) 0%, transparent 100%)",
+          }}
+        />
+      )}
       {/* Right depth fade */}
-      <div
-        className="absolute right-0 top-0 bottom-4 w-36 z-20 pointer-events-none"
-        style={{
-          background: darkMode
-            ? "linear-gradient(to left, rgba(3,7,18,0.95) 0%, transparent 100%)"
-            : "linear-gradient(to left, rgba(249,250,251,0.97) 0%, transparent 100%)",
-        }}
-      />
+      {gallery.length >= 4 && (
+        <div
+          className="absolute right-0 top-0 bottom-4 w-36 z-20 pointer-events-none"
+          style={{
+            background: darkMode
+              ? "linear-gradient(to left, rgba(3,7,18,0.95) 0%, transparent 100%)"
+              : "linear-gradient(to left, rgba(249,250,251,0.97) 0%, transparent 100%)",
+          }}
+        />
+      )}
 
       {/* Reel — overflow-x-scroll so scrollLeft works; scrollbar hidden via no-scrollbar */}
       <div
         ref={containerRef}
-        className="flex gap-5 overflow-x-scroll no-scrollbar py-8"
+        className={`flex gap-5 overflow-x-scroll no-scrollbar py-8 ${
+          gallery.length < 4 ? "justify-center" : ""
+        }`}
         onMouseEnter={() => {
           hovering.current = true;
         }}
@@ -333,7 +341,7 @@ function GalleryScrim() {
 }
 
 function ProjectDetailPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const { darkMode } = useTheme();
   const [project, setProject] = useState(null);
   const [allProjects, setAllProjects] = useState([]);
@@ -363,7 +371,7 @@ function ProjectDetailPage() {
     const fetchMainProject = async () => {
       setIsLoading(true);
       try {
-        const res = await API.get(`projects/${id}`);
+        const res = await API.get(`projects/${slug}`);
         if (active && res.data?.success) {
           setProject(res.data.data);
         }
@@ -393,14 +401,43 @@ function ProjectDetailPage() {
     return () => {
       active = false;
     };
-  }, [id]);
+  }, [slug]);
 
-  const currentIndex = allProjects.findIndex((p) => p._id === id);
+  const currentIndex = allProjects.findIndex((p) => p.slug === slug || p._id === slug);
   const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
   const nextProject =
     currentIndex < allProjects.length - 1
       ? allProjects[currentIndex + 1]
       : null;
+
+  // Prioritized 3-way matching algorithm for Explore More Projects (up to 4 items)
+  const exploreProjects = (() => {
+    if (!allProjects.length) return [];
+    
+    // 1. Exclude the current project
+    const otherProjects = allProjects.filter((p) => p.slug !== slug && p._id !== slug);
+    
+    // 2. Sort by relevance
+    return [...otherProjects].sort((a, b) => {
+      // Rule A: Category matching is top priority
+      const aMatchesCat = a.category && project?.category && a.category.toLowerCase() === project.category.toLowerCase();
+      const bMatchesCat = b.category && project?.category && b.category.toLowerCase() === project.category.toLowerCase();
+      
+      if (aMatchesCat && !bMatchesCat) return -1;
+      if (!aMatchesCat && bMatchesCat) return 1;
+      
+      // Rule B: Featured projects are second priority
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+      
+      // Rule C: Sort by defined ordering rank first, then newest creation date
+      const orderA = a.order !== undefined ? a.order : 999;
+      const orderB = b.order !== undefined ? b.order : 999;
+      if (orderA !== orderB) return orderA - orderB;
+      
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    }).slice(0, 4);
+  })();
 
   const getCategoryIcon = (category) => {
     const cat = category?.toLowerCase() || "";
@@ -486,7 +523,7 @@ function ProjectDetailPage() {
           </Link>
         </div>
       ) : (
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 relative z-10">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-20 lg:pb-24 relative z-10">
           {/* Navigation & Indicators Header Row */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full mb-3 sm:mb-8 gap-3">
             {/* Navigation Breadcrumb */}
@@ -1298,7 +1335,7 @@ function ProjectDetailPage() {
               );
 
               return (
-                <div className="mb-24">
+                <div className="mb-16">
                   {/* ── INJECTED STYLES ── */}
                   <style>{`
                 /* Rotating conic-gradient border */
@@ -1704,7 +1741,7 @@ function ProjectDetailPage() {
                                   </p>
                                   {/* Category name */}
                                   <h4
-                                    className={`font-extrabold tracking-wider leading-tight ${
+                                    className={`font-outfit font-extrabold tracking-wider leading-tight ${
                                       isHero ? "text-base" : "text-sm"
                                     } ${darkMode ? "text-white" : "text-gray-900"}`}
                                   >
@@ -1808,55 +1845,118 @@ function ProjectDetailPage() {
               );
             })()}
 
-          {/* Next/Prev Navigation */}
-          <div
-            className={`grid grid-cols-1 sm:grid-cols-2 border-t pt-12 gap-6 ${
-              darkMode ? "border-white/10" : "border-gray-200"
-            }`}
-          >
-            {prevProject ? (
-              <Link
-                to={`/projects/${prevProject._id}`}
-                className={`p-6 rounded-3xl border flex flex-col items-start gap-1 transition-all duration-300 group hover:-translate-x-1 ${
-                  darkMode
-                    ? "border-white/5 hover:border-white/10 bg-white/2 hover:bg-white/5"
-                    : "border-gray-200 hover:border-gray-300 bg-gray-50/50 hover:bg-gray-100/50"
-                }`}
-              >
-                <span className="text-[10px] font-bold text-cyan-500 uppercase tracking-widest flex items-center gap-1">
-                  <ArrowLeft size={12} /> Previous Showcase
-                </span>
-                <span
-                  className={`text-base font-bold ${darkMode ? "text-white group-hover:text-cyan-300" : "text-gray-900 group-hover:text-cyan-600"}`}
-                >
-                  {prevProject.title}
-                </span>
-              </Link>
-            ) : (
-              <div />
-            )}
+          {/* ── Explore More Projects — Cinematic Wide-Card Layout ── */}
+          <div>
 
-            {nextProject ? (
+            {/* Section Header */}
+            <div className="flex items-center gap-4 mb-10">
+              <div className={`flex-1 h-px bg-gradient-to-r ${darkMode ? "from-transparent via-cyan-500/30 to-cyan-500/60" : "from-transparent via-cyan-400/40 to-cyan-500/70"}`} />
+              <div className="flex items-center gap-2.5 px-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                <h3 className={`text-[10px] font-black font-outfit tracking-[0.3em] uppercase ${darkMode ? "text-cyan-400/80" : "text-cyan-600/80"}`}>
+                  Explore More Projects
+                </h3>
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+              </div>
+              <div className={`flex-1 h-px bg-gradient-to-l ${darkMode ? "from-transparent via-cyan-500/30 to-cyan-500/60" : "from-transparent via-cyan-400/40 to-cyan-500/70"}`} />
+            </div>
+
+            {/* Responsive Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {exploreProjects.map((item, idx) => {
+                // Responsive visibility:
+                // idx 0, 1: Always visible (1 col on mobile -> 2 rows)
+                // idx 2: Visible on md/lg (2 cols on tablet -> 2x2 grid, 3 cols on desktop -> 1x3 grid)
+                // idx 3: Visible only on md screens (4th item for tablet 2x2 grid)
+                const visibilityClass = 
+                  idx === 0 || idx === 1 ? "block" :
+                  idx === 2 ? "hidden md:block" :
+                  "hidden md:block lg:hidden";
+
+                const isEven = idx % 2 === 0;
+
+                return (
+                  <Link
+                    key={item._id || idx}
+                    to={`/projects/${item.slug || item._id}`}
+                    className={`${visibilityClass} group relative overflow-hidden rounded-2xl border transition-all duration-700 cursor-pointer block aspect-video hover:shadow-[0_12px_40px_rgba(34,211,238,0.15)]
+                      ${darkMode 
+                        ? "border-white/[0.05] hover:border-cyan-500/40 bg-slate-950/60" 
+                        : "border-gray-200 hover:border-cyan-400/50 bg-white"
+                      }`}
+                  >
+                    {/* Full-bleed background image with subtle scale + tilt transition */}
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className={`absolute inset-0 bg-gradient-to-br ${isEven ? "from-cyan-950 via-slate-900 to-indigo-950" : "from-indigo-950 via-slate-900 to-cyan-950"}`} />
+                    )}
+
+                    {/* Designer Dark Gradient Overlay (rich shadows, higher contrast for readability) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-85 group-hover:opacity-90 transition-opacity duration-500" />
+                    
+                    {/* Dynamic colored ambient light glow */}
+                    <div className="absolute inset-0 bg-radial-gradient from-cyan-500/0 via-transparent to-transparent group-hover:from-cyan-500/10 transition-all duration-700" />
+
+                    {/* Border highlight overlay */}
+                    <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5 group-hover:ring-cyan-500/30 transition-all duration-500" />
+
+                    {/* Navigation label indicator - top corner */}
+                    <div className={`absolute top-4 z-10 ${isEven ? "left-4" : "right-4"}`}>
+                      <span className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-950/60 backdrop-blur-md border border-white/10 text-[9px] font-bold tracking-[0.25em] uppercase text-cyan-400 font-outfit">
+                        {isEven && <ArrowLeft size={9} className="group-hover:-translate-x-0.5 transition-transform duration-300" />}
+                        Recommend
+                        {!isEven && <ArrowRight size={9} className="group-hover:translate-x-0.5 transition-transform duration-300" />}
+                      </span>
+                    </div>
+
+                    {/* Content - Pinned bottom */}
+                    <div className={`absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col ${isEven ? "items-start text-left" : "items-end text-right"}`}>
+                      {item.category && (
+                        <span className="inline-block text-[9px] font-bold text-cyan-400 uppercase tracking-[0.2em] mb-1.5 font-outfit">
+                          {item.category}
+                        </span>
+                      )}
+                      <h4 className="text-base md:text-lg font-bold text-white leading-snug tracking-tight font-outfit transition-colors duration-300 group-hover:text-cyan-200 line-clamp-2">
+                        {item.title}
+                      </h4>
+                      
+                      {/* Micro-interaction: 'View Case' prompt slide-up */}
+                      <span className={`flex items-center gap-1 text-[10px] font-semibold text-cyan-400 font-outfit mt-2 opacity-0 translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300`}>
+                        View Project <ArrowRight size={11} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* ── Centered "View All Projects" CTA Button ── */}
+            <div className="flex justify-center mt-12">
               <Link
-                to={`/projects/${nextProject._id}`}
-                className={`p-6 rounded-3xl border flex flex-col items-end text-right gap-1 transition-all duration-300 group hover:translate-x-1 ${
-                  darkMode
-                    ? "border-white/5 hover:border-white/10 bg-white/2 hover:bg-white/5"
-                    : "border-gray-200 hover:border-gray-300 bg-gray-50/50 hover:bg-gray-100/50"
-                }`}
+                to="/projects"
+                className={`group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-full border
+                  text-xs font-bold tracking-[0.25em] uppercase font-outfit transition-all duration-500 overflow-hidden
+                  ${darkMode
+                    ? "border-cyan-500/30 hover:border-cyan-400 bg-slate-950/90 text-cyan-400 hover:text-white"
+                    : "border-cyan-600/25 hover:border-cyan-600 bg-white text-cyan-600 hover:text-cyan-800"
+                  }
+                  hover:shadow-[0_0_35px_rgba(34,211,238,0.25)]`}
               >
-                <span className="text-[10px] font-bold text-cyan-500 uppercase tracking-widest flex items-center gap-1">
-                  Next Showcase <ArrowRight size={12} />
-                </span>
-                <span
-                  className={`text-base font-bold ${darkMode ? "text-white group-hover:text-cyan-300" : "text-gray-900 group-hover:text-cyan-600"}`}
-                >
-                  {nextProject.title}
-                </span>
+                {/* Glowing neon backdrop hover blob */}
+                <span className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Icon transition */}
+                <Layers size={13} className="relative z-10 transition-transform duration-500 group-hover:scale-110" />
+                <span className="relative z-10">View All Projects</span>
+                <ArrowRight size={12} className="relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
-            ) : (
-              <div />
-            )}
+            </div>
+
           </div>
         </main>
       )}

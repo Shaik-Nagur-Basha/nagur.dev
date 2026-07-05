@@ -359,7 +359,7 @@ function ProjectsPage() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/projects/${project._id}`);
+                                navigate(`/projects/${project.slug || project._id}`);
                               }}
                               className={`group relative px-2 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium ${
                                 darkMode
@@ -421,7 +421,7 @@ function ProjectsPage() {
                           className="flex items-center cursor-pointer pl-3 pb-0.5 gap-0.5 hover:gap-1 text-cyan-500 font-bold text-[10px] tracking-widest"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/projects/${project._id}`);
+                            navigate(`/projects/${project.slug || project._id}`);
                           }}
                         >
                           EXPLORE PROJECT
