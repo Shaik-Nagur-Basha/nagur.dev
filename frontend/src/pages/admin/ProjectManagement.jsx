@@ -36,8 +36,8 @@ const ProjectManagement = () => {
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = (-(y - centerY) / centerY) * 8;
-    const rotateY = ((x - centerX) / centerX) * 8;
+    const rotateX = ((y - centerY) / centerY) * 8;
+    const rotateY = (-(x - centerX) / centerX) * 8;
     card.style.setProperty("--mouse-x", `${x}px`);
     card.style.setProperty("--mouse-y", `${y}px`);
     card.style.setProperty("--rotate-x", `${rotateX}deg`);
@@ -138,6 +138,37 @@ const ProjectManagement = () => {
     .project-card-inner::after { content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; animation: rotate-gradient 4s linear infinite; opacity: 0; transition: opacity .3s; }
     .project-card-grid:hover .project-card-inner::after { opacity: 1; }
     .project-card-grid:hover .project-card-inner { transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y));  box-shadow: 0 14px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.55);}
+
+    /* Badge shimmer sweep reference from ts-pill */
+    @keyframes ts-badge-shine {
+      0%   { background-position: -200% center; }
+      100% { background-position: 300% center; }
+    }
+
+    .project-card-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        var(--ts-shine-color, rgba(255, 255, 255, 0.08)) 50%,
+        transparent 80%
+      );
+      background-size: 200% 100%;
+      background-repeat: no-repeat;
+      background-position: -200% center;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 25;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    .project-card-grid:hover .project-card-shine {
+      opacity: 1;
+      animation: ts-badge-shine 0.7s ease-in 2 forwards;
+    }
+
     .tech-badge { transform: translateZ(20px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
   `;
 
@@ -255,8 +286,13 @@ const ProjectManagement = () => {
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
                 className="project-card-grid relative p-2 rounded-2xl overflow-hidden group h-80 cursor-pointer"
+                style={{
+                  "--ts-shine-color": project.featured ? "rgba(245, 158, 11, 0.18)" : "rgba(6, 182, 212, 0.18)"
+                }}
               >
                 <div className="project-card-inner shadow-md rounded-2xl overflow-hidden flex flex-col relative h-full">
+                  {/* Extra shimmer sweep effect on hover */}
+                  <div className="project-card-shine" />
                   <div className="absolute inset-0 overflow-hidden pointer-events-none z-20" />
 
                   {project.mediaType === "video" || project.video ? (

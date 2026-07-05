@@ -1,10 +1,20 @@
-import { Code2, ExternalLink, Github, MoveRightIcon, Plus } from "lucide-react";
+import {
+  Code2,
+  ExternalLink,
+  Github,
+  MoveRightIcon,
+  Plus,
+  Sparkles,
+  ArrowUpRight,
+} from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "./SkeletonLoader";
 import API from "../api/axios";
 
 function Projects() {
+  const navigate = useNavigate();
   const { darkMode } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
@@ -41,7 +51,6 @@ function Projects() {
     return 3;
   };
 
-
   const projectsPerPage = getProjectsPerPage(windowWidth);
 
   // Detect window resize
@@ -55,14 +64,14 @@ function Projects() {
   }, []);
 
   const projectCardStyle = `
-    @property --gradient-angle {
+    @property --ts-angle {
       syntax: "<angle>";
       initial-value: 0deg;
       inherits: false;
     }
 
-    @keyframes rotate-gradient {
-      to { --gradient-angle: 360deg; }
+    @keyframes ts-spin {
+      to { --ts-angle: 360deg; }
     }
 
 
@@ -101,16 +110,28 @@ function Projects() {
       pointer-events: none;
     }
 
-    /* Rainbow Border Shader */
+    /* Rotating Conic Gradient Border Hover Effect */
     .project-card-inner::after {
       content: "";
       position: absolute;
-      inset: -1px;
-      z-index: -1;
+      inset: -2px;
       border-radius: inherit;
-      animation: rotate-gradient 4s linear infinite;
+      background: conic-gradient(
+        from var(--ts-angle),
+        transparent 55%,
+        var(--ts-c1, rgba(6, 182, 212, 0.8)) 75%,
+        var(--ts-c2, rgba(139, 92, 246, 0.8)) 88%,
+        transparent 100%
+      );
+      animation: ts-spin 5s linear infinite;
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+      padding: 2px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
     }
 
     .project-gallery:hover .project-card-inner::after {
@@ -119,6 +140,36 @@ function Projects() {
 
     .project-gallery:hover .project-card-inner {
       transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y));
+    }
+
+    /* Badge shimmer sweep reference from ts-pill */
+    @keyframes ts-badge-shine {
+      0%   { background-position: -200% center; }
+      100% { background-position: 300% center; }
+    }
+
+    .project-card-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        var(--ts-shine-color, rgba(255, 255, 255, 0.08)) 50%,
+        transparent 80%
+      );
+      background-size: 200% 100%;
+      background-repeat: no-repeat;
+      background-position: -200% center;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 25;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    .project-gallery:hover .project-card-shine {
+      opacity: 1;
+      animation: ts-badge-shine 0.7s ease-in 2 forwards;
     }
 
     /* Floating Tags */
@@ -153,8 +204,8 @@ function Projects() {
     // Calculate rotation (max 10 degrees)
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = (-(y - centerY) / centerY) * 10;
-    const rotateY = ((x - centerX) / centerX) * 10;
+    const rotateX = ((y - centerY) / centerY) * 10;
+    const rotateY = (-(x - centerX) / centerX) * 10;
 
     card.style.setProperty("--mouse-x", `${x}px`);
     card.style.setProperty("--mouse-y", `${y}px`);
@@ -192,7 +243,6 @@ function Projects() {
 
     setExpandedId(expandedId === projectId ? null : projectId);
   };
-
 
   // Pagination - advance by 1 project at a time
   const totalSteps = Math.max(0, projects.length - projectsPerPage) + 1;
@@ -325,156 +375,250 @@ function Projects() {
                     } * (100% / ${projectsPerPage})))`,
                   }}
                 >
-                  {projects.map((project) => (
-                    <div
-                      key={project._id}
-                      onMouseMove={handleMouseMove}
-                      onMouseLeave={handleMouseLeave}
-                      className={`project-gallery max-sm:scale-x-100 2xl:scale-x-90 max-2xl:scale-x-75 max-xl:scale-x-65 max-lg:scale-x-50 max-md:scale-x-65 relative h-60 rounded-3xl aspect-video group overflow-hidden isolate z-0`}
-                      style={{
-                        flex: `0 0 calc(100% / ${projectsPerPage})`,
-                      }}
-                    >
-                      <div className="project-card-inner rounded-3xl overflow-hidden shadow-2xl flex flex-col relative">
-                        {/* Ripple Container */}
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none z-25">
-                          {ripples[`${project._id}`] &&
-                            Object.entries(ripples)
-                              .filter(([key]) =>
-                                key.startsWith(`${project._id}-`),
-                              )
-                              .map(([key, ripple]) => (
-                                <div
-                                  key={key}
-                                  className="ripple"
-                                  style={{
-                                    left: `${ripple.x}px`,
-                                    top: `${ripple.y}px`,
-                                    width: `${ripple.size}px`,
-                                    height: `${ripple.size}px`,
-                                    marginLeft: `-${ripple.size / 2}px`,
-                                    marginTop: `-${ripple.size / 2}px`,
-                                  }}
-                                />
-                              ))}
-                        </div>
-
-                        {/* Video/Image Background */}
-                        {project.mediaType === "video" ? (
-                          <video
-                            className="absolute inset-0 w-full h-full object-fill"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          >
-                            <source src={project.video} type="video/mp4" />
-                          </video>
-                        ) : (
-                          <img 
-                            src={project.image} 
-                            alt={project.title}
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
-                        )}
-
-                        {/* Overlay for light mode styling */}
-                        <div
-                          className={`absolute inset-0 z-10 transition-opacity duration-300 ${
-                            expandedId === project._id
-                              ? darkMode
-                                ? "bg-black/80"
-                                : "bg-black/60"
-                              : darkMode
-                                ? ""
-                                : ""
-                          }`}
-                        />
-
-                        {/* Content Area */}
-                        <div
-                          className={`relative z-20 transition-all duration-500 flex flex-col ${
-                            expandedId === project._id
-                              ? "h-full p-6 backdrop-blur-md"
-                              : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-1 bg-black/40 backdrop-blur-xs"
-                          }`}
-                          onClick={(e) => handleClick(e, project._id)}
-                        >
-                          <h3
-                            className={`text-lg tracking-wide font-black italic transition-colors duration-300 ${expandedId === project._id ? "text-cyan-400 mb-3" : "text-white mb-1"}`}
-                          >
-                            {project.title}
-                          </h3>
-
-                          {expandedId === project._id ? (
-                            <div className="flex flex-col h-full space-y-4 animate-in fade-in zoom-in-95 duration-300">
-                              <p className="text-gray-300 text-sm font-medium">
-                                {project.description}
-                              </p>
-
-                              <div className="flex flex-wrap gap-2 pt-2">
-                                {project.skills?.map((tag, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="tech-badge px-3 py-1 bg-white/10 text-cyan-400 rounded-full text-[10px] font-bold border border-cyan-400/30"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-
-                              <div className="flex gap-2.5 mt-auto">
-                                <a
-                                  href={project.demoLink}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-medium ${
-                                    darkMode
-                                      ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
-                                      : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
-                                  }`}
-                                  title="View Live Demo"
-                                >
-                                  <ExternalLink
-                                    size={16}
-                                    className="transition-all duration-300 group-hover:scale-110"
-                                  />
-                                  <span className="hidden sm:inline">DEMO</span>
-                                </a>
-                                <a
-                                  href={project.githubLink}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={`group relative px-3 py-2 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1.5 text-xs font-mono font-medium ${
-                                    darkMode
-                                      ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
-                                      : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
-                                  }`}
-                                  title="View Code"
-                                >
-                                  <Github
-                                    size={16}
-                                    className="transition-all duration-300 group-hover:scale-110"
-                                  />
-                                  <span className="hidden sm:inline">
-                                    &lt;/&gt;
-                                  </span>
-                                </a>
-                              </div>
+                  {projects.map((project) => {
+                    const c1 = project.featured ? "#f59e0b" : "#06b6d4";
+                    const c2 = project.featured ? "#ec4899" : "#3b82f6";
+                    return (
+                      <div
+                        key={project._id}
+                        onMouseMove={handleMouseMove}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={() =>
+                          navigate(`/projects/${project.slug || project._id}`)
+                        }
+                        className={`project-gallery max-sm:scale-x-100 2xl:scale-x-90 max-2xl:scale-x-75 max-xl:scale-x-65 max-lg:scale-x-50 max-md:scale-x-65 relative h-60 rounded-none aspect-video group isolate z-0 cursor-pointer`}
+                        style={{
+                          flex: `0 0 calc(100% / ${projectsPerPage})`,
+                          "--ts-c1": c1,
+                          "--ts-c2": c2,
+                          "--ts-shine-color": project.featured ? "rgba(245, 158, 11, 0.18)" : "rgba(6, 182, 212, 0.18)"
+                        }}
+                      >
+                        <div className="project-card-inner rounded-none shadow-2xl flex flex-col relative z-10">
+                          {/* Extra shimmer sweep effect on hover */}
+                          <div className="project-card-shine" />
+                           {/* Glassy Featured Hover Badge (Featured projects only, hidden when expanded) */}
+                           {project.featured && expandedId !== project._id && (
+                             <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
+                               <Sparkles size={8} className="animate-pulse text-neutral-950 shrink-0" />
+                               <span>FEATURED</span>
+                             </div>
+                           )}
+                           {/* Glassy Category Hover Badge (Hidden when expanded) */}
+                           {project.category && expandedId !== project._id && (
+                             <div
+                               className={`absolute top-0 left-0 z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-0 group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
+                                 project.featured
+                                   ? "border-amber-500/40 text-amber-300"
+                                   : "border-cyan-500/40 text-cyan-300"
+                               }`}
+                             >
+                               {project.category}
+                             </div>
+                           )}
+                          {/* Media Wrapper (handles clipping for backgrounds & overlays) */}
+                          <div className="absolute inset-0 rounded-none overflow-hidden z-0">
+                            {/* Ripple Container */}
+                            <div className="absolute inset-0 overflow-hidden pointer-events-none z-25">
+                              {ripples[`${project._id}`] &&
+                                Object.entries(ripples)
+                                  .filter(([key]) =>
+                                    key.startsWith(`${project._id}-`),
+                                  )
+                                  .map(([key, ripple]) => (
+                                    <div
+                                      key={key}
+                                      className="ripple"
+                                      style={{
+                                        left: `${ripple.x}px`,
+                                        top: `${ripple.y}px`,
+                                        width: `${ripple.size}px`,
+                                        height: `${ripple.size}px`,
+                                        marginLeft: `-${ripple.size / 2}px`,
+                                        marginTop: `-${ripple.size / 2}px`,
+                                      }}
+                                    />
+                                  ))}
                             </div>
-                          ) : (
+
+                            {/* Video/Image Background */}
+                            {project.mediaType === "video" ? (
+                              <video
+                                className="absolute inset-0 w-full h-full object-fill"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                              >
+                                <source src={project.video} type="video/mp4" />
+                              </video>
+                            ) : (
+                              <img
+                                src={project.image}
+                                alt={project.title}
+                                className="absolute inset-0 w-full h-full object-cover"
+                              />
+                            )}
+
+                            {/* Overlay for light mode styling */}
                             <div
-                              className="flex items-center cursor-pointer pl-3 pb-0.5 gap-0.5 hover:gap-1 text-cyan-500 font-bold text-[10px] tracking-widest"
-                              onClick={(e) => handleClick(e, project._id)}
-                            >
-                              EXPLORE PROJECT
-                              <MoveRightIcon size={16} />
+                              className={`absolute inset-0 z-10 transition-opacity duration-300 ${
+                                expandedId === project._id
+                                  ? darkMode
+                                    ? "bg-black/80 backdrop-blur-md"
+                                    : "bg-black/60 backdrop-blur-md"
+                                  : ""
+                              }`}
+                            />
+                          </div>
+
+                          {/* Content Area */}
+                          <div
+                            className={`relative z-20 transition-all duration-500 flex flex-col ${
+                              expandedId === project._id
+                                ? "h-full p-6"
+                                : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-2 bg-black/50 backdrop-blur-xs"
+                            }`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleClick(e, project._id);
+                            }}
+                          >
+                            <div className="flex justify-between items-center w-full pr-3 mb-1">
+                              <h3
+                                className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 ${
+                                  project.featured
+                                    ? "text-amber-400"
+                                    : "text-cyan-400"
+                                }`}
+                              >
+                                {project.title}
+                              </h3>
+                              {expandedId !== project._id && (
+                                <MoveRightIcon
+                                  size={16}
+                                  className={`transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
+                                    project.featured
+                                      ? "text-amber-400"
+                                      : "text-cyan-400"
+                                  }`}
+                                />
+                              )}
                             </div>
-                          )}
+
+                            {expandedId === project._id ? (
+                              <div className="flex flex-col h-full space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                <p className="text-slate-300 dark:text-slate-300 font-normal font-sans text-xs tracking-normal line-clamp-4 leading-relaxed">
+                                  {project.description}
+                                </p>
+
+                                {/* Tags (Only 4 skills) */}
+                                <div className="flex flex-wrap gap-2 pt-2">
+                                  {project.skills
+                                    ?.slice(0, 4)
+                                    .map((tag, idx) => (
+                                      <span
+                                        key={idx}
+                                        className={`tech-badge px-2.5 py-0.5 border border-dashed rounded text-[9px] font-mono tracking-wider transition-all duration-300 ${
+                                          project.featured
+                                            ? "text-amber-400 border-amber-500/40 hover:border-amber-300 hover:bg-amber-400/10"
+                                            : "text-cyan-400 border-cyan-500/40 hover:border-cyan-300 hover:bg-cyan-400/10"
+                                        }`}
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                </div>
+
+                                {/* Buttons */}
+                                <div className="flex justify-between items-center mt-auto w-full">
+                                  <div className="flex gap-2">
+                                    {project.demoLink && (
+                                      <a
+                                        href={project.demoLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={`group relative px-2.5 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium ${
+                                          project.featured
+                                            ? darkMode
+                                              ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
+                                              : "backdrop-blur-md bg-amber-400/15 border border-amber-400/40 hover:border-amber-300/70 hover:-translate-y-0.5 drop-shadow-sm text-amber-600 hover:text-amber-500"
+                                            : darkMode
+                                              ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                                              : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
+                                        }`}
+                                        title="View Live Demo"
+                                      >
+                                        <ExternalLink
+                                          size={12}
+                                          className="transition-all duration-300 group-hover:scale-110"
+                                        />
+                                        <span>DEMO</span>
+                                      </a>
+                                    )}
+                                    {project.githubLink && (
+                                      <a
+                                        href={project.githubLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={`group relative px-2.5 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-mono font-medium ${
+                                          project.featured
+                                            ? darkMode
+                                              ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
+                                              : "backdrop-blur-md bg-amber-400/15 border border-amber-400/40 hover:border-amber-300/70 hover:-translate-y-0.5 drop-shadow-sm text-amber-600 hover:text-amber-500"
+                                            : darkMode
+                                              ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                                              : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
+                                        }`}
+                                        title="View Code"
+                                      >
+                                        <Github
+                                          size={12}
+                                          className="transition-all duration-300 group-hover:scale-110"
+                                        />
+                                        <span>CODE</span>
+                                      </a>
+                                    )}
+                                  </div>
+
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(
+                                        `/projects/${project.slug || project._id}`,
+                                      );
+                                    }}
+                                    className={`group relative px-2.5 py-1.5 rounded-lg transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
+                                      project.featured
+                                        ? darkMode
+                                          ? "backdrop-blur-md bg-amber-500/15 border border-amber-500/30 hover:border-amber-400/60 hover:-translate-y-0.5 drop-shadow-sm text-amber-300 hover:text-amber-200"
+                                          : "backdrop-blur-md bg-amber-400/15 border border-amber-400/40 hover:border-amber-300/70 hover:-translate-y-0.5 drop-shadow-sm text-amber-600 hover:text-amber-500"
+                                        : darkMode
+                                          ? "backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:-translate-y-0.5 drop-shadow-sm text-cyan-300 hover:text-cyan-200"
+                                          : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
+                                    }`}
+                                    title="View Full Project Details"
+                                  >
+                                    <span>MORE INFO</span>
+                                    <ArrowUpRight
+                                      size={12}
+                                      className="transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                    />
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug">
+                                {project.description}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

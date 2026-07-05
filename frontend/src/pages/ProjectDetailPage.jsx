@@ -496,6 +496,13 @@ function ProjectDetailPage() {
     },
   ];
 
+  const videoC1 = project?.featured ? "#f59e0b" : "#06b6d4";
+  const videoC2 = project?.featured ? "#f97316" : (darkMode ? "#8b5cf6" : "#7c3aed");
+  const videoC3 = project?.featured ? "#ec4899" : (darkMode ? "#ec4899" : "#db2777");
+  const glowC1 = project?.featured ? "0 0 4px 2px rgba(245,158,11,0.4)" : "0 0 4px 2px rgba(6,182,212,0.4)";
+  const glowC2 = project?.featured ? "0 0 4px 2px rgba(249,115,22,0.4)" : (darkMode ? "0 0 4px 2px rgba(139,92,246,0.4)" : "0 0 4px 2px rgba(124,58,237,0.4)");
+  const glowC3 = project?.featured ? "0 0 4px 2px rgba(236,72,153,0.4)" : (darkMode ? "0 0 4px 2px rgba(236,72,153,0.4)" : "0 0 4px 2px rgba(219,39,119,0.4)");
+
   return (
     <div
       className={`min-h-screen relative overflow-hidden ${
@@ -650,6 +657,11 @@ function ProjectDetailPage() {
               {/* Ultra-modern rotating aurora border wrapper */}
               <div
                 className={`aspect-video w-full ${darkMode ? "video-card-dark" : "video-card-light"}`}
+                style={{
+                  "--video-c1": videoC1,
+                  "--video-c2": videoC2,
+                  "--video-c3": videoC3,
+                }}
               >
                 {/* Glowing corner dot accents */}
                 <span
@@ -657,8 +669,8 @@ function ProjectDetailPage() {
                   style={{
                     top: "-3px",
                     left: "-3px",
-                    background: darkMode ? "#06b6d4" : "#06b6d4",
-                    boxShadow: "0 0 4px 2px rgba(6,182,212,0.4)",
+                    background: videoC1,
+                    boxShadow: glowC1,
                   }}
                 />
                 <span
@@ -666,10 +678,8 @@ function ProjectDetailPage() {
                   style={{
                     top: "-3px",
                     right: "-3px",
-                    background: darkMode ? "#8b5cf6" : "#7c3aed",
-                    boxShadow: darkMode
-                      ? "0 0 4px 2px rgba(139,92,246,0.4)"
-                      : "0 0 4px 2px rgba(124,58,237,0.4)",
+                    background: videoC2,
+                    boxShadow: glowC2,
                   }}
                 />
                 <span
@@ -677,10 +687,8 @@ function ProjectDetailPage() {
                   style={{
                     bottom: "-3px",
                     left: "-3px",
-                    background: darkMode ? "#ec4899" : "#db2777",
-                    boxShadow: darkMode
-                      ? "0 0 4px 2px rgba(236,72,153,0.4)"
-                      : "0 0 4px 2px rgba(219,39,119,0.4)",
+                    background: videoC3,
+                    boxShadow: glowC3,
                   }}
                 />
                 <span
@@ -688,8 +696,8 @@ function ProjectDetailPage() {
                   style={{
                     bottom: "-3px",
                     right: "-3px",
-                    background: darkMode ? "#06b6d4" : "#06b6d4",
-                    boxShadow: "0 0 4px 2px rgba(6,182,212,0.4)",
+                    background: videoC1,
+                    boxShadow: glowC1,
                   }}
                 />
 

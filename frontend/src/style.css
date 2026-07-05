@@ -655,11 +655,11 @@
   animation: video-border-spin 6s linear infinite;
   background: conic-gradient(
     from var(--video-border-angle),
-    #06b6d4 0%,
-    #8b5cf6 25%,
-    #ec4899 50%,
-    #8b5cf6 75%,
-    #06b6d4 100%
+    var(--video-c1, #06b6d4) 0%,
+    var(--video-c2, #8b5cf6) 25%,
+    var(--video-c3, #ec4899) 50%,
+    var(--video-c2, #8b5cf6) 75%,
+    var(--video-c1, #06b6d4) 100%
   );
   /* Neon glow layers */
   box-shadow:
@@ -705,11 +705,11 @@
   animation: video-border-spin 8s linear infinite;
   background: conic-gradient(
     from var(--video-border-angle),
-    #06b6d4 0%,
-    #7c3aed 30%,
-    #db2777 55%,
-    #7c3aed 80%,
-    #06b6d4 100%
+    var(--video-c1, #06b6d4) 0%,
+    var(--video-c2, #7c3aed) 30%,
+    var(--video-c3, #db2777) 55%,
+    var(--video-c2, #7c3aed) 80%,
+    var(--video-c1, #06b6d4) 100%
   );
   box-shadow:
     0 0 8px 1px rgba(6, 182, 212, 0.12),
