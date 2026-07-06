@@ -33,6 +33,21 @@ const profileSchema = new mongoose.Schema(
       type: String,
       default: "Available for projects",
     },
+    footerDescription: {
+      type: String,
+    },
+    footerProjects: [
+      {
+        label: {
+          type: String,
+          required: true,
+        },
+        link: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

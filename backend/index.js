@@ -6,6 +6,10 @@ import mongoose from "mongoose";
 import helmet from "helmet";
 import path from "path";
 import { fileURLToPath } from "url";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
+import rateLimit from "express-rate-limit";
 
 // Route files
 import authRoutes from "./routes/authRoutes.js";
@@ -47,9 +51,38 @@ app.use(
     crossOriginResourcePolicy: { policy: "cross-origin" },
   }),
 );
-// app.use(mongoSanitize()); // Prevent NoSQL injection
-// app.use(xss()); // Prevent XSS attacks
-// app.use(hpp()); // Prevent HTTP Parameter Pollution
+
+// Workaround for express-mongo-sanitize compatibility with Express 5
+app.use((req, res, next) => {
+  Object.defineProperty(req, 'query', {
+    value: { ...req.query },
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  next();
+});
+
+// Prevent NoSQL injection
+app.use(mongoSanitize());
+
+// Prevent XSS attacks
+app.use(xss());
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
+
+// API Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === "production" ? 300 : 10000, // Limit each IP to 300 requests (production) or 10000 (development) per 15 minutes
+  message: {
+    error: "Too many requests from this IP, please try again after 15 minutes",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/", limiter);
 
 // CORS Configuration
 const allowedOrigins = [

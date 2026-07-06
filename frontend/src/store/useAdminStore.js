@@ -13,7 +13,7 @@ export const useAdminStore = create((set, get) => ({
   fetchProjects: async (params = {}) => {
     set({ loading: true });
     try {
-      const mergedParams = { status: "all", ...params };
+      const mergedParams = { status: "all", isAdmin: "true", ...params };
       const { data } = await API.get("projects", { params: mergedParams });
       set({
         projects: data.data,
@@ -117,5 +117,4 @@ export const useAdminStore = create((set, get) => ({
       return { success: false, error: error.response?.data?.error };
     }
   },
-
 }));

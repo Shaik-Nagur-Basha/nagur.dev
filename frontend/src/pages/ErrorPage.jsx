@@ -39,6 +39,10 @@ const ErrorPage = () => {
     .error-page-container {
       background-color: ${darkMode ? "#020617" : "#f8fafc"};
       color: ${darkMode ? "#e2e8f0" : "#0f172a"};
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .error-page-container::before {

@@ -14,6 +14,17 @@ function Logo({ theme = "default" }) {
     `;
   };
 
+  const getThemeHoverGlow = () => {
+    if (theme === "golden") {
+      return `
+        filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 12px rgba(245, 158, 11, 0.8));
+      `;
+    }
+    return `
+      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.95)) drop-shadow(0 0 12px rgba(124, 58, 237, 0.8));
+    `;
+  };
+
   const getThemeGlowAnimEnd = () => {
     if (theme === "golden") {
       return `
@@ -42,7 +53,15 @@ function Logo({ theme = "default" }) {
       0%, 100% { opacity: 0.6; }
       50% { opacity: 1; }
     }
-    .logo-container { animation: logoFloat 3s ease-in-out infinite; }
+    .logo-container { 
+      animation: logoFloat 3s ease-in-out infinite; 
+      transition: filter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .logo-container:hover,
+    .group:hover .logo-container {
+      animation-play-state: paused;
+      ${getThemeHoverGlow()}
+    }
     .logo-glow { animation: logoGlow 3s ease-in-out infinite; }
     .logo-rotate { animation: rotateOuter 12s linear infinite; transform-origin: center; }
     .logo-pulse { animation: rotatePulse 2.5s ease-in-out infinite; }

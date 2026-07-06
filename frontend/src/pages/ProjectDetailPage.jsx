@@ -352,6 +352,22 @@ function ProjectDetailPage() {
   const [galleryLayout, setGalleryLayout] = useState("grid"); // "grid" | "bento" | "filmstrip"
   const [expandedExploreId, setExpandedExploreId] = useState(null);
 
+  useEffect(() => {
+    const handleViewportResize = () => {
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth < 467 &&
+        expandedExploreId
+      ) {
+        setExpandedExploreId(null);
+      }
+    };
+
+    handleViewportResize();
+    window.addEventListener("resize", handleViewportResize);
+    return () => window.removeEventListener("resize", handleViewportResize);
+  }, [expandedExploreId]);
+
   const handleMouseMove = (e) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -581,7 +597,9 @@ function ProjectDetailPage() {
     };
   }, [slug]);
 
-  const currentIndex = allProjects.findIndex((p) => p.slug === slug || p._id === slug);
+  const currentIndex = allProjects.findIndex(
+    (p) => p.slug === slug || p._id === slug,
+  );
   const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
   const nextProject =
     currentIndex < allProjects.length - 1
@@ -591,30 +609,40 @@ function ProjectDetailPage() {
   // Prioritized 3-way matching algorithm for Explore More Projects (up to 4 items)
   const exploreProjects = (() => {
     if (!allProjects.length) return [];
-    
+
     // 1. Exclude the current project
-    const otherProjects = allProjects.filter((p) => p.slug !== slug && p._id !== slug);
-    
+    const otherProjects = allProjects.filter(
+      (p) => p.slug !== slug && p._id !== slug,
+    );
+
     // 2. Sort by relevance
-    return [...otherProjects].sort((a, b) => {
-      // Rule A: Category matching is top priority
-      const aMatchesCat = a.category && project?.category && a.category.toLowerCase() === project.category.toLowerCase();
-      const bMatchesCat = b.category && project?.category && b.category.toLowerCase() === project.category.toLowerCase();
-      
-      if (aMatchesCat && !bMatchesCat) return -1;
-      if (!aMatchesCat && bMatchesCat) return 1;
-      
-      // Rule B: Featured projects are second priority
-      if (a.isFeatured && !b.isFeatured) return -1;
-      if (!a.isFeatured && b.isFeatured) return 1;
-      
-      // Rule C: Sort by defined ordering rank first, then newest creation date
-      const orderA = a.order !== undefined ? a.order : 999;
-      const orderB = b.order !== undefined ? b.order : 999;
-      if (orderA !== orderB) return orderA - orderB;
-      
-      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-    }).slice(0, 4);
+    return [...otherProjects]
+      .sort((a, b) => {
+        // Rule A: Category matching is top priority
+        const aMatchesCat =
+          a.category &&
+          project?.category &&
+          a.category.toLowerCase() === project.category.toLowerCase();
+        const bMatchesCat =
+          b.category &&
+          project?.category &&
+          b.category.toLowerCase() === project.category.toLowerCase();
+
+        if (aMatchesCat && !bMatchesCat) return -1;
+        if (!aMatchesCat && bMatchesCat) return 1;
+
+        // Rule B: Featured projects are second priority
+        if (a.isFeatured && !b.isFeatured) return -1;
+        if (!a.isFeatured && b.isFeatured) return 1;
+
+        // Rule C: Sort by defined ordering rank first, then newest creation date
+        const orderA = a.order !== undefined ? a.order : 999;
+        const orderB = b.order !== undefined ? b.order : 999;
+        if (orderA !== orderB) return orderA - orderB;
+
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      })
+      .slice(0, 4);
   })();
 
   const getCategoryIcon = (category) => {
@@ -675,15 +703,33 @@ function ProjectDetailPage() {
   ];
 
   const videoC1 = project?.featured ? "#f59e0b" : "#06b6d4";
-  const videoC2 = project?.featured ? "#f97316" : (darkMode ? "#8b5cf6" : "#7c3aed");
-  const videoC3 = project?.featured ? "#ec4899" : (darkMode ? "#ec4899" : "#db2777");
-  const glowC1 = project?.featured ? "0 0 4px 2px rgba(245,158,11,0.4)" : "0 0 4px 2px rgba(6,182,212,0.4)";
-  const glowC2 = project?.featured ? "0 0 4px 2px rgba(249,115,22,0.4)" : (darkMode ? "0 0 4px 2px rgba(139,92,246,0.4)" : "0 0 4px 2px rgba(124,58,237,0.4)");
-  const glowC3 = project?.featured ? "0 0 4px 2px rgba(236,72,153,0.4)" : (darkMode ? "0 0 4px 2px rgba(236,72,153,0.4)" : "0 0 4px 2px rgba(219,39,119,0.4)");
+  const videoC2 = project?.featured
+    ? "#f97316"
+    : darkMode
+      ? "#8b5cf6"
+      : "#7c3aed";
+  const videoC3 = project?.featured
+    ? "#ec4899"
+    : darkMode
+      ? "#ec4899"
+      : "#db2777";
+  const glowC1 = project?.featured
+    ? "0 0 4px 2px rgba(245,158,11,0.4)"
+    : "0 0 4px 2px rgba(6,182,212,0.4)";
+  const glowC2 = project?.featured
+    ? "0 0 4px 2px rgba(249,115,22,0.4)"
+    : darkMode
+      ? "0 0 4px 2px rgba(139,92,246,0.4)"
+      : "0 0 4px 2px rgba(124,58,237,0.4)";
+  const glowC3 = project?.featured
+    ? "0 0 4px 2px rgba(236,72,153,0.4)"
+    : darkMode
+      ? "0 0 4px 2px rgba(236,72,153,0.4)"
+      : "0 0 4px 2px rgba(219,39,119,0.4)";
 
   return (
     <div
-      className={`min-h-screen relative overflow-hidden ${
+      className={`min-h-screen flex flex-col justify-between relative overflow-hidden ${
         darkMode
           ? "dark bg-linear-to-br from-gray-950 via-gray-900 to-purple-950 text-gray-100"
           : "bg-linear-to-br from-blue-50 via-white to-purple-50 text-gray-800"
@@ -2033,18 +2079,23 @@ function ProjectDetailPage() {
 
           {/* ── Explore More Projects — Cinematic Wide-Card Layout ── */}
           <div>
-
             {/* Section Header */}
             <div className="flex items-center gap-4 mb-10">
-              <div className={`flex-1 h-px bg-gradient-to-r ${darkMode ? "from-transparent via-cyan-500/30 to-cyan-500/60" : "from-transparent via-cyan-400/40 to-cyan-500/70"}`} />
+              <div
+                className={`flex-1 h-px bg-gradient-to-r ${darkMode ? "from-transparent via-cyan-500/30 to-cyan-500/60" : "from-transparent via-cyan-400/40 to-cyan-500/70"}`}
+              />
               <div className="flex items-center gap-2.5 px-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                <h3 className={`text-[10px] font-black font-outfit tracking-[0.3em] uppercase ${darkMode ? "text-cyan-400/80" : "text-cyan-600/80"}`}>
+                <h3
+                  className={`text-[10px] font-black font-outfit tracking-[0.3em] uppercase ${darkMode ? "text-cyan-400/80" : "text-cyan-600/80"}`}
+                >
                   Explore More Projects
                 </h3>
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
               </div>
-              <div className={`flex-1 h-px bg-gradient-to-l ${darkMode ? "from-transparent via-cyan-500/30 to-cyan-500/60" : "from-transparent via-cyan-400/40 to-cyan-500/70"}`} />
+              <div
+                className={`flex-1 h-px bg-gradient-to-l ${darkMode ? "from-transparent via-cyan-500/30 to-cyan-500/60" : "from-transparent via-cyan-400/40 to-cyan-500/70"}`}
+              />
             </div>
             <style>{projectCardStyle}</style>
 
@@ -2055,22 +2106,28 @@ function ProjectDetailPage() {
                 // idx 0, 1: Always visible (1 col on mobile -> 2 rows)
                 // idx 2: Visible on md/lg (2 cols on tablet -> 2x2 grid, 3 cols on desktop -> 1x3 grid)
                 // idx 3: Visible only on md screens (4th item for tablet 2x2 grid)
-                const visibilityClass = 
-                  idx === 0 || idx === 1 ? "block" :
-                  idx === 2 ? "hidden md:block" :
-                  "hidden md:block lg:hidden";
+                const visibilityClass =
+                  idx === 0 || idx === 1
+                    ? "block"
+                    : idx === 2
+                      ? "hidden md:block"
+                      : "hidden md:block lg:hidden";
 
                 return (
                   <div
                     key={item._id || idx}
                     onMouseMove={handleMouseMove}
                     onMouseLeave={handleMouseLeave}
-                    onClick={() => navigate(`/projects/${item.slug || item._id}`)}
+                    onClick={() =>
+                      navigate(`/projects/${item.slug || item._id}`)
+                    }
                     className={`${visibilityClass} project-card-grid relative p-2 rounded-none group aspect-video isolate z-0 cursor-pointer`}
                     style={{
                       "--ts-c1": item.featured ? "#f59e0b" : "#06b6d4",
                       "--ts-c2": item.featured ? "#ec4899" : "#3b82f6",
-                      "--ts-shine-color": item.featured ? "rgba(245, 158, 11, 0.18)" : "rgba(6, 182, 212, 0.18)"
+                      "--ts-shine-color": item.featured
+                        ? "rgba(245, 158, 11, 0.18)"
+                        : "rgba(6, 182, 212, 0.18)",
                     }}
                   >
                     <div className="project-card-inner shadow-md shadow-black/70 rounded-none flex flex-col relative h-full z-10">
@@ -2080,17 +2137,26 @@ function ProjectDetailPage() {
                       {/* Glassy Featured Hover Badge */}
                       {item.featured && expandedExploreId !== item._id && (
                         <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
-                          <Sparkles size={8} className="animate-pulse text-neutral-950 shrink-0" />
+                          <Sparkles
+                            size={8}
+                            className="animate-pulse text-neutral-950 shrink-0"
+                          />
                           <span>FEATURED</span>
                         </div>
                       )}
 
                       {/* Glassy Category Hover Badge */}
                       {item.category && expandedExploreId !== item._id && (
-                        <div className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
-                          item.featured ? "border-amber-500/40 text-amber-300" : "border-cyan-500/40 text-cyan-300"
-                        }`}>
-                          {item.category}
+                        <div
+                          className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs max-[466px]:px-2 max-[466px]:py-1 max-[466px]:text-[7px] ${
+                            item.featured
+                              ? "border-amber-500/40 text-amber-300"
+                              : "border-cyan-500/40 text-cyan-300"
+                          }`}
+                        >
+                          <span className="font-semibold uppercase tracking-[0.25em] max-[466px]:tracking-[0.15em]">
+                            {item.category}
+                          </span>
                         </div>
                       )}
 
@@ -2129,25 +2195,34 @@ function ProjectDetailPage() {
                         className={`relative z-20 transition-all duration-500 flex flex-col ${
                           expandedExploreId === item._id
                             ? "h-full p-4"
-                            : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-2 bg-black/50 backdrop-blur-xs"
+                            : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-2 bg-gray-950/85 backdrop-blur-xs"
                         }`}
                         onClick={(e) => {
                           e.stopPropagation();
                           if (window.innerWidth >= 467) {
-                            setExpandedExploreId(expandedExploreId === item._id ? null : item._id);
+                            setExpandedExploreId(
+                              expandedExploreId === item._id ? null : item._id,
+                            );
                           }
                         }}
                       >
-                        <div className="flex justify-between items-center w-full pr-3 mb-1">
-                          <h3 className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 ${
-                            item.featured ? "text-amber-400" : "text-cyan-400"
-                          }`}>
+                        <div className="flex justify-between items-center w-full pr-3 mb-1 max-[466px]:pr-1 max-[466px]:mb-0 max-[466px]:gap-2">
+                          <h3
+                            className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 max-[466px]:text-[13px] max-[466px]:leading-tight max-[466px]:line-clamp-1 ${
+                              item.featured ? "text-amber-400" : "text-cyan-400"
+                            }`}
+                          >
                             {item.title}
                           </h3>
                           {expandedExploreId !== item._id && (
-                            <MoveRightIcon size={16} className={`project-move-right transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
-                              item.featured ? "text-amber-400" : "text-cyan-400"
-                            }`} />
+                            <MoveRightIcon
+                              size={16}
+                              className={`project-move-right transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
+                                item.featured
+                                  ? "text-amber-400"
+                                  : "text-cyan-400"
+                              }`}
+                            />
                           )}
                         </div>
 
@@ -2192,7 +2267,10 @@ function ProjectDetailPage() {
                                           : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
                                     }`}
                                   >
-                                    <ExternalLink size={12} className="transition-all duration-300 group-hover:scale-110" />
+                                    <ExternalLink
+                                      size={12}
+                                      className="transition-all duration-300 group-hover:scale-110"
+                                    />
                                     <span>DEMO</span>
                                   </a>
                                 )}
@@ -2212,7 +2290,10 @@ function ProjectDetailPage() {
                                           : "backdrop-blur-md bg-cyan-400/15 border border-cyan-400/40 hover:border-cyan-300/70 hover:-translate-y-0.5 drop-shadow-sm text-cyan-500 hover:text-cyan-400"
                                     }`}
                                   >
-                                    <Github size={12} className="transition-all duration-300 group-hover:scale-110" />
+                                    <Github
+                                      size={12}
+                                      className="transition-all duration-300 group-hover:scale-110"
+                                    />
                                     <span>CODE</span>
                                   </a>
                                 )}
@@ -2221,7 +2302,9 @@ function ProjectDetailPage() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  navigate(`/projects/${item.slug || item._id}`);
+                                  navigate(
+                                    `/projects/${item.slug || item._id}`,
+                                  );
                                 }}
                                 className={`group relative px-2.5 py-1.5 rounded-lg text-nowrap transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
                                   item.featured
@@ -2234,12 +2317,15 @@ function ProjectDetailPage() {
                                 }`}
                               >
                                 <span>MORE INFO</span>
-                                <ArrowUpRight size={12} className="transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                <ArrowUpRight
+                                  size={12}
+                                  className="transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                />
                               </button>
                             </div>
                           </div>
                         ) : (
-                          <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug">
+                          <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug max-[466px]:text-[10px] max-[466px]:pr-2 max-[466px]:pb-0.5 max-[466px]:line-clamp-1">
                             {item.description}
                           </div>
                         )}
@@ -2256,22 +2342,28 @@ function ProjectDetailPage() {
                 to="/projects"
                 className={`group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-full border
                   text-xs font-bold tracking-[0.25em] uppercase font-outfit transition-all duration-500 overflow-hidden
-                  ${darkMode
-                    ? "border-cyan-500/30 hover:border-cyan-400 bg-slate-950/90 text-cyan-400 hover:text-white"
-                    : "border-cyan-600/25 hover:border-cyan-600 bg-white text-cyan-600 hover:text-cyan-800"
+                  ${
+                    darkMode
+                      ? "border-cyan-500/30 hover:border-cyan-400 bg-slate-950/90 text-cyan-400 hover:text-white"
+                      : "border-cyan-600/25 hover:border-cyan-600 bg-white text-cyan-600 hover:text-cyan-800"
                   }
                   hover:shadow-[0_0_35px_rgba(34,211,238,0.25)]`}
               >
                 {/* Glowing neon backdrop hover blob */}
                 <span className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
+
                 {/* Icon transition */}
-                <Layers size={13} className="relative z-10 transition-transform duration-500 group-hover:scale-110" />
+                <Layers
+                  size={13}
+                  className="relative z-10 transition-transform duration-500 group-hover:scale-110"
+                />
                 <span className="relative z-10">View All Projects</span>
-                <ArrowRight size={12} className="relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight
+                  size={12}
+                  className="relative z-10 transition-transform duration-300 group-hover:translate-x-1"
+                />
               </Link>
             </div>
-
           </div>
         </main>
       )}
@@ -2281,4 +2373,3 @@ function ProjectDetailPage() {
 }
 
 export default ProjectDetailPage;
-

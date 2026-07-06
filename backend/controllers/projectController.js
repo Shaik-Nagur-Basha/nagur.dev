@@ -2,19 +2,45 @@ import mongoose from "mongoose";
 import Project from "../models/Project.js";
 import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
+import jwt from "jsonwebtoken";
+
+// Helper to check if requester is an approved Admin
+const checkIsAdmin = async (req) => {
+  let token;
+  if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  } else if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) return false;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    return !!(user && user.role === "admin" && user.isApproved);
+  } catch (error) {
+    return false;
+  }
+};
 
 // @desc    Get all projects
 // @route   GET /api/projects
 // @access  Public
 export const getProjects = async (req, res, next) => {
   try {
+    const isExplicitAdminRequest =
+      req.query.isAdmin === "true" ||
+      req.query.status === "all" ||
+      req.query.status?.toLowerCase() === "draft";
+    const isAdminUser = isExplicitAdminRequest && (await checkIsAdmin(req));
     let queryObj = {};
 
-    // For public requests, show only Published projects.
-    // If status is "all" or admin mode is requested, show all projects.
-    if (req.query.status !== "all" && req.query.isAdmin !== "true") {
-      queryObj.status = "Published";
-    }
+    const requestedStatus = req.query.status?.toString().trim();
+    const normalizedStatus = requestedStatus?.toLowerCase();
 
     // Category filter
     if (req.query.category && req.query.category !== "ALL") {
@@ -37,38 +63,88 @@ export const getProjects = async (req, res, next) => {
       ];
     }
 
-    // Get unique categories for project metadata based on status
-    let categoriesObj = {};
-    if (req.query.status !== "all" && req.query.isAdmin !== "true") {
-      categoriesObj.status = "Published";
-    }
-    const allCategories = await Project.distinct("category", categoriesObj);
-    const categoryList = ["ALL", ...new Set(allCategories.filter(Boolean).map(c => c.toUpperCase()))];
+    let categoryList = ["ALL"];
+    let query;
 
-    let query = Project.find(queryObj);
+    if (isAdminUser) {
+      // Admin request: allow status filters
+      if (normalizedStatus === "draft") {
+        queryObj.status = "Draft";
+      } else if (normalizedStatus === "published") {
+        queryObj.status = "Published";
+      } else {
+        // Fetch all (Draft + Published) if status is 'all' or default
+      }
 
-    // Determine sort
-    // Admin: recently added or updated first (updatedAt covers both cases)
-    // Public: featured first, then priority order, then newest
-    let sortObj = { featured: -1, order: 1, createdAt: -1 };
-    if (req.query.status === "all" || req.query.isAdmin === "true") {
-      sortObj = { updatedAt: -1 };
-    }
-    query = query.sort(sortObj);
+      // Admin categories lookup (includes drafts)
+      const allCategories = await Project.distinct("category");
+      categoryList = [
+        "ALL",
+        ...new Set(allCategories.filter(Boolean).map((c) => c.toUpperCase())),
+      ];
 
-    // Select fields: if a specific select parameter is provided, use it.
-    // Otherwise, restrict by context:
-    //   - admin requests (status=all): full form fields minus Cloudinary internals
-    //   - public requests: minimal card fields only
-    if (req.query.select) {
-      const fields = req.query.select.split(",").join(" ");
-      query = query.select(fields);
-    } else if (req.query.status === "all" || req.query.isAdmin === "true") {
-      // Admin list + edit form fields — exclude Cloudinary publicIds and internal fields
-      query = query.select("-imagePublicId -videoPublicId -createdBy -__v");
+      query = Project.find(queryObj);
+
+      // Admin sorting
+      query = query.sort({ updatedAt: -1 });
+
+      // Admin select
+      if (req.query.select) {
+        const fields = req.query.select.split(",").join(" ");
+        query = query.select(fields);
+      } else {
+        query = query.select("-imagePublicId -videoPublicId -createdBy -__v");
+      }
     } else {
-      // Limit fields for public card views to minimize payload
-      query = query.select("title slug shortDescription description mediaType image video skills demoLink githubLink category featured order createdAt");
+      // Public request: Forcibly restrict to Published projects only
+      queryObj.status = "Published";
+
+      // Public categories lookup (Published only)
+      const allCategories = await Project.distinct("category", {
+        status: "Published",
+      });
+      categoryList = [
+        "ALL",
+        ...new Set(allCategories.filter(Boolean).map((c) => c.toUpperCase())),
+      ];
+
+      query = Project.find(queryObj);
+
+      // Public sorting
+      query = query.sort({ featured: -1, order: 1, createdAt: -1 });
+
+      // Public fields whitelist
+      const publicWhitelist = [
+        "_id",
+        "title",
+        "slug",
+        "image",
+        "video",
+        "mediaType",
+        "description",
+        "skills",
+        "demoLink",
+        "githubLink",
+        "category",
+        "featured",
+        "order",
+        "createdAt",
+      ];
+
+      if (req.query.select) {
+        const fields = req.query.select
+          .split(",")
+          .map((f) => f.trim())
+          .filter((f) => publicWhitelist.includes(f))
+          .join(" ");
+        if (fields) {
+          query = query.select(fields);
+        } else {
+          query = query.select(publicWhitelist.join(" "));
+        }
+      } else {
+        query = query.select(publicWhitelist.join(" "));
+      }
     }
 
     const page = req.query.page ? parseInt(req.query.page, 10) : null;
@@ -77,10 +153,10 @@ export const getProjects = async (req, res, next) => {
     if (page && limit) {
       const startIndex = (page - 1) * limit;
       const total = await Project.countDocuments(queryObj);
-      
+
       query = query.skip(startIndex).limit(limit);
       const projects = await query;
-      
+
       return res.status(200).json({
         success: true,
         count: projects.length,
@@ -122,9 +198,25 @@ export const getProject = async (req, res, next) => {
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
+
+    // Strict validation for Draft projects
+    if (project.status === "Draft") {
+      const isAdminUser = await checkIsAdmin(req);
+      if (!isAdminUser) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+    }
+
+    // Restrict response fields for security
+    const projectObj = project.toObject();
+    delete projectObj.imagePublicId;
+    delete projectObj.videoPublicId;
+    delete projectObj.createdBy;
+    delete projectObj.__v;
+
     res.status(200).json({
       success: true,
-      data: project,
+      data: projectObj,
     });
   } catch (error) {
     next(error);
@@ -182,8 +274,13 @@ export const updateProject = async (req, res, next) => {
     }
 
     // Check if user is project owner
-    if (project.createdBy.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({ error: "Not authorized to update this project" });
+    if (
+      project.createdBy.toString() !== req.user.id &&
+      req.user.role !== "admin"
+    ) {
+      return res
+        .status(401)
+        .json({ error: "Not authorized to update this project" });
     }
 
     // Handle media update if file exists
@@ -192,7 +289,9 @@ export const updateProject = async (req, res, next) => {
       if (project.mediaType === "image" && project.imagePublicId) {
         await cloudinary.uploader.destroy(project.imagePublicId);
       } else if (project.mediaType === "video" && project.videoPublicId) {
-        await cloudinary.uploader.destroy(project.videoPublicId, { resource_type: "video" });
+        await cloudinary.uploader.destroy(project.videoPublicId, {
+          resource_type: "video",
+        });
       }
 
       // Set new media
@@ -236,15 +335,22 @@ export const deleteProject = async (req, res, next) => {
     }
 
     // Check if user is project owner
-    if (project.createdBy.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({ error: "Not authorized to delete this project" });
+    if (
+      project.createdBy.toString() !== req.user.id &&
+      req.user.role !== "admin"
+    ) {
+      return res
+        .status(401)
+        .json({ error: "Not authorized to delete this project" });
     }
 
     // Delete media from Cloudinary
     if (project.mediaType === "image" && project.imagePublicId) {
       await cloudinary.uploader.destroy(project.imagePublicId);
     } else if (project.mediaType === "video" && project.videoPublicId) {
-      await cloudinary.uploader.destroy(project.videoPublicId, { resource_type: "video" });
+      await cloudinary.uploader.destroy(project.videoPublicId, {
+        resource_type: "video",
+      });
     }
 
     await project.deleteOne();
@@ -270,11 +376,13 @@ export const updateProjectOrder = async (req, res, next) => {
     const { orders } = req.body; // Array of { id, order }
 
     if (!orders || !Array.isArray(orders)) {
-      return res.status(400).json({ error: "Please provide an array of orders" });
+      return res
+        .status(400)
+        .json({ error: "Please provide an array of orders" });
     }
 
     const updatePromises = orders.map((item) =>
-      Project.findByIdAndUpdate(item.id, { order: item.order })
+      Project.findByIdAndUpdate(item.id, { order: item.order }),
     );
 
     await Promise.all(updatePromises);

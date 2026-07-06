@@ -18,6 +18,19 @@ const ContactManagement = () => {
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailContact, setDetailContact] = useState(null);
+  const [colsCount, setColsCount] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      if (w < 768) setColsCount(1);
+      else if (w < 1024) setColsCount(2);
+      else setColsCount(3);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetchContacts();
@@ -53,6 +66,11 @@ const ContactManagement = () => {
           msg.includes(q)
         );
       });
+
+  const columns = Array.from({ length: colsCount }, () => []);
+  filteredContacts.forEach((contact, index) => {
+    columns[index % colsCount].push(contact);
+  });
 
   const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const highlightText = (text = "", query) => {
@@ -93,7 +111,7 @@ const ContactManagement = () => {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2 p-1 text-slate-500 hover:text-slate-400 transition-colors duration-150"
+                className="absolute right-2 p-1 cursor-pointer text-slate-500 hover:text-slate-400 transition-colors duration-150"
                 title="Clear search"
                 aria-label="Clear search"
               >
@@ -103,169 +121,174 @@ const ContactManagement = () => {
           </div>
         </div>
 
-        <div className="grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-1">
-          {filteredContacts.map((contact) => (
-            <motion.div
-              key={contact._id}
-              onClick={() => setSelectedContact(contact)}
-              className={cn(
-                "p-4 rounded-2xl transition-all duration-200 group relative shadow-lg",
-                selectedContact?._id === contact._id
-                  ? "bg-blue-600/10 border-blue-500/50"
-                  : "bg-white/[0.02] hover:bg-white/[0.03] border border-white/5",
-              )}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <div
+        {filteredContacts.length === 0 ? (
+          <div className="text-center py-10 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
+            Zero Results
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-1 w-full items-start">
+            {columns.map((colItems, colIdx) => (
+              <div key={colIdx} className="flex flex-col gap-4">
+                {colItems.map((contact) => (
+                  <motion.div
+                    key={contact._id}
+                    onClick={() => setSelectedContact(contact)}
                     className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm",
+                      "p-4 rounded-2xl transition-all duration-200 group relative shadow-lg flex flex-col justify-between h-auto",
                       selectedContact?._id === contact._id
-                        ? "bg-blue-500/25 text-white"
-                        : "bg-white/5 text-slate-400",
+                        ? "bg-blue-600/10"
+                        : "bg-white/[0.02] hover:bg-white/[0.03] border-white/5",
                     )}
                   >
-                    {String(contact.name || "")[0] || "?"}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[12px] font-black uppercase tracking-widest truncate">
-                      {highlightText(contact.name, searchQuery)}
-                    </p>
-                    <p className="text-[10px] text-slate-400 font-bold truncate">
-                      {highlightText(contact.email, searchQuery)}
-                    </p>
-                  </div>
-                </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={cn(
+                            "w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm",
+                            selectedContact?._id === contact._id
+                              ? "bg-blue-500/25 text-white"
+                              : "bg-white/5 text-slate-400",
+                          )}
+                        >
+                          {String(contact.name || "")[0] || "?"}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[12px] font-black uppercase tracking-widest truncate">
+                            {highlightText(contact.name, searchQuery)}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-bold truncate">
+                            {highlightText(contact.email, searchQuery)}
+                          </p>
+                        </div>
+                      </div>
 
-                {/* Desktop / large screens: always visible */}
-                <div className="hidden 2xl:flex items-center gap-2">
-                  {String(contact.message || "").length > 220 && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDetailContact(contact);
-                        setDetailOpen(true);
-                      }}
-                      className="p-2 rounded-xl cursor-pointer text-slate-300 hover:text-white"
-                      title="Expand"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  )}
+                      {/* Desktop / large screens: always visible */}
+                      <div className="hidden 2xl:flex items-center gap-2">
+                        {String(contact.message || "").length > 220 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDetailContact(contact);
+                              setDetailOpen(true);
+                            }}
+                            className="p-2 rounded-xl cursor-pointer text-amber-400/75 hover:text-amber-400 bg-gray-600/20 hover:bg-gray-600/30"
+                            title="Expand"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        )}
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const current = contact.status || "Unread";
-                      const next = current === "Unread" ? "Read" : "Unread";
-                      updateContactStatus(contact._id, next).then((res) => {
-                        if (res?.success) toast.success(`Marked ${next}`);
-                      });
-                    }}
-                    className={cn(
-                      "p-2 rounded-xl cursor-pointer transition-all",
-                      contact.status === "Read"
-                        ? "text-emerald-400 bg-emerald-500/10"
-                        : "text-slate-400 hover:text-white",
-                    )}
-                    title={
-                      contact.status === "Read" ? "Mark Unread" : "Mark Read"
-                    }
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                  </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const current = contact.status || "Unread";
+                            const next = current === "Unread" ? "Read" : "Unread";
+                            updateContactStatus(contact._id, next).then((res) => {
+                              if (res?.success) toast.success(`Marked ${next}`);
+                            });
+                          }}
+                          className={cn(
+                            "p-2 rounded-xl cursor-pointer transition-all",
+                            contact.status === "Read"
+                              ? "text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20"
+                              : "text-slate-400 bg-gray-600/30 hover:bg-gray-600/60 hover:text-white",
+                          )}
+                          title={
+                            contact.status === "Read" ? "Mark Unread" : "Mark Read"
+                          }
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                        </button>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPendingDeleteId(contact._id);
-                      setConfirmOpen(true);
-                    }}
-                    className="p-2 rounded-xl cursor-pointer text-rose-400 hover:bg-rose-500/10"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPendingDeleteId(contact._id);
+                            setConfirmOpen(true);
+                          }}
+                          className="p-2 rounded-xl cursor-pointer text-rose-400/50 hover:text-rose-400/75 bg-rose-500/15 hover:bg-rose-500/25"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
 
-                {/* Mobile: show actions only when this contact is selected */}
-                <div
-                  className={
-                    selectedContact?._id === contact._id
-                      ? "absolute top-2 right-2 z-20 flex 2xl:hidden items-center gap-0.5 p-0.5 bg-black rounded-xl"
-                      : "hidden 2xl:hidden"
-                  }
-                >
-                  {String(contact.message || "").length > 220 && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDetailContact(contact);
-                        setDetailOpen(true);
-                      }}
-                      className="p-2 rounded-xl cursor-pointer text-slate-300 hover:text-white"
-                      title="Expand"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  )}
+                      {/* Mobile: show actions only when this contact is selected */}
+                      <div
+                        className={
+                          selectedContact?._id === contact._id
+                            ? "absolute top-2 right-2 z-20 flex 2xl:hidden items-center gap-1 p-1 bg-gray-950/85 rounded-xl"
+                            : "hidden 2xl:hidden"
+                        }
+                      >
+                        {String(contact.message || "").length > 220 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDetailContact(contact);
+                              setDetailOpen(true);
+                            }}
+                            className="p-2 rounded-xl cursor-pointer text-amber-400/75 hover:text-amber-400 bg-gray-600/20 hover:bg-gray-600/30"
+                            title="Expand"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        )}
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const current = contact.status || "Unread";
-                      const next = current === "Unread" ? "Read" : "Unread";
-                      updateContactStatus(contact._id, next).then((res) => {
-                        if (res?.success) toast.success(`Marked ${next}`);
-                      });
-                    }}
-                    className={cn(
-                      "p-2 rounded-xl cursor-pointer transition-all",
-                      contact.status === "Read"
-                        ? "text-emerald-400 bg-emerald-500/10"
-                        : "text-slate-400 hover:text-white",
-                    )}
-                    title={
-                      contact.status === "Read" ? "Mark Unread" : "Mark Read"
-                    }
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                  </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const current = contact.status || "Unread";
+                            const next = current === "Unread" ? "Read" : "Unread";
+                            updateContactStatus(contact._id, next).then((res) => {
+                              if (res?.success) toast.success(`Marked ${next}`);
+                            });
+                          }}
+                          className={cn(
+                            "p-2 rounded-xl cursor-pointer transition-all",
+                            contact.status === "Read"
+                              ? "text-emerald-400 hover:text-emerald-300 bg-emerald-500/20 hover:bg-emerald-500/30"
+                              : "text-slate-400 bg-gray-600/30 hover:bg-gray-600/60 hover:text-white",
+                          )}
+                          title={
+                            contact.status === "Read" ? "Mark Unread" : "Mark Read"
+                          }
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                        </button>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPendingDeleteId(contact._id);
-                      setConfirmOpen(true);
-                    }}
-                    className="p-2 rounded-xl cursor-pointer text-rose-400 hover:bg-rose-500/10"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPendingDeleteId(contact._id);
+                            setConfirmOpen(true);
+                          }}
+                          className="p-2 rounded-xl cursor-pointer text-rose-400/50 hover:text-rose-400/75 bg-rose-500/15 hover:bg-rose-500/20"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mb-2 flex-grow">
+                      <p className="text-[11px] text-slate-200 font-medium line-clamp-4">
+                        {highlightText(contact.message, searchQuery)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[9px] text-slate-500">
+                      <div>{new Date(contact.submittedAt).toLocaleString()}</div>
+                      <div className={`uppercase font-semibold tracking-widest text-[10px] ${contact.status === "Unread" ? "text-amber-400" : "text-emerald-400"}`}>
+                        {contact.status || "Unread"}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-
-              <div className="mb-2">
-                <p className="text-[11px] text-slate-200 font-medium line-clamp-2">
-                  {highlightText(contact.message, searchQuery)}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between text-[9px] text-slate-500">
-                <div>{new Date(contact.submittedAt).toLocaleString()}</div>
-                <div className="uppercase font-semibold tracking-widest text-[10px] text-slate-500">
-                  {contact.status || "Unread"}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-          {filteredContacts.length === 0 && (
-            <div className="text-center py-10 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
-              Zero Results
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
       <ContactDetailDialog
         open={detailOpen}

@@ -269,7 +269,7 @@ function Contact() {
                         required
                         placeholder="Your Name"
                         disabled={isSubmitting}
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none disabled:opacity-50 ${
+                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none disabled:opacity-50 whiteblink-remover ${
                           focusedField === "name"
                             ? darkMode
                               ? "bg-linear-to-r from-blue-500/30 to-blue-400/20 border-2 border-blue-400 shadow-lg shadow-blue-500/30"
@@ -300,7 +300,7 @@ function Contact() {
                         required
                         placeholder="your@email.com"
                         disabled={isSubmitting}
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none disabled:opacity-50 ${
+                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none disabled:opacity-50 whiteblink-remover ${
                           focusedField === "email"
                             ? darkMode
                               ? "bg-linear-to-r from-purple-500/30 to-purple-400/20 border-2 border-purple-400 shadow-lg shadow-purple-500/30"
@@ -333,7 +333,7 @@ function Contact() {
                       minLength={5}
                       placeholder="Tell us about your project ideas, requirements, or any questions you have..."
                       disabled={isSubmitting}
-                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none resize-none disabled:opacity-50 ${
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm transition-all duration-300 focus:outline-none resize-none disabled:opacity-50 whiteblink-remover ${
                         focusedField === "message"
                           ? darkMode
                             ? "bg-linear-to-r from-pink-500/30 to-pink-400/20 border-2 border-pink-400 shadow-lg shadow-pink-500/30"

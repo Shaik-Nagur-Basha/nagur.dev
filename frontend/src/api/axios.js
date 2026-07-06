@@ -20,10 +20,44 @@ const getApiBaseURL = () => {
   return envUrl || "/api";
 };
 
+// Cache to deduplicate concurrent in-flight GET requests
+const activeRequests = new Map();
+const defaultAdapter = axios.getAdapter(axios.defaults.adapter);
+
+const dedupeAdapter = (config) => {
+  // Only deduplicate GET requests
+  if (config.method?.toLowerCase() === "get") {
+    const url = config.url || "";
+    const params = config.params ? JSON.stringify(config.params) : "";
+    const key = `get:${url}:${params}`;
+
+    if (activeRequests.has(key)) {
+      return activeRequests.get(key);
+    }
+
+    const promise = defaultAdapter(config).then(
+      (response) => {
+        activeRequests.delete(key);
+        return response;
+      },
+      (error) => {
+        activeRequests.delete(key);
+        return Promise.reject(error);
+      }
+    );
+
+    activeRequests.set(key, promise);
+    return promise;
+  }
+
+  return defaultAdapter(config);
+};
+
 const API = axios.create({
   baseURL: getApiBaseURL(),
   withCredentials: true, // Send cookies with requests
   timeout: 10000, // 10 seconds timeout to prevent requests from hanging indefinitely
+  adapter: dedupeAdapter,
 });
 
 // Request interceptor

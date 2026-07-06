@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -23,21 +23,78 @@ import ProjectForm from "../../components/admin/ProjectForm";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 import { toast } from "react-toastify";
 import { cn } from "../../utils/cn";
+import API from "../../api/axios";
+import { useTheme } from "../../context/ThemeContext";
 
 const ProjectManagement = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { darkMode } = useTheme();
   const [isFormOpen, setIsFormOpen] = useState(
     location?.state?.openForm || false,
   );
   const [editingProject, setEditingProject] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const { projects, categories, totalPages, fetchProjects, deleteProject, loading } = useAdminStore();
+  const {
+    projects,
+    categories,
+    totalPages,
+    fetchProjects,
+    deleteProject,
+    loading,
+  } = useAdminStore();
   const [expandedId, setExpandedId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [showDraftOnly, setShowDraftOnly] = useState(false);
+
+  // Dropdown search state
+  const [dropdownResults, setDropdownResults] = useState([]);
+  const [dropdownLoading, setDropdownLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef(null);
+
+  // Dropdown search — debounced 350ms, top 5 results only
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q) {
+      setDropdownResults([]);
+      setShowDropdown(false);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setDropdownLoading(true);
+      try {
+        const { data } = await API.get("projects", {
+          params: {
+            search: q,
+            limit: 5,
+            page: 1,
+            select: "title,slug,image,thumbnail,category,featured,mediaType,video",
+          },
+        });
+        setDropdownResults(data.data || []);
+        setShowDropdown(true);
+      } catch {
+        setDropdownResults([]);
+      } finally {
+        setDropdownLoading(false);
+      }
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const handleMouseMove = (e) => {
     const card = e.currentTarget;
@@ -83,12 +140,32 @@ const ProjectManagement = () => {
       category: selectedCategory,
       search: debouncedSearch.trim(),
       status: showDraftOnly ? "Draft" : "all",
+      isAdmin: "true",
     });
   };
 
   useEffect(() => {
     loadProjects();
-  }, [fetchProjects, currentPage, selectedCategory, showDraftOnly, debouncedSearch]);
+  }, [
+    fetchProjects,
+    currentPage,
+    selectedCategory,
+    showDraftOnly,
+    debouncedSearch,
+  ]);
+
+  useEffect(() => {
+    const handleViewportResize = () => {
+      if (window.innerWidth < 467 && expandedId) {
+        setExpandedId(null);
+      }
+    };
+
+    handleViewportResize();
+    window.addEventListener("resize", handleViewportResize);
+
+    return () => window.removeEventListener("resize", handleViewportResize);
+  }, [expandedId]);
 
   // Reset state after navigation or handle deep-links
   useEffect(() => {
@@ -145,7 +222,7 @@ const ProjectManagement = () => {
         "image",
         "video",
         "thumbnail",
-        "url"
+        "url",
       ];
       return Object.entries(obj).some(([key, val]) => {
         if (ignoredKeys.includes(key)) return false;
@@ -155,7 +232,13 @@ const ProjectManagement = () => {
     return false;
   };
 
-  const paginatedProjects = projects;
+  const visibleProjects = showDraftOnly
+    ? projects.filter(
+        (project) => String(project.status).toLowerCase() === "draft",
+      )
+    : projects;
+
+  const paginatedProjects = visibleProjects;
 
   // Highlight matching query substrings in text
   const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -331,36 +414,193 @@ const ProjectManagement = () => {
   return (
     <div className="">
       <style>{projectCardStyle}</style>
-      {/* Action Bar (hidden when form is open) */}
       <div
-        className={`flex pb-8 flex-row items-center justify-between gap-4 glass-panel !border-0 !bg-transparent rounded-2xl ${
+        className={`relative z-40 flex pb-8 flex-row items-center justify-between gap-4 glass-panel !border-0 !bg-transparent rounded-2xl ${
           isFormOpen ? "hidden" : ""
         }`}
       >
         {/* Search (left) */}
         <div className="flex-1">
-          <div className="relative w-full md:max-w-[720px]">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
-              <Search size={16} />
+          <div
+            ref={searchRef}
+            className="relative w-full md:max-w-[720px] z-30"
+          >
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              {dropdownLoading ? (
+                <div
+                  className={`w-3.5 h-3.5 shrink-0 rounded-full border-2 animate-spin ${
+                    darkMode ? "border-white/10 border-t-cyan-400" : "border-black/10 border-t-cyan-600"
+                  }`}
+                />
+              ) : (
+                <Search
+                  size={16}
+                  className={`shrink-0 transition-colors ${
+                    searchQuery
+                      ? darkMode
+                        ? "text-cyan-400"
+                        : "text-cyan-600"
+                      : "text-slate-500"
+                  }`}
+                />
+              )}
             </div>
             <input
               type="text"
               placeholder="SEARCH ASSETS..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border-b border-white/20  bg-transparent pl-9 pr-9 py-2 text-[13px] text-white/85 placeholder:text-slate-600 transition-colors duration-150 outline-none focus:outline-0 focus-visible:outline-0 ring-0 focus:ring-0 focus-visible:ring-0 whiteblink-remover"
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                if (!e.target.value.trim()) setShowDropdown(false);
+              }}
+              onFocus={() => {
+                if (dropdownResults.length > 0) setShowDropdown(true);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setShowDropdown(false);
+                  setSearchQuery("");
+                }
+              }}
+              className="w-full border-b border-white/20 bg-transparent pl-9 pr-9 py-2 text-[13px] text-white/85 placeholder:text-slate-600 transition-colors duration-150 outline-none focus:outline-0 focus-visible:outline-0 ring-0 focus:ring-0 focus-visible:ring-0 whiteblink-remover"
               aria-label="Search assets"
               autoComplete="off"
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2 p-1 text-slate-500 hover:text-slate-400 transition-colors duration-150"
+                onClick={() => {
+                  setSearchQuery("");
+                  setShowDropdown(false);
+                  setDropdownResults([]);
+                }}
+                className="absolute right-2 p-1 cursor-pointer text-slate-500 hover:text-slate-400 transition-colors duration-150"
                 title="Clear search"
                 aria-label="Clear search"
               >
                 <X size={14} />
               </button>
+            )}
+
+            {/* Search Dropdown */}
+            {showDropdown && (
+              <div
+                className={`absolute left-0 right-0 top-full mt-2 rounded-xl border overflow-hidden z-50 backdrop-blur-xl shadow-2xl ${
+                  darkMode
+                    ? "bg-slate-900/95 border-white/10"
+                    : "bg-slate-200/85 border-black/10"
+                }`}
+              >
+                {dropdownResults.length === 0 ? (
+                  <div
+                    className={`px-4 py-5 text-center text-xs font-medium ${
+                      darkMode ? "text-slate-500" : "text-slate-400"
+                    }`}
+                  >
+                    No results for &ldquo;{searchQuery}&rdquo;
+                  </div>
+                ) : (
+                  <ul>
+                    {dropdownResults.map((p, i) => (
+                      <li key={p._id}>
+                        <button
+                          onClick={() => {
+                            navigate(`/projects/${p.slug || p._id}`);
+                            setShowDropdown(false);
+                            setSearchQuery("");
+                          }}
+                          className={`group w-full flex items-center gap-3 pl-3.5 pr-3.5 py-2.5 text-left transition-all duration-300 ease-out cursor-pointer ${
+                            i !== dropdownResults.length - 1
+                              ? darkMode
+                                ? "border-b border-white/5"
+                                : "border-b border-black/5"
+                              : ""
+                          } ${
+                            p.featured
+                              ? darkMode
+                                ? "hover:bg-amber-500/[0.06] hover:pl-[18px]"
+                                : "hover:bg-amber-500/[0.04] hover:pl-[18px]"
+                              : darkMode
+                                ? "hover:bg-cyan-500/[0.06] hover:pl-[18px]"
+                                : "hover:bg-cyan-500/[0.04] hover:pl-[18px]"
+                          }`}
+                        >
+                          {/* Thumbnail */}
+                          <div
+                            className={`w-16 aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300 ${
+                              darkMode
+                                ? "border-white/10 bg-white/5"
+                                : "border-black/10 bg-black/5"
+                            }`}
+                          >
+                            {p.mediaType === "video" && p.video ? (
+                              <video
+                                src={p.video}
+                                preload="metadata"
+                                muted
+                                playsInline
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            ) : p.image || p.thumbnail ? (
+                              <img
+                                src={p.image || p.thumbnail}
+                                alt={p.title}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div
+                                className={`w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105 ${
+                                  p.featured
+                                    ? "text-amber-400"
+                                    : "text-cyan-400"
+                                }`}
+                              >
+                                <Sparkles size={14} />
+                              </div>
+                            )}
+                          </div>
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className={`text-xs font-semibold truncate ${
+                                darkMode ? "text-white" : "text-gray-900"
+                              }`}
+                            >
+                              {p.title}
+                            </p>
+                            {p.category && (
+                              <p
+                                className={`text-[10px] font-medium mt-0.5 ${
+                                  p.featured
+                                    ? darkMode
+                                      ? "text-amber-400/70"
+                                      : "text-amber-600/70"
+                                    : darkMode
+                                      ? "text-cyan-400/70"
+                                      : "text-cyan-600/70"
+                                }`}
+                              >
+                                {p.category}
+                              </p>
+                            )}
+                          </div>
+                          <ArrowUpRight
+                            size={18}
+                            className={`transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
+                              p.featured
+                                ? darkMode
+                                  ? "text-amber-400/80 group-hover:text-amber-400"
+                                  : "text-amber-600/80 group-hover:text-amber-500"
+                                : darkMode
+                                  ? "text-slate-500 group-hover:text-cyan-400"
+                                  : "text-slate-400 group-hover:text-cyan-600"
+                            }`}
+                          />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -399,12 +639,16 @@ const ProjectManagement = () => {
                 <h2 className="text-sm font-black uppercase tracking-[0.2em]">
                   {editingProject ? (
                     <>
-                      <span className="hidden sm:inline">Reconfigure Asset</span>
+                      <span className="hidden sm:inline">
+                        Reconfigure Asset
+                      </span>
                       <span className="sm:hidden">Reconfigure</span>
                     </>
                   ) : (
                     <>
-                      <span className="hidden sm:inline">Initialize New Asset</span>
+                      <span className="hidden sm:inline">
+                        Initialize New Asset
+                      </span>
                       <span className="sm:hidden">Initialize</span>
                     </>
                   )}
@@ -479,27 +723,34 @@ const ProjectManagement = () => {
                   transition={{ delay: index * 0.05 }}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
-                  onClick={() => navigate(`/projects/${project.slug || project._id}`)}
+                  onClick={() =>
+                    navigate(`/projects/${project.slug || project._id}`)
+                  }
                   className="project-card-grid relative p-2 rounded-none group aspect-video isolate z-0 cursor-pointer"
                   style={{
                     "--ts-c1": project.featured ? "#f59e0b" : "#06b6d4",
                     "--ts-c2": project.featured ? "#ec4899" : "#3b82f6",
-                    "--ts-shine-color": project.featured ? "rgba(245, 158, 11, 0.18)" : "rgba(6, 182, 212, 0.18)"
+                    "--ts-shine-color": project.featured
+                      ? "rgba(245, 158, 11, 0.18)"
+                      : "rgba(6, 182, 212, 0.18)",
                   }}
                 >
                   <div className="project-card-inner shadow-md shadow-black/70 rounded-none flex flex-col relative h-full z-10">
                     {/* Extra shimmer sweep effect on hover */}
                     <div className="project-card-shine" />
-                    
-                     {/* Floating Action Controls (Top-Right, below Featured Badge if featured) */}
+
+                    {/* Floating Action Controls (Top-Right, below Featured Badge if featured) */}
                     {expandedId !== project._id && (
-                      <div 
+                      <div
                         className="absolute top-4 right-4 z-30 flex flex-col items-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {project.featured && (
                           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
-                            <Sparkles size={8} className="animate-pulse text-neutral-950 shrink-0" />
+                            <Sparkles
+                              size={8}
+                              className="animate-pulse text-neutral-950 shrink-0"
+                            />
                             <span>FEATURED</span>
                           </div>
                         )}
@@ -510,7 +761,7 @@ const ProjectManagement = () => {
                               setEditingProject(project);
                               setIsFormOpen(true);
                             }}
-                            className="p-2 rounded-xl backdrop-blur-md bg-cyan-500/15 border border-cyan-500/30 hover:border-cyan-400/60 hover:bg-cyan-500/25 text-cyan-300 hover:text-cyan-200 shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center"
+                            className="p-2 rounded-xl backdrop-blur-md bg-neutral-950/95 border border-cyan-500/30 hover:border-cyan-400/60 hover:bg-cyan-500/15 text-cyan-300 hover:text-cyan-600 shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center"
                             title="Edit Project"
                           >
                             <Edit2 size={14} />
@@ -520,7 +771,7 @@ const ProjectManagement = () => {
                               e.stopPropagation();
                               handleDelete(project._id);
                             }}
-                            className="p-2 rounded-xl backdrop-blur-md bg-red-500/15 border border-red-500/30 hover:border-red-400/60 hover:bg-red-500/25 text-red-300 hover:text-red-200 shadow-md hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center"
+                            className="p-2 rounded-xl backdrop-blur-md bg-neutral-950/95 border border-red-500/30 hover:border-red-400/60 hover:bg-red-500/25 text-red-300 hover:text-red-600 shadow-md hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center"
                             title="Delete Project"
                           >
                             <Trash2 size={14} />
@@ -531,10 +782,16 @@ const ProjectManagement = () => {
 
                     {/* Glassy Category Hover Badge */}
                     {project.category && expandedId !== project._id && (
-                      <div className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
-                        project.featured ? "border-amber-500/40 text-amber-300" : "border-cyan-500/40 text-cyan-300"
-                      }`}>
-                        {project.category}
+                      <div
+                        className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs max-[466px]:px-2 max-[466px]:py-1 max-[466px]:text-[7px] ${
+                          project.featured
+                            ? "border-amber-500/40 text-amber-300"
+                            : "border-cyan-500/40 text-cyan-300"
+                        }`}
+                      >
+                        <span className="font-semibold uppercase tracking-[0.25em] max-[466px]:tracking-[0.15em]">
+                          {project.category}
+                        </span>
                       </div>
                     )}
 
@@ -561,7 +818,9 @@ const ProjectManagement = () => {
                       {/* Overlay for expanded state */}
                       <div
                         className={`absolute inset-0 z-10 transition-opacity duration-300 ${
-                          expandedId === project._id ? "bg-black/80 backdrop-blur-md" : ""
+                          expandedId === project._id
+                            ? "bg-black/80 backdrop-blur-md"
+                            : ""
                         }`}
                       />
                     </div>
@@ -570,22 +829,28 @@ const ProjectManagement = () => {
                     <div
                       className={`relative z-20 transition-all duration-500 flex flex-col ${
                         expandedId === project._id
-                          ? "h-full p-4"
-                          : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-2 bg-black/50 backdrop-blur-xs"
+                          ? "h-full p-3"
+                          : "mt-auto hidden max-lg:flex group-hover:flex pl-2.5 pb-1.5 bg-gray-950/85 backdrop-blur-xs"
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
                         if (window.innerWidth >= 467) {
-                          setExpandedId((prev) => (prev === project._id ? null : project._id));
+                          setExpandedId((prev) =>
+                            prev === project._id ? null : project._id,
+                          );
                         }
                       }}
                     >
-                      <div className="flex justify-between items-center w-full pr-3 mb-1">
+                      <div className="flex justify-between items-center w-full pr-2 mb-0.5 max-[466px]:pr-1 max-[466px]:mb-0 max-[466px]:gap-2">
                         <h3
-                          className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 ${
+                          className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 max-[466px]:text-[13px] max-[466px]:leading-tight max-[466px]:line-clamp-1 ${
                             expandedId === project._id
-                              ? project.featured ? "text-amber-400" : "text-cyan-400"
-                              : project.featured ? "text-amber-400" : "text-cyan-400"
+                              ? project.featured
+                                ? "text-amber-400"
+                                : "text-cyan-400"
+                              : project.featured
+                                ? "text-amber-400"
+                                : "text-cyan-400"
                           }`}
                         >
                           {highlightText(project.title, q)}
@@ -593,22 +858,25 @@ const ProjectManagement = () => {
                         {expandedId !== project._id && (
                           <MoveRightIcon
                             size={16}
-                            className={`project-move-right transition-all duration-300 shrink-0 transform group-hover:translate-x-1 ${
-                              project.featured ? "text-amber-400" : "text-cyan-400"
+                            className={`project-move-right transition-all duration-300 shrink-0 transform group-hover:translate-x-1 max-[466px]:w-3.5 max-[466px]:h-3.5 ${
+                              project.featured
+                                ? "text-amber-400"
+                                : "text-cyan-400"
                             }`}
                           />
                         )}
                       </div>
 
                       {expandedId === project._id ? (
-                        <div className="flex flex-col h-full space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                        <div className="flex flex-col h-full space-y-2 animate-in fade-in zoom-in-95 duration-300">
                           <p className="text-slate-300 dark:text-slate-300 font-normal font-sans text-xs tracking-normal line-clamp-3 leading-relaxed">
                             {project.description}
                           </p>
 
-                          <div className="flex flex-wrap gap-2 pt-1">
-                            {(project.tags || project.skills || []).slice(0, 4).map(
-                              (tag, idx) => (
+                          <div className="flex flex-wrap gap-2 pt-0.5">
+                            {(project.tags || project.skills || [])
+                              .slice(0, 4)
+                              .map((tag, idx) => (
                                 <span
                                   key={idx}
                                   className={`tech-badge px-2.5 py-0.5 border border-dashed rounded text-[9px] font-mono tracking-wider transition-all duration-300 ${
@@ -617,10 +885,9 @@ const ProjectManagement = () => {
                                       : "text-cyan-400 border-cyan-500/40 hover:border-cyan-300 hover:bg-cyan-400/10"
                                   }`}
                                 >
-                                    {tag}
+                                  {tag}
                                 </span>
-                              ),
-                            )}
+                              ))}
                           </div>
 
                           <div className="flex justify-between items-center mt-auto w-full">
@@ -641,7 +908,9 @@ const ProjectManagement = () => {
                                     size={12}
                                     className="transition-all shrink-0 duration-300 group-hover:scale-110"
                                   />
-                                  <span className="overflow-hidden truncate">DEMO</span>
+                                  <span className="overflow-hidden truncate">
+                                    DEMO
+                                  </span>
                                 </a>
                               )}
                               {project.githubLink && (
@@ -660,7 +929,9 @@ const ProjectManagement = () => {
                                     size={12}
                                     className="transition-all shrink-0 duration-300 group-hover:scale-110"
                                   />
-                                  <span className="overflow-hidden truncate">CODE</span>
+                                  <span className="overflow-hidden truncate">
+                                    CODE
+                                  </span>
                                 </a>
                               )}
                             </div>
@@ -668,7 +939,9 @@ const ProjectManagement = () => {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/projects/${project.slug || project._id}`);
+                                navigate(
+                                  `/projects/${project.slug || project._id}`,
+                                );
                               }}
                               className={`group relative px-2.5 py-1.5 rounded-lg text-nowrap transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
                                 project.featured
@@ -686,7 +959,7 @@ const ProjectManagement = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug">
+                        <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug max-[466px]:text-[10px] max-[466px]:pr-2 max-[466px]:pb-0.5 max-[466px]:line-clamp-1">
                           {project.description}
                         </div>
                       )}
@@ -702,7 +975,9 @@ const ProjectManagement = () => {
                 {/* Desktop Pagination */}
                 <div className="hidden sm:flex justify-center items-center gap-3 mt-12">
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(1, prev - 1))
+                    }
                     disabled={currentPage === 1}
                     className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
                       currentPage === 1
@@ -713,25 +988,29 @@ const ProjectManagement = () => {
                   >
                     <ChevronLeft size={16} />
                   </button>
-                  
+
                   <div className="flex items-center gap-1.5">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`w-9 h-9 rounded-xl text-xs font-bold transition-all duration-300 backdrop-blur-md cursor-pointer border ${
-                          currentPage === page
-                            ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-md shadow-cyan-500/10"
-                            : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:border-white/20 hover:text-white"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-9 h-9 rounded-xl text-xs font-bold transition-all duration-300 backdrop-blur-md cursor-pointer border ${
+                            currentPage === page
+                              ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-md shadow-cyan-500/10"
+                              : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ),
+                    )}
                   </div>
 
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
                       currentPage === totalPages
@@ -747,7 +1026,9 @@ const ProjectManagement = () => {
                 {/* Compact Mobile Pagination */}
                 <div className="flex sm:hidden justify-center items-center gap-4 mt-8">
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(1, prev - 1))
+                    }
                     disabled={currentPage === 1}
                     className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
                       currentPage === 1
@@ -758,13 +1039,16 @@ const ProjectManagement = () => {
                   >
                     <ChevronLeft size={16} />
                   </button>
-                  
+
                   <span className="text-xs font-medium text-slate-400">
-                    {currentPage} <span className="text-slate-600">/</span> {totalPages}
+                    {currentPage} <span className="text-slate-600">/</span>{" "}
+                    {totalPages}
                   </span>
 
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className={`p-2 rounded-xl border transition-all duration-300 backdrop-blur-md cursor-pointer ${
                       currentPage === totalPages
@@ -796,4 +1080,3 @@ const ProjectManagement = () => {
 };
 
 export default ProjectManagement;
-

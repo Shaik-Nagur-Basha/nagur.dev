@@ -23,6 +23,9 @@ export const protect = async (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ error: "User not found" });
     }
+    if (!req.user.isApproved) {
+      return res.status(403).json({ error: "User account is not approved/active" });
+    }
     next();
   } catch (error) {
     return res.status(401).json({ error: "Not authorized to access this route" });

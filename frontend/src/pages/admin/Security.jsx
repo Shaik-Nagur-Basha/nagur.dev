@@ -41,10 +41,15 @@ const Security = () => {
     if (formData.newPassword !== formData.confirmPassword) {
       return toast.error("Passwords do not match");
     }
-    const result = await updatePassword(
-      formData.currentPassword,
-      formData.newPassword,
-    );
+    const unmet = passwordRequirements.filter((r) => !r.met);
+    if (unmet.length > 0) {
+      return toast.error("Password complexity requirements not met");
+    }
+    const result = await updatePassword({
+      oldPassword: formData.currentPassword,
+      newPassword: formData.newPassword,
+      confirmPassword: formData.confirmPassword,
+    });
     if (result.success) {
       toast.success("Password updated successfully");
       setFormData({
@@ -222,10 +227,10 @@ const Security = () => {
                 <div key={index} className="flex items-center gap-3 group">
                   <div
                     className={cn(
-                      "w-5 h-5 rounded-lg flex items-center justify-center transition-all duration-300 border",
+                      "w-5 h-5 rounded-lg flex items-center justify-center transition-all duration-300",
                       req.met
-                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.08)]"
-                        : "bg-slate-900/50 border-white/5 text-slate-600",
+                        ? "border-emerald-500/30 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.08)]"
+                        : "border-white/5 text-slate-600",
                     )}
                   >
                     {req.met ? (

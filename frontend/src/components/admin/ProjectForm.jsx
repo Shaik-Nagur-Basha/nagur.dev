@@ -35,7 +35,10 @@ const projectSchema = z.object({
   slug: z
     .string()
     .min(3, "Slug is required")
-    .regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug must only contain lowercase letters, numbers, and hyphens",
+    ),
   shortDescription: z
     .string()
     .min(5, "Short description is required")
@@ -57,7 +60,7 @@ const projectSchema = z.object({
   mediaType: z.enum(["image", "video"]),
   order: z.preprocess(
     (val) => (val === "" || val === undefined ? 0 : Number(val)),
-    z.number().nonnegative("Order must be a positive number").default(0)
+    z.number().nonnegative("Order must be a positive number").default(0),
   ),
 });
 
@@ -67,29 +70,29 @@ const ProjectForm = ({ project = null, onSuccess }) => {
   const [mediaPreview, setMediaPreview] = useState(
     project?.image || project?.video || null,
   );
-  
+
   // Dynamic Array States
   const [skills, setSkills] = useState(project?.skills || []);
   const [skillInput, setSkillInput] = useState("");
-  
+
   // Array states with unique IDs for Framer Motion Reordering
   const [featuresList, setFeaturesList] = useState(
     (project?.featuresList || []).map((item, idx) => ({
       ...item,
       id: item._id || `feat-${idx}-${Date.now()}-${Math.random()}`,
-    }))
+    })),
   );
   const [gallery, setGallery] = useState(
     (project?.gallery || []).map((item, idx) => ({
       ...item,
       id: item._id || `gal-${idx}-${Date.now()}-${Math.random()}`,
-    }))
+    })),
   );
   const [techStackDetails, setTechStackDetails] = useState(
     (project?.techStackDetails || []).map((item, idx) => ({
       ...item,
       id: item._id || `cat-${idx}-${Date.now()}-${Math.random()}`,
-    }))
+    })),
   );
 
   // Toggles for adding tags
@@ -98,10 +101,38 @@ const ProjectForm = ({ project = null, onSuccess }) => {
 
   // Active dragging item tracker
   const [draggingId, setDraggingId] = useState(null);
+  const [draggedIndex, setDraggedIndex] = useState(null);
+
+  // Gallery Drag and Drop Handlers for smooth grid reordering
+  const handleGalleryDragStart = (e, index, id) => {
+    setDraggedIndex(index);
+    setTimeout(() => {
+      setDraggingId(id);
+    }, 0);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleGalleryDragEnd = () => {
+    setDraggedIndex(null);
+    setDraggingId(null);
+  };
+
+  const handleGalleryDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleGalleryDragEnter = (e, index) => {
+    if (draggedIndex === null || draggedIndex === index) return;
+    const updated = [...gallery];
+    const [movedItem] = updated.splice(draggedIndex, 1);
+    updated.splice(index, 0, movedItem);
+    setDraggedIndex(index);
+    setGallery(updated);
+  };
 
   // Screen size detection to enable/disable drag-and-drop
   const [isLargeScreen, setIsLargeScreen] = useState(
-    typeof window !== "undefined" ? window.innerWidth >= 768 : true
+    typeof window !== "undefined" ? window.innerWidth >= 768 : true,
   );
 
   useEffect(() => {
@@ -112,7 +143,7 @@ const ProjectForm = ({ project = null, onSuccess }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
   const fileInputRef = useRef(null);
   const galleryInputRef = useRef(null);
   const { createProject, updateProject, loading } = useAdminStore();
@@ -174,19 +205,19 @@ const ProjectForm = ({ project = null, onSuccess }) => {
         (project.featuresList || []).map((item, idx) => ({
           ...item,
           id: item._id || `feat-${idx}-${Date.now()}-${Math.random()}`,
-        }))
+        })),
       );
       setGallery(
         (project.gallery || []).map((item, idx) => ({
           ...item,
           id: item._id || `gal-${idx}-${Date.now()}-${Math.random()}`,
-        }))
+        })),
       );
       setTechStackDetails(
         (project.techStackDetails || []).map((item, idx) => ({
           ...item,
           id: item._id || `cat-${idx}-${Date.now()}-${Math.random()}`,
-        }))
+        })),
       );
       setMediaPreview(
         project.mediaType === "image" ? project.image : project.video,
@@ -212,20 +243,22 @@ const ProjectForm = ({ project = null, onSuccess }) => {
   };
 
   const addSkill = (e) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      const value = skillInput.trim();
-      if (value && !skills.includes(value)) {
-        setSkills([...skills, value]);
-        setSkillInput("");
-      }
+    if (e) e.preventDefault();
+    const value = skillInput.trim();
+    if (value && !skills.includes(value)) {
+      setSkills([...skills, value]);
+      setSkillInput("");
     }
   };
 
   // Features List Handlers (Prepending to appear on top)
   const addFeature = () => {
     setFeaturesList([
-      { id: `feat-new-${Date.now()}-${Math.random()}`, title: "", description: "" },
+      {
+        id: `feat-new-${Date.now()}-${Math.random()}`,
+        title: "",
+        description: "",
+      },
       ...featuresList,
     ]);
   };
@@ -302,7 +335,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
   };
   const removeTechItem = (catIdx, itemIdx) => {
     const updated = [...techStackDetails];
-    updated[catIdx].items = updated[catIdx].items.filter((_, i) => i !== itemIdx);
+    updated[catIdx].items = updated[catIdx].items.filter(
+      (_, i) => i !== itemIdx,
+    );
     setTechStackDetails(updated);
   };
 
@@ -311,14 +346,14 @@ const ProjectForm = ({ project = null, onSuccess }) => {
     if (skills.length === 0) return toast.error("Skills required");
 
     const formData = new FormData();
-    
+
     // Append simple values
     Object.keys(data).forEach((key) => {
       formData.append(key, data[key]);
     });
-    
+
     if (mediaFile) formData.append("media", mediaFile);
-    
+
     // Append standard skills array
     skills.forEach((skill) => formData.append("skills[]", skill));
 
@@ -326,16 +361,25 @@ const ProjectForm = ({ project = null, onSuccess }) => {
     featuresList.forEach((item, index) => {
       if (item.title.trim()) {
         formData.append(`featuresList[${index}][title]`, item.title.trim());
-        formData.append(`featuresList[${index}][description]`, (item.description || "").trim());
+        formData.append(
+          `featuresList[${index}][description]`,
+          (item.description || "").trim(),
+        );
       }
     });
 
     // Append Tech Stack Details array of objects
     techStackDetails.forEach((item, index) => {
       if (item.category.trim()) {
-        formData.append(`techStackDetails[${index}][category]`, item.category.trim());
+        formData.append(
+          `techStackDetails[${index}][category]`,
+          item.category.trim(),
+        );
         item.items.forEach((subItem, subIdx) => {
-          formData.append(`techStackDetails[${index}][items][${subIdx}]`, subItem.trim());
+          formData.append(
+            `techStackDetails[${index}][items][${subIdx}]`,
+            subItem.trim(),
+          );
         });
       }
     });
@@ -344,7 +388,10 @@ const ProjectForm = ({ project = null, onSuccess }) => {
     gallery.forEach((item, index) => {
       if (item.url.trim()) {
         formData.append(`gallery[${index}][url]`, item.url.trim());
-        formData.append(`gallery[${index}][caption]`, (item.caption || "").trim());
+        formData.append(
+          `gallery[${index}][caption]`,
+          (item.caption || "").trim(),
+        );
       }
     });
 
@@ -362,10 +409,8 @@ const ProjectForm = ({ project = null, onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="pb-10">
-      
       {/* ── RESPONSIVE GRID LAYOUT ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        
         {/* ── PANEL 1: Identity & Basic Info (order-1 on all screens) ── */}
         <div className="order-1 lg:order-1 glass-panel p-6 rounded-3xl space-y-4">
           <h3 className="text-xs font-black uppercase tracking-widest text-blue-500 mb-4 flex items-center gap-2">
@@ -376,7 +421,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
             <div className="floating-label-group">
               <FileText className="input-icon w-4 h-4 text-blue-500/70" />
               <input {...register("title")} placeholder=" " id="title" />
-              <label htmlFor="title">Project Title <span className="text-red-500">*</span></label>
+              <label htmlFor="title">
+                Project Title <span className="text-red-500">*</span>
+              </label>
               {errors.title && (
                 <p className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-wider">
                   {errors.title.message}
@@ -387,7 +434,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
             <div className="floating-label-group">
               <ExternalLink className="input-icon w-4 h-4 text-blue-500/70" />
               <input {...register("slug")} placeholder=" " id="slug" />
-              <label htmlFor="slug">Project Slug (URL part) <span className="text-red-500">*</span></label>
+              <label htmlFor="slug">
+                Project Slug (URL part) <span className="text-red-500">*</span>
+              </label>
               {errors.slug && (
                 <p className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-wider">
                   {errors.slug.message}
@@ -438,7 +487,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                 placeholder=" "
                 id="shortDescription"
               />
-              <label htmlFor="shortDescription">Short Description <span className="text-red-500">*</span></label>
+              <label htmlFor="shortDescription">
+                Short Description <span className="text-red-500">*</span>
+              </label>
               {errors.shortDescription && (
                 <p className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-wider">
                   {errors.shortDescription.message}
@@ -447,8 +498,13 @@ const ProjectForm = ({ project = null, onSuccess }) => {
             </div>
 
             <div className="pt-2">
-              <label htmlFor="description" className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                <span className="hidden sm:inline">Full Project Brief / Description</span>
+              <label
+                htmlFor="description"
+                className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1"
+              >
+                <span className="hidden sm:inline">
+                  Full Project Brief / Description
+                </span>
                 <span className="sm:hidden">Full Project Brief</span>
                 <span className="text-red-500 ml-0.5">*</span>
               </label>
@@ -457,7 +513,7 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                 placeholder="Provide markdown or clear text describing the project details..."
                 id="description"
                 rows={10}
-                className="w-full border-0 border-b border-gray-700 bg-transparent py-2 focus:ring-0 focus-visible:ring-0 focus:outline-none outline-none whiteblink-remover text-sm"
+                className="w-full border rounded-md border-gray-700 bg-transparent p-2 mt-2! focus:ring-0 focus-visible:ring-0 focus:outline-none outline-none whiteblink-remover text-sm"
               />
               {errors.description && (
                 <p className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-wider">
@@ -469,7 +525,12 @@ const ProjectForm = ({ project = null, onSuccess }) => {
         </div>
 
         {/* ── PANEL 2: Media & Links (order-2 on all screens, dynamic relative priority stack) ── */}
-        <div className={cn("order-2 lg:order-2 glass-panel p-6 rounded-3xl space-y-4 transition-all duration-300", statusOpen ? "z-50 relative" : "z-10 relative")}>
+        <div
+          className={cn(
+            "order-2 lg:order-2 glass-panel p-6 rounded-3xl space-y-4 transition-all duration-300",
+            statusOpen ? "z-50 relative" : "z-10 relative",
+          )}
+        >
           <h3 className="text-xs font-black uppercase tracking-widest text-purple-500 mb-4 flex items-center gap-2">
             <ImageIcon className="w-3.5 h-3.5" /> Media & Links
           </h3>
@@ -549,14 +610,10 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                 </p>
               )}
             </div>
-            
+
             <div className="floating-label-group !m-0">
               <ExternalLink className="input-icon w-4 h-4 text-purple-500/70" />
-              <input
-                {...register("demoLink")}
-                placeholder=" "
-                id="demoLink"
-              />
+              <input {...register("demoLink")} placeholder=" " id="demoLink" />
               <label htmlFor="demoLink">Live Demo URL</label>
               {errors.demoLink && (
                 <p className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-wider">
@@ -599,7 +656,10 @@ const ProjectForm = ({ project = null, onSuccess }) => {
               </label>
             </div>
 
-            <div className="space-y-1.5 relative w-full md:w-40" ref={statusRef}>
+            <div
+              className="space-y-1.5 relative w-full md:w-40"
+              ref={statusRef}
+            >
               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
                 Status <span className="text-red-500">*</span>
               </label>
@@ -610,7 +670,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                 aria-haspopup="listbox"
                 aria-expanded={statusOpen}
               >
-                <span className="text-sm font-bold uppercase tracking-wider">{statusValue || "Draft"}</span>
+                <span className="text-sm font-bold uppercase tracking-wider">
+                  {statusValue || "Draft"}
+                </span>
                 <svg
                   className="w-3 h-3 opacity-80"
                   viewBox="0 0 20 20"
@@ -644,7 +706,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                       }}
                       className={cn(
                         "p-2.5 text-xs font-bold uppercase tracking-wider cursor-pointer transition-colors",
-                        statusValue === opt ? "bg-white/10 text-white" : "text-slate-500 hover:text-slate-300"
+                        statusValue === opt
+                          ? "bg-white/10 text-white"
+                          : "text-slate-500 hover:text-slate-300",
                       )}
                     >
                       {opt}
@@ -661,7 +725,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
           <h3 className="text-xs font-black uppercase tracking-widest text-emerald-500 flex items-center justify-between">
             <span className="flex items-center gap-2">
               <ListTodo className="w-3.5 h-3.5" />
-              <span><span className="hidden sm:inline">Highlights & </span>Features</span>
+              <span>
+                <span className="hidden sm:inline">Highlights & </span>Features
+              </span>
             </span>
             <button
               type="button"
@@ -669,7 +735,10 @@ const ProjectForm = ({ project = null, onSuccess }) => {
               className="cursor-pointer flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-xs font-bold text-emerald-400 uppercase tracking-wider hover:bg-emerald-500/20 transition-all duration-300"
             >
               <Plus className="w-4 h-4" />
-              <span><span className="hidden sm:inline">Add Feature</span><span className="sm:hidden">Add</span></span>
+              <span>
+                <span className="hidden sm:inline">Add Feature</span>
+                <span className="sm:hidden">Add</span>
+              </span>
             </button>
           </h3>
 
@@ -683,10 +752,12 @@ const ProjectForm = ({ project = null, onSuccess }) => {
             values={featuresList}
             onReorder={setFeaturesList}
             as="div"
-            className="space-y-6 max-h-[300px] overflow-y-auto pr-1"
+            className="space-y-6 max-h-[390px] overflow-y-auto pr-1"
           >
             {featuresList.length === 0 ? (
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center py-6">No features added yet</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center py-6">
+                No features added yet
+              </p>
             ) : (
               featuresList.map((feature, idx) => (
                 <Reorder.Item
@@ -704,21 +775,29 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                   </div>
 
                   {/* Input fields wrapper - background styling applied ONLY during dragging */}
-                  <div className={cn(
-                    "flex-1 space-y-1.5 p-2 rounded-xl transition-all duration-200",
-                    draggingId === feature.id ? "bg-white/[0.06] shadow-xl ring-1 ring-white/10" : ""
-                  )}>
+                  <div
+                    className={cn(
+                      "flex-1 space-y-1.5 p-2 rounded-xl transition-all duration-200",
+                      draggingId === feature.id
+                        ? "bg-white/[0.06] shadow-xl ring-1 ring-white/10"
+                        : "",
+                    )}
+                  >
                     {/* Row 1: Title input & Delete button on the right */}
                     <div className="flex items-center gap-4">
                       <div className="floating-label-group flex-1 !mb-0">
                         <CheckSquare className="input-icon w-4 h-4 text-emerald-400/80" />
                         <input
                           value={feature.title}
-                          onChange={(e) => updateFeature(idx, "title", e.target.value)}
+                          onChange={(e) =>
+                            updateFeature(idx, "title", e.target.value)
+                          }
                           placeholder=" "
                           id={`feat-title-${idx}`}
                         />
-                        <label htmlFor={`feat-title-${idx}`}>Feature Title</label>
+                        <label htmlFor={`feat-title-${idx}`}>
+                          Feature Title
+                        </label>
                       </div>
 
                       <button
@@ -736,11 +815,15 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                       <Info className="input-icon w-4 h-4 text-slate-500/70" />
                       <input
                         value={feature.description}
-                        onChange={(e) => updateFeature(idx, "description", e.target.value)}
+                        onChange={(e) =>
+                          updateFeature(idx, "description", e.target.value)
+                        }
                         placeholder=" "
                         id={`feat-desc-${idx}`}
                       />
-                      <label htmlFor={`feat-desc-${idx}`}>Feature Description</label>
+                      <label htmlFor={`feat-desc-${idx}`}>
+                        Feature Description
+                      </label>
                     </div>
                   </div>
                 </Reorder.Item>
@@ -759,9 +842,10 @@ const ProjectForm = ({ project = null, onSuccess }) => {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                Main Stack Tags (Core Highlights) <span className="text-red-500">*</span>
+                Main Stack Tags (Core Highlights){" "}
+                <span className="text-red-500">*</span>
               </label>
-              
+
               {/* Premium EMERALD toggle button styling (different styling colors requested) */}
               {!showAddCoreTag && (
                 <button
@@ -802,16 +886,22 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === ",") {
+                      if (e.key === "Enter" || e.key === "," || e.keyCode === 13 || e.which === 13) {
                         addSkill(e);
                         setShowAddCoreTag(false);
                       }
+                    }}
+                    onBlur={() => {
+                      addSkill();
+                      setShowAddCoreTag(false);
                     }}
                     placeholder=" "
                     id="skillInput"
                     autoFocus
                   />
-                  <label htmlFor="skillInput">Add Core Tag (Press Enter)</label>
+                  <label htmlFor="skillInput">
+                    Add Core Tag <span className="hidden sm:inline">(Press Enter)</span>
+                  </label>
                 </div>
                 <button
                   type="button"
@@ -828,7 +918,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
           <div className="space-y-4 pt-4 border-white/5">
             <div className="flex items-center justify-between">
               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                <span><span className="hidden sm:inline">Detailed </span>Categories</span>
+                <span>
+                  <span className="hidden sm:inline">Detailed </span>Categories
+                </span>
               </label>
               <button
                 type="button"
@@ -836,7 +928,10 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                 className="cursor-pointer flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/25 text-xs font-bold text-cyan-400 uppercase tracking-wider hover:bg-cyan-500/20 transition-all duration-300"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span><span className="hidden sm:inline">Add Category</span><span className="sm:hidden">Add</span></span>
+                <span>
+                  <span className="hidden sm:inline">Add Category</span>
+                  <span className="sm:hidden">Add</span>
+                </span>
               </button>
             </div>
 
@@ -854,7 +949,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                 className="space-y-6"
               >
                 {techStackDetails.length === 0 ? (
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center py-6">No categories added yet</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center py-6">
+                    No categories added yet
+                  </p>
                 ) : (
                   techStackDetails.map((cat, catIdx) => (
                     <Reorder.Item
@@ -872,22 +969,30 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                       </div>
 
                       {/* Right Column: Inputs & Tags (background only shown while dragging) */}
-                      <div className={cn(
-                        "flex-1 space-y-2 p-2 rounded-xl transition-all duration-200",
-                        draggingId === cat.id ? "bg-white/[0.06] shadow-xl ring-1 ring-white/10" : ""
-                      )}>
+                      <div
+                        className={cn(
+                          "flex-1 space-y-2 p-2 rounded-xl transition-all duration-200",
+                          draggingId === cat.id
+                            ? "bg-white/[0.06] shadow-xl ring-1 ring-white/10"
+                            : "",
+                        )}
+                      >
                         {/* Row 1: Category Name input & Delete button */}
                         <div className="flex items-center gap-4">
                           <div className="floating-label-group flex-1 !mb-0">
                             <Cpu className="input-icon w-4 h-4 text-cyan-500/70" />
                             <input
                               value={cat.category}
-                              onChange={(e) => updateTechCategoryName(catIdx, e.target.value)}
+                              onChange={(e) =>
+                                updateTechCategoryName(catIdx, e.target.value)
+                              }
                               placeholder=" "
                               id={`cat-${catIdx}`}
                             />
                             <label htmlFor={`cat-${catIdx}`}>
-                              <span className="hidden sm:inline">Category Name (e.g. Frontend, Databases)</span>
+                              <span className="hidden sm:inline">
+                                Category Name (e.g. Frontend, Databases)
+                              </span>
                               <span className="sm:hidden">Name</span>
                             </label>
                           </div>
@@ -912,7 +1017,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                               >
                                 {item}
                                 <X
-                                  onClick={() => removeTechItem(catIdx, itemIdx)}
+                                  onClick={() =>
+                                    removeTechItem(catIdx, itemIdx)
+                                  }
                                   className="w-2.5 h-2.5 cursor-pointer hover:text-red-500"
                                 />
                               </span>
@@ -929,7 +1036,7 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                               </button>
                             )}
                           </div>
-                          
+
                           {/* Conditional Category Tag Input Field */}
                           {activeAddTagCatIdx === catIdx && (
                             <div className="flex items-center gap-2 pt-1">
@@ -950,7 +1057,9 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                                   autoFocus
                                 />
                                 <label htmlFor={`cat-add-item-${catIdx}`}>
-                                  <span className="hidden sm:inline">Add Tag (Press Enter)</span>
+                                  <span className="hidden sm:inline">
+                                    Add Tag (Press Enter)
+                                  </span>
                                   <span className="sm:hidden">Add Tag</span>
                                 </label>
                               </div>
@@ -972,107 +1081,125 @@ const ProjectForm = ({ project = null, onSuccess }) => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* ── PANEL 5: Project Gallery (order-5 on all screens) ── */}
-        <div className="order-5 lg:order-5 glass-panel p-6 rounded-3xl space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-widest text-amber-500 flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <Images className="w-3.5 h-3.5" />
-              <span><span className="hidden sm:inline">Project </span>Gallery</span>
+      {/* ── PANEL 5: Project Gallery (order-5 on all screens) ── */}
+      <div className="glass-panel p-6 rounded-3xl my-5">
+        <h3 className="text-xs font-black uppercase tracking-widest text-amber-500 flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <Images className="w-3.5 h-3.5" />
+            <span>
+              <span className="hidden sm:inline">Project </span>Gallery
             </span>
-            <button
-              type="button"
-              onClick={handleGalleryClick}
-              className="cursor-pointer flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs font-bold text-amber-400 uppercase tracking-wider hover:bg-amber-500/20 transition-all duration-300"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span><span className="hidden sm:inline">Add Image</span><span className="sm:hidden">Add</span></span>
-            </button>
-          </h3>
-
-          {/* Hidden Input selector for Multiple Image Files */}
-          <input
-            type="file"
-            ref={galleryInputRef}
-            multiple
-            accept="image/*"
-            className="hidden"
-            onChange={handleGalleryFilesChange}
-          />
-
-          {/* Draggable Reorder list, no border lines, card spacing = space-y-6, input field spacing = space-y-1.5 */}
-          {gallery.length > 0 && (
-            <div className="h-[1px] bg-gradient-to-r from-transparent via-amber-500/25 to-transparent my-3" />
-          )}
-
-          <Reorder.Group
-            axis="y"
-            values={gallery}
-            onReorder={setGallery}
-            as="div"
-            className="space-y-6 max-h-[300px] overflow-y-auto pr-1"
+          </span>
+          <button
+            type="button"
+            onClick={handleGalleryClick}
+            className="cursor-pointer flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs font-bold text-amber-400 uppercase tracking-wider hover:bg-amber-500/20 transition-all duration-300"
           >
-            {gallery.length === 0 ? (
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center py-6">No gallery items added yet</p>
-            ) : (
-              gallery.map((g, idx) => (
-                <Reorder.Item
-                  key={g.id}
-                  value={g}
-                  as="div"
-                  drag={isLargeScreen ? "y" : false}
-                  onDragStart={() => isLargeScreen && setDraggingId(g.id)}
-                  onDragEnd={() => setDraggingId(null)}
-                  className="relative flex items-center pl-0 md:pl-7 transition-all duration-200"
-                >
-                  {/* Absolute drag handle positioned outside grid flow, taking no width */}
-                  <div className="absolute left-0.5 top-[50%] -translate-y-[50%] hidden md:flex items-center justify-center cursor-grab text-slate-600 hover:text-slate-400">
-                    <GripVertical className="w-5 h-5" />
-                  </div>
+            <Plus className="w-3.5 h-3.5" />
+            <span>
+              <span className="hidden sm:inline">Add Image</span>
+              <span className="sm:hidden">Add</span>
+            </span>
+          </button>
+        </h3>
 
-                  {/* Polaroid Card Wrapper (background styling applied ONLY during dragging) */}
-                  <div className={cn(
-                    "flex-1 flex flex-col p-3 rounded-2xl transition-all duration-200",
-                    draggingId === g.id ? "bg-white/[0.06] shadow-xl ring-1 ring-white/10" : "bg-white/[0.01]"
-                  )}>
-                    {/* Polaroid Image Preview (16:9 aspect-video) */}
-                    {g.url && (
-                      <div className="w-full aspect-video rounded-xl overflow-hidden border border-white/5 flex-shrink-0 bg-white/5 shadow-md relative group">
-                        <img
-                          src={g.url}
-                          alt="Gallery item preview"
-                          className="w-full h-full object-cover hover:scale-102 transition-transform duration-300"
-                        />
-                        {/* Absolute positioned Delete button in the top-right corner */}
-                        <button
-                          type="button"
-                          onClick={() => removeGalleryItem(idx)}
-                          className="absolute top-2.5 right-2.5 cursor-pointer p-2 rounded-xl bg-black/60 border border-white/10 text-slate-400 hover:text-red-400 hover:bg-black/80 transition-all flex-shrink-0"
-                          title="Delete Image"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+        {/* Hidden Input selector for Multiple Image Files */}
+        <input
+          type="file"
+          ref={galleryInputRef}
+          multiple
+          accept="image/*"
+          className="hidden"
+          onChange={handleGalleryFilesChange}
+        />
 
-                    {/* Polaroid Caption Input stacked underneath */}
-                    <div className="floating-label-group !mb-0 mt-3.5">
-                      <Info className="input-icon w-4 h-4 text-slate-500/70" />
-                      <input
-                        value={g.caption}
-                        onChange={(e) => updateGalleryItem(idx, "caption", e.target.value)}
-                        placeholder=" "
-                        id={`gal-cap-${idx}`}
+        {/* Draggable Reorder list, no border lines, card spacing = space-y-6, input field spacing = space-y-1.5 */}
+        {gallery.length > 0 && (
+          <div className="h-[1px] bg-gradient-to-r from-transparent via-amber-500/25 to-transparent my-3" />
+        )}
+
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[400px] overflow-y-auto overflow-x-hidden pr-1 scroll-smooth"
+        >
+          {gallery.length === 0 ? (
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center py-6 col-span-full">
+              No gallery items added yet
+            </p>
+          ) : (
+            gallery.map((g, idx) => (
+              <motion.div
+                key={g.id}
+                layout
+                draggable
+                onDragStart={(e) => handleGalleryDragStart(e, idx, g.id)}
+                onDragEnd={handleGalleryDragEnd}
+                onDragOver={handleGalleryDragOver}
+                onDragEnter={(e) => handleGalleryDragEnter(e, idx)}
+                whileHover={{ scale: 1.01 }}
+                className={cn(
+                  "relative flex flex-col p-3 rounded-2xl transition-all duration-200 w-full cursor-grab active:cursor-grabbing border border-white/5",
+                  draggingId === g.id
+                    ? "bg-white/[0.08] shadow-2xl ring-2 ring-amber-500/30 opacity-40 scale-95"
+                    : "bg-white/[0.01] hover:bg-white/[0.03]",
+                )}
+                style={{ willChange: "transform" }}
+              >
+                {/* Polaroid Card Wrapper */}
+                <div className="flex-1 flex flex-col">
+                  {/* Polaroid Image Preview (16:9 aspect-video) */}
+                  {g.url && (
+                    <div className="w-full aspect-video rounded-xl overflow-hidden border border-white/5 flex-shrink-0 bg-white/5 shadow-md relative group select-none">
+                      <img
+                        src={g.url}
+                        alt="Gallery item preview"
+                        className="w-full h-full object-cover hover:scale-102 transition-transform duration-300 pointer-events-none"
                       />
-                      <label htmlFor={`gal-cap-${idx}`}>Caption / Subtitle</label>
-                    </div>
-                  </div>
-                </Reorder.Item>
-              ))
-            )}
-          </Reorder.Group>
-        </div>
+                      
+                      {/* Drag Grip Overlay (top-left) */}
+                      <div className="absolute top-2.5 left-2.5 p-2 rounded-xl bg-black/60 border border-white/10 text-slate-400 cursor-grab active:cursor-grabbing hover:text-white transition-all z-10">
+                        <GripVertical className="w-4 h-4" />
+                      </div>
 
+                      {/* Absolute positioned Delete button in the top-right corner */}
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryItem(idx)}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onDragStart={(e) => e.stopPropagation()}
+                        className="absolute top-2.5 right-2.5 cursor-pointer p-2 rounded-xl bg-black/60 border border-white/10 text-slate-400 hover:text-red-400 hover:bg-black/80 transition-all flex-shrink-0 z-10"
+                        title="Delete Image"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Polaroid Caption Input stacked underneath */}
+                  <div
+                    className="floating-label-group !mb-0 mt-3.5"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onDragStart={(e) => e.stopPropagation()}
+                  >
+                    <Info className="input-icon w-4 h-4 text-slate-500/70" />
+                    <input
+                      value={g.caption}
+                      onChange={(e) =>
+                        updateGalleryItem(idx, "caption", e.target.value)
+                      }
+                      placeholder=" "
+                      id={`gal-cap-${idx}`}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onDragStart={(e) => e.stopPropagation()}
+                    />
+                    <label htmlFor={`gal-cap-${idx}`}>Caption / Subtitle</label>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Buttons */}

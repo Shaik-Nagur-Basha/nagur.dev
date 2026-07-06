@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/useAuthStore";
+import { useProfileStore } from "../../store/useProfileStore";
 import { cn } from "../../utils/cn";
 import Logo from "../Logo";
 import ProjectOrderModal from "./ProjectOrderModal";
@@ -24,6 +25,11 @@ const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
   // null | "featured" | "nonfeatured"
   const [orderModalMode, setOrderModalMode] = useState(null);
+  const { profile, fetchProfile } = useProfileStore();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const menuItems = [
     { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -39,7 +45,7 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 flex font-outfit overflow-hidden">
+    <div className="dark min-h-screen bg-[#020617] text-slate-100 flex font-outfit overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
@@ -47,16 +53,15 @@ const AdminLayout = ({ children }) => {
       </div>
 
       {/* Sidebar */}
-      <aside className="sticky top-0 h-screen z-50 w-16 lg:w-64 glass-panel border-r border-white/5 transition-all duration-300 flex flex-col shrink-0">
-        {/* Sidebar Header */}
+      <aside className="sticky top-0 h-screen z-50 w-16 lg:w-64 glass-panel !border-r-0 transition-all duration-300 flex flex-col shrink-0 relative after:absolute after:top-20 after:right-0 after:bottom-0 after:w-[1px] after:bg-white/10">
         <div className="h-16 flex items-center px-4 lg:px-6 border-white/5">
           <Link
             to="/"
-            className="flex items-center justify-center gap-2 opacity-80 transition-opacity hover:opacity-100"
+            className="flex items-center justify-center gap-2 opacity-80 transition-opacity hover:opacity-100 group"
           >
             <Logo theme="golden" />
-            <span className="text-sm font-black tracking-widest uppercase bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent hidden lg:block">
-              nagur.dev
+            <span className="text-base lg:text-lg font-black tracking-widest uppercase bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent hidden lg:block">
+              {profile?.title || "nagur.dev"}
             </span>
           </Link>
         </div>
@@ -92,7 +97,7 @@ const AdminLayout = ({ children }) => {
         </nav>
 
         {/* Security Status (desktop only) */}
-        <div className="hidden lg:block px-3 my-4">
+        <div className="hidden lg:block px-3 my-2">
           <div className="glass-panel !border-0 rounded-2xl overflow-hidden relative group">
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative p-4 bg-gradient-to-br from-slate-900/80 to-slate-800/80 text-white">
@@ -129,7 +134,7 @@ const AdminLayout = ({ children }) => {
         </div>
 
         {/* User Section */}
-        <div className="p-3 border-t border-white/5 mt-auto">
+        <div className="p-3 border-white/5 mt-auto">
           {/* Desktop User Card */}
           <div className="hidden lg:block p-3 rounded-xl bg-white/5 border border-white/5">
             <div className="flex items-center gap-3 mb-3">
@@ -173,16 +178,22 @@ const AdminLayout = ({ children }) => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 relative h-screen overflow-hidden">
+        {/* Inverted corner transition */}
+        <svg className="absolute top-16 left-0 w-4 h-4 pointer-events-none z-50" viewBox="0 0 16 16" style={{ backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }}>
+          <path d="M 0 0 L 16 0 Q 0 0 0 16 Z" fill="rgba(255, 255, 255, 0.03)" />
+          <path d="M 0 16 Q 0 0 16 0" fill="none" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="1" />
+        </svg>
+
         {/* Header */}
-        <header className="h-16 flex items-center justify-between px-6 border-b border-white/5 glass-panel z-40 shrink-0">
+        <header className="h-16 flex items-center justify-between px-6 glass-panel z-40 shrink-0 !border-l-0 !border-b-0 relative after:absolute after:bottom-0 after:left-4 after:right-0 after:h-[1px] after:bg-white/10">
           <div className="flex items-center gap-4">
-            <h1 className="text-xs font-black uppercase tracking-[0.2em] text-slate-100">
+            <h1 className="text-xs font-black uppercase tracking-[0.2em] text-slate-100 mr-2">
               {menuItems.find((m) => m.path === location.pathname)?.name ||
                 "Dashboard"}
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
             {/* Featured Order Button — amber */}
             <button
               onClick={() => setOrderModalMode("featured")}
@@ -190,7 +201,7 @@ const AdminLayout = ({ children }) => {
               title="Change Featured Projects Order"
             >
               <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              <span className="hidden sm:inline">Featured Order</span>
+              <span className="hidden md:inline text-nowrap">Featured Order</span>
             </button>
 
             {/* Non-Featured Order Button — cyan */}
@@ -200,7 +211,7 @@ const AdminLayout = ({ children }) => {
               title="Change Non-Featured Projects Order"
             >
               <ListOrdered className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Standard Order</span>
+              <span className="hidden md:inline text-nowrap">Standard Order</span>
             </button>
             {!(
               location.pathname === "/admin" ||
@@ -210,12 +221,12 @@ const AdminLayout = ({ children }) => {
                 onClick={() =>
                   navigate("/admin/projects", { state: { openForm: true } })
                 }
-                className="rotating-gradient-card new-project mr-3 !px-3 sm:!px-6"
+                className="rotating-gradient-card new-project !px-3 sm:!px-6"
                 title="New Project"
               >
                 <span>
                   <Plus className="w-4 h-4" />
-                  <span className="hidden sm:inline">New Project</span>
+                  <span className="hidden md:inline text-nowrap">New Project</span>
                 </span>
               </button>
             )}
@@ -227,7 +238,7 @@ const AdminLayout = ({ children }) => {
             >
               <span>
                 <ExternalLink className="w-4 h-4" />
-                <span className="hidden sm:inline">Live Site</span>
+                <span className="hidden md:inline text-nowrap">Live Site</span>
               </span>
             </a>
           </div>

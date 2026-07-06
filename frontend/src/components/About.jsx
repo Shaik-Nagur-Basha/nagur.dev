@@ -2,11 +2,60 @@ import { CheckCircle, Sparkles, TrendingUp, Award, Zap } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
 import SkeletonLoader from "./SkeletonLoader";
+import API from "../api/axios";
+
+// Helper to calculate years of experience from August 2024
+const getYearsOfExperience = () => {
+  const startDate = new Date("2024-08-01");
+  const today = new Date();
+  const diffTime = today.getTime() - startDate.getTime();
+  if (diffTime < 0) return 0;
+  const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+  return parseFloat(diffYears.toFixed(1));
+};
+
+// CountUp animation component
+function CountUp({ end, duration = 1200, suffix = "" }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime = null;
+    const startValue = 0;
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      
+      // Smooth easeOutQuad easing
+      const easeProgress = progress * (2 - progress);
+      
+      const currentValue = startValue + easeProgress * (end - startValue);
+
+      if (Number.isInteger(end)) {
+        setCount(Math.floor(currentValue));
+      } else {
+        setCount(parseFloat(currentValue.toFixed(1)));
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(end);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [end, duration]);
+
+  return <>{count}{suffix}</>;
+}
 
 function About() {
   const { darkMode } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [projectsCount, setProjectsCount] = useState(0);
 
   useEffect(() => {
     // Minimum skeleton display time (prevents flashing)
@@ -15,13 +64,31 @@ function About() {
   }, []);
 
   useEffect(() => {
-    // Switch to content once minimum time has passed
-    if (!minLoadingTime) {
+    const fetchProjectsCount = async () => {
+      try {
+        const { data } = await API.get("/projects?select=_id");
+        if (data.success) {
+          setProjectsCount(data.count || data.data?.length || 0);
+        }
+      } catch (error) {
+        console.error("Error fetching projects count:", error);
+      } finally {
+        setIsDataLoading(false);
+      }
+    };
+
+    fetchProjectsCount();
+  }, []);
+
+  useEffect(() => {
+    // Switch to content once minimum time and data fetch are complete
+    if (!minLoadingTime && !isDataLoading) {
       setIsLoading(false);
     }
-  }, [minLoadingTime]);
+  }, [minLoadingTime, isDataLoading]);
+
   const highlights = [
-    "1.5+ yrs experience in MERN",
+    `${getYearsOfExperience()}+ yrs experience in MERN`,
     "Expert in React & Node.js",
     "Responsive & accessible design",
     "Performance optimization",
@@ -168,9 +235,9 @@ function About() {
               <div className="w-full order-1 lg:order-2">
                 <div className="grid grid-cols-3 lg:grid-cols-2 gap-4 sm:gap-3 lg:gap-4">
                   {[
-                    { number: "5+", label: "Projects", icon: TrendingUp },
-                    { number: "1.5+", label: "Years", icon: Award },
-                    { number: "100%", label: "Satisfaction", icon: Zap },
+                    { number: <CountUp end={projectsCount} suffix="+" />, label: "Projects", icon: TrendingUp },
+                    { number: <CountUp end={getYearsOfExperience()} suffix="+" />, label: "Years", icon: Award },
+                    { number: <CountUp end={99} suffix="%" />, label: "Satisfaction", icon: Zap },
                   ].map((stat, idx) => {
                     const IconComponent = stat.icon;
                     return (

@@ -6,8 +6,10 @@ const ProtectedRoute = () => {
   const { isAuthenticated, isCheckingAuth, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    if (!isAuthenticated) {
+      checkAuth();
+    }
+  }, [checkAuth, isAuthenticated]);
 
   if (isCheckingAuth) {
     return (

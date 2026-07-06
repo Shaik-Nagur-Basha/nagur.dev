@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import SkeletonLoader from "./SkeletonLoader";
 import { useProfileStore } from "../store/useProfileStore";
 
@@ -451,21 +452,23 @@ function Footer() {
     },
     {
       title: "Projects",
-      links: [
-        { label: "BlogByte Blog", href: "https://blogbyte-blog.onrender.com" },
-        {
-          label: "Gradient Craft",
-          href: "https://shaik-nagur-basha.github.io/Gradient-Craft",
-        },
-        {
-          label: "DevMatrix",
-          href: "https://shaik-nagur-basha.github.io/DevMatrix",
-        },
-        {
-          label: "NeoChat",
-          href: "https://neochat-sk.onrender.com",
-        },
-      ],
+      links: profile?.footerProjects && profile.footerProjects.length > 0
+        ? profile.footerProjects.map((p) => ({ label: p.label, href: p.link }))
+        : [
+            { label: "BlogByte Blog", href: "https://blogbyte-blog.onrender.com" },
+            {
+              label: "Gradient Craft",
+              href: "https://shaik-nagur-basha.github.io/Gradient-Craft",
+            },
+            {
+              label: "DevMatrix",
+              href: "https://shaik-nagur-basha.github.io/DevMatrix",
+            },
+            {
+              label: "NeoChat",
+              href: "https://neochat-sk.onrender.com",
+            },
+          ],
     },
     {
       title: "Contact",
@@ -521,7 +524,7 @@ function Footer() {
                   <h2 className="footer-title mb-0!">{profile?.name || "Sk Nagur Basha"}</h2>
                 </div>
                 <p className="footer-description">
-                  MERN full stack web developer focused on building fast, accessible, and visually refined web experiences with modern technologies.
+                  {profile?.footerDescription || "MERN full stack web developer focused on building fast, accessible, and visually refined web experiences with modern technologies."}
                 </p>
                 <div className="social-links">
                   {socialLinks.map((social) => {
@@ -562,9 +565,9 @@ function Footer() {
                   </span>
                 </p>
                 <nav className="footer-links-bottom">
-                  <a href="#privacy">Privacy Policy</a>
-                  <a href="#terms">Terms of Service</a>
-                  <a href="#cookies">Cookie Policy</a>
+                  <Link to="/privacy">Privacy Policy</Link>
+                  <Link to="/terms">Terms of Service</Link>
+                  <Link to="/cookies">Cookie Policy</Link>
                 </nav>
               </div>
             </div>

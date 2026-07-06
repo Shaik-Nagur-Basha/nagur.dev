@@ -71,6 +71,22 @@ function Projects() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const handleViewportResize = () => {
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth < 467 &&
+        expandedId
+      ) {
+        setExpandedId(null);
+      }
+    };
+
+    handleViewportResize();
+    window.addEventListener("resize", handleViewportResize);
+    return () => window.removeEventListener("resize", handleViewportResize);
+  }, [expandedId]);
+
   const projectCardStyle = `
     @property --ts-angle {
       syntax: "<angle>";
@@ -246,6 +262,11 @@ function Projects() {
   const [prevPage, setPrevPage] = useState(currentPage);
 
   const handleClick = (e, projectId) => {
+    if (typeof window !== "undefined" && window.innerWidth < 467) {
+      setExpandedId(null);
+      return;
+    }
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -415,31 +436,38 @@ function Projects() {
                           flex: `0 0 calc(100% / ${projectsPerPage})`,
                           "--ts-c1": c1,
                           "--ts-c2": c2,
-                          "--ts-shine-color": project.featured ? "rgba(245, 158, 11, 0.18)" : "rgba(6, 182, 212, 0.18)"
+                          "--ts-shine-color": project.featured
+                            ? "rgba(245, 158, 11, 0.18)"
+                            : "rgba(6, 182, 212, 0.18)",
                         }}
                       >
                         <div className="project-card-inner rounded-none shadow-2xl flex flex-col relative z-10">
                           {/* Extra shimmer sweep effect on hover */}
                           <div className="project-card-shine" />
-                           {/* Glassy Featured Hover Badge (Featured projects only, hidden when expanded) */}
-                           {project.featured && expandedId !== project._id && (
-                             <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
-                               <Sparkles size={8} className="animate-pulse text-neutral-950 shrink-0" />
-                               <span>FEATURED</span>
-                             </div>
-                           )}
-                           {/* Glassy Category Hover Badge (Hidden when expanded) */}
-                           {project.category && expandedId !== project._id && (
-                             <div
-                               className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs ${
-                                 project.featured
-                                   ? "border-amber-500/40 text-amber-300"
-                                   : "border-cyan-500/40 text-cyan-300"
-                               }`}
-                             >
-                               {project.category}
-                             </div>
-                           )}
+                          {/* Glassy Featured Hover Badge (Featured projects only, hidden when expanded) */}
+                          {project.featured && expandedId !== project._id && (
+                            <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
+                              <Sparkles
+                                size={8}
+                                className="animate-pulse text-neutral-950 shrink-0"
+                              />
+                              <span>FEATURED</span>
+                            </div>
+                          )}
+                          {/* Glassy Category Hover Badge (Hidden when expanded) */}
+                          {project.category && expandedId !== project._id && (
+                            <div
+                              className={`absolute -top-px -left-px z-30 px-3 py-1.5 rounded-br-md text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-neutral-950/95 border-r border-b backdrop-blur-xs max-[466px]:px-2 max-[466px]:py-1 max-[466px]:text-[7px] ${
+                                project.featured
+                                  ? "border-amber-500/40 text-amber-300"
+                                  : "border-cyan-500/40 text-cyan-300"
+                              }`}
+                            >
+                              <span className="font-semibold uppercase tracking-[0.25em] max-[466px]:tracking-[0.15em]">
+                                {project.category}
+                              </span>
+                            </div>
+                          )}
                           {/* Media Wrapper (handles clipping for backgrounds & overlays) */}
                           <div className="absolute inset-0 rounded-none overflow-hidden z-0">
                             {/* Ripple Container */}
@@ -501,7 +529,7 @@ function Projects() {
                             className={`relative z-20 transition-all duration-500 flex flex-col ${
                               expandedId === project._id
                                 ? "h-full p-6"
-                                : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-2 bg-black/50 backdrop-blur-xs"
+                                : "mt-auto hidden max-lg:flex group-hover:flex pl-3 pb-2 bg-gray-950/85 backdrop-blur-xs"
                             }`}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -510,9 +538,9 @@ function Projects() {
                               }
                             }}
                           >
-                            <div className="flex justify-between items-center w-full pr-3 mb-1">
+                            <div className="flex justify-between items-center w-full pr-3 mb-1 max-[466px]:pr-1 max-[466px]:mb-0 max-[466px]:gap-2">
                               <h3
-                                className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 ${
+                                className={`text-base font-semibold font-sans tracking-wide transition-colors duration-300 max-[466px]:text-[13px] max-[466px]:leading-tight max-[466px]:line-clamp-1 ${
                                   project.featured
                                     ? "text-amber-400"
                                     : "text-cyan-400"
@@ -636,7 +664,7 @@ function Projects() {
                                 </div>
                               </div>
                             ) : (
-                              <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug">
+                              <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug max-[466px]:text-[10px] max-[466px]:pr-2 max-[466px]:pb-0.5 max-[466px]:line-clamp-1">
                                 {project.description}
                               </div>
                             )}
@@ -743,4 +771,3 @@ function Projects() {
 }
 
 export default Projects;
-

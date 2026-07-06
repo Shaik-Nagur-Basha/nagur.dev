@@ -91,34 +91,41 @@ const Dashboard = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         {/* Recent Projects */}
-        <div className="glass-panel rounded-3xl overflow-hidden h-full flex flex-col">
+        <div className="glass-panel rounded-xl sm:rounded-3xl overflow-hidden h-full flex flex-col">
           <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity className="w-4 h-4 text-blue-500" />
-              <h3 className="text-sm font-bold uppercase tracking-widest">
+              <h3 className="sm:text-sm text-xs font-bold uppercase tracking-widest">
                 Recent Activity
               </h3>
             </div>
             <Link
               to="/admin/projects"
-              className="text-xs font-bold text-blue-500 hover:text-blue-400"
+              className="sm:text-xs text-[10px] font-bold text-blue-500 hover:text-blue-400"
             >
               VIEW ALL
             </Link>
           </div>
-          <div className="divide-y divide-white/5 flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto">
             {projects.slice(0, 4).map((project) => (
               <div
                 key={project._id}
                 onClick={() =>
-                  navigate("/admin/projects", {
-                    state: { expandId: project._id },
+                  navigate("/projects/" + project.slug, {
+                    state: { fromAdmin: true },
                   })
                 }
-                className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group cursor-pointer"
+                className="flex items-center justify-between p-2 sm:p-4 hover:bg-white/5 transition-colors group cursor-pointer"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-slate-800 overflow-hidden ring-1 ring-white/10 group-hover:ring-blue-500/50 transition-all">
+                <div className="flex items-center gap-2 sm:gap-4">
+                  <div
+                    className={cn(
+                      "w-16 h-9 rounded-lg bg-slate-800 overflow-hidden ring-1 transition-all aspect-video shrink-0",
+                      project.featured
+                        ? "ring-amber-500/40"
+                        : "ring-cyan-500/40",
+                    )}
+                  >
                     {project.image ? (
                       <img
                         src={project.image}
@@ -126,32 +133,63 @@ const Dashboard = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-blue-500/10">
-                        <FolderKanban className="w-4 h-4 text-blue-500" />
+                      <div
+                        className={cn(
+                          "w-full h-full flex items-center justify-center",
+                          project.featured
+                            ? "bg-amber-500/10"
+                            : "bg-cyan-500/10",
+                        )}
+                      >
+                        <FolderKanban
+                          className={cn(
+                            "w-4 h-4",
+                            project.featured
+                              ? "text-amber-500"
+                              : "text-cyan-500",
+                          )}
+                        />
                       </div>
                     )}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold group-hover:text-blue-500 transition-colors">
+                    <h4
+                      className={cn(
+                        "sm:text-sm line-clamp-1 text-xs font-bold transition-colors",
+                        project.featured ? "text-amber-400" : "text-cyan-400",
+                      )}
+                    >
                       {project.title}
                     </h4>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-tight">
-                      {new Date(project.createdAt).toLocaleDateString()}
-                    </p>
+                    <div className="flex gap-2 mt-1 justify-baseline items-center">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-tight">
+                        {new Date(project.createdAt).toLocaleDateString()}
+                      </p>
+                      {project.category && (
+                        <span
+                          className={`tech-badge px-1.5 border border-dashed rounded text-[8px] font-mono tracking-wider transition-all duration-300 ${
+                            project.featured
+                              ? "text-amber-400 border-amber-500/40 bg-amber-400/10"
+                              : "text-cyan-400 border-cyan-500/40 bg-cyan-400/10"
+                          }`}
+                        >
+                          {project.category}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span
-                    className={cn(
-                      "px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter",
-                      project.status === "Published"
-                        ? "bg-emerald-500/10 text-emerald-500"
-                        : "bg-orange-500/10 text-orange-500",
-                    )}
-                  >
-                    {project.status}
-                  </span>
-                </div>
+                {project.status === "Draft" && (
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={cn(
+                        "px-2 py-0.5 rounded-md text-[9px] font-semibold border border-dashed uppercase tracking-widest bg-orange-500/10 text-orange-500",
+                      )}
+                    >
+                      {project.status}
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
             {projects.length === 0 && (
@@ -164,19 +202,21 @@ const Dashboard = () => {
 
         {/* Messages & Security */}
         <div className="space-y-6">
-          <div className="glass-panel rounded-3xl overflow-hidden">
+          <div className="glass-panel rounded-xl sm:rounded-3xl overflow-hidden">
             <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-              <h3 className="text-sm font-bold uppercase tracking-widest">
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-purple-500" />
+              <h3 className="sm:text-sm text-xs font-bold uppercase tracking-widest">
                 Inbox
-              </h3>
+              </h3></div>
               <Link
                 to="/admin/contacts"
-                className="text-xs font-bold text-purple-500 hover:text-purple-400"
+                className="sm:text-xs text-[10px] font-bold text-purple-500 hover:text-purple-400"
               >
                 VIEW ALL
               </Link>
             </div>
-            <div className="divide-y divide-white/5 flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto">
               {contacts.slice(0, 4).map((contact) => (
                 <div
                   key={contact._id}
@@ -185,10 +225,10 @@ const Dashboard = () => {
                       state: { selectId: contact._id },
                     })
                   }
-                  className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group cursor-pointer"
+                  className="flex items-center justify-between p-2 sm:p-4 hover:bg-white/5 transition-colors group cursor-pointer"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-slate-800 overflow-hidden ring-1 ring-white/10 group-hover:ring-purple-500/50 transition-all">
+                  <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-slate-800 overflow-hidden ring-1 ring-white/10 group-hover:ring-purple-500/50 transition-all shrink-0">
                       <div className="w-full h-full flex items-center justify-center bg-purple-500/10 text-purple-500 font-bold">
                         {contact.name[0]}
                       </div>
@@ -204,7 +244,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     {contact.status === "Unread" ? (
-                      <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-purple-500/10 text-purple-500">
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase border border-dashed tracking-widest bg-amber-400/10 text-amber-400">
                         UNREAD
                       </span>
                     ) : (

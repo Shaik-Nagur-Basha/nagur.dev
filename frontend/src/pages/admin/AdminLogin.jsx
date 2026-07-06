@@ -45,7 +45,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#020617] p-4 font-outfit">
+    <div className="dark min-h-screen flex items-center justify-center bg-[#020617] p-4 font-outfit">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

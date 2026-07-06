@@ -13,13 +13,17 @@ import {
   Send,
   Phone,
   Image as ImageIcon,
+  ChevronDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useProfileStore } from "../../store/useProfileStore";
 import { toast } from "react-toastify";
+import API from "../../api/axios";
 
 const ProfileManagement = () => {
   const { profile, loading, fetchProfile, updateProfile } = useProfileStore();
+  const [publishedProjects, setPublishedProjects] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [formData, setFormData] = useState({
     name: "Sk Nagur Basha",
     title: "MERN Stack Developer",
@@ -35,11 +39,32 @@ const ProfileManagement = () => {
       telegram: "",
       email: "sknbasknba@gmail.com",
     },
+    footerDescription: "",
+    footerProjects: [
+      { label: "", link: "" },
+      { label: "", link: "" },
+      { label: "", link: "" },
+      { label: "", link: "" },
+    ],
   });
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfile(true);
   }, [fetchProfile]);
+
+  useEffect(() => {
+    const fetchPublishedProjects = async () => {
+      try {
+        const { data } = await API.get("/projects?status=Published&select=title,demoLink,slug");
+        if (data.success) {
+          setPublishedProjects(data.data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching published projects:", error);
+      }
+    };
+    fetchPublishedProjects();
+  }, []);
 
   useEffect(() => {
     if (profile) {
@@ -58,6 +83,15 @@ const ProfileManagement = () => {
           telegram: profile.socialLinks?.telegram || "",
           email: profile.socialLinks?.email || "",
         },
+        footerDescription: profile.footerDescription || "",
+        footerProjects: profile.footerProjects && profile.footerProjects.length > 0
+          ? profile.footerProjects.map((p) => ({ label: p.label || "", link: p.link || "" }))
+          : [
+              { label: "", link: "" },
+              { label: "", link: "" },
+              { label: "", link: "" },
+              { label: "", link: "" },
+            ],
       });
     }
   }, [profile]);
@@ -80,6 +114,38 @@ const ProfileManagement = () => {
         [key]: value,
       },
     });
+  };
+
+  const handleFooterProjectChange = (index, field, value) => {
+    const updatedProjects = [...formData.footerProjects];
+    updatedProjects[index] = {
+      ...updatedProjects[index],
+      [field]: value,
+    };
+    setFormData({
+      ...formData,
+      footerProjects: updatedProjects,
+    });
+  };
+
+  const handleDropdownSelect = (projectIdx, selectValue) => {
+    const pIdx = parseInt(selectValue, 10);
+    if (isNaN(pIdx)) return;
+    const selectedProj = publishedProjects[pIdx];
+    if (selectedProj) {
+      setFormData((prevFormData) => {
+        const updatedProjects = [...prevFormData.footerProjects];
+        updatedProjects[projectIdx] = {
+          ...updatedProjects[projectIdx],
+          label: selectedProj.title,
+          link: selectedProj.demoLink || `${window.location.origin}/projects/${selectedProj.slug}`,
+        };
+        return {
+          ...prevFormData,
+          footerProjects: updatedProjects,
+        };
+      });
+    }
   };
 
   return (
@@ -315,12 +381,118 @@ const ProfileManagement = () => {
             </div>
           </div>
         </div>
+
+        {/* Footer Configuration */}
+        <div className="lg:col-span-12 space-y-4 relative z-20">
+          <div className="glass-panel rounded-[2.5rem] sm:p-6 md:p-8 bg-transparent! border-0! border-white/5 relative h-full group">
+            <div className="absolute inset-0 bg-purple-500/5 opacity-0 rounded-[2.5rem] group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            
+            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 sm:mb-2 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+              Footer Configuration
+            </h3>
+
+            <div className="space-y-6 p-3 sm:p-4">
+              {/* Footer Description */}
+              <div className="max-sm:mt-4!">
+                <div className="opacity-55 flex items-center gap-1.5 text-md mb-2">
+                  <FileText className="input-icon w-4 h-4 text-indigo-400" />
+                  <label htmlFor="footerDescription" className="text-slate-300">Footer Bio</label>
+                </div>
+                <textarea
+                  className="w-full border-0 border-b border-gray-700 focus:ring-0 focus-visible:ring-0 focus:outline-none outline-none whiteblink-remover text-white bg-transparent"
+                  value={formData.footerDescription}
+                  onChange={(e) =>
+                    setFormData({ ...formData, footerDescription: e.target.value })
+                  }
+                  placeholder="Bio description..."
+                  id="footerDescription"
+                  rows={2}
+                />
+              </div>
+
+              {/* Footer 4 Projects Links */}
+              <div className="space-y-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <span>Footer Projects (Exactly 4)</span>
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {formData.footerProjects.map((project, idx) => (
+                    <div key={idx} className="md:w-11/12">
+                      <div className="flex justify-between items-center flex-wrap gap-2">
+                        <span className="text-[10px] uppercase font-bold text-indigo-400">Project #{idx + 1}</span>
+                        {publishedProjects.length > 0 && (
+                          <div className="relative">
+                            <button
+                              type="button"
+                              onClick={() => setOpenDropdown(openDropdown === idx ? null : idx)}
+                              className="text-[9px] uppercase font-black tracking-wider bg-[#0f172a] hover:bg-slate-800 border border-white/10 rounded-md px-2.5 py-1 text-slate-300 transition-colors duration-150 cursor-pointer flex items-center gap-1.5 focus:outline-none"
+                            >
+                              {project.label || "Link Project"} <ChevronDown className="w-3 h-3 text-slate-400" />
+                            </button>
+                            {openDropdown === idx && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-50 cursor-pointer"
+                                  onClick={() => setOpenDropdown(null)}
+                                />
+                                <div className="absolute right-0 mt-1.5 w-fit z-60 rounded-xl bg-slate-900 border border-white/10 shadow-2xl overflow-hidden py-1">
+                                  {publishedProjects.map((p, pIdx) => (
+                                    <button
+                                      key={p._id}
+                                      type="button"
+                                      onClick={() => {
+                                        handleDropdownSelect(idx, pIdx);
+                                        setOpenDropdown(null);
+                                      }}
+                                      className="w-full text-left text-nowrap px-3 py-2 text-[9px] font-black uppercase tracking-wider text-slate-400 hover:text-white hover:bg-indigo-600/35 transition-colors duration-150 cursor-pointer"
+                                    >
+                                      {p.title}
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="floating-label-group my-0! relative!">
+                        <input
+                          type="text"
+                          value={project.label}
+                          onChange={(e) => handleFooterProjectChange(idx, "label", e.target.value)}
+                          placeholder=" "
+                          id={`proj-label-${idx}`}
+                          required
+                          className="max-md:pl-0! pl-5!"
+                        />
+                        <label htmlFor={`proj-label-${idx}`} className="absolute! max-md:left-0! left-5! top-2!">Label</label>
+                      </div>
+                      <div className="floating-label-group my-0! relative!">
+                        <input
+                          type="url"
+                          value={project.link}
+                          onChange={(e) => handleFooterProjectChange(idx, "link", e.target.value)}
+                          placeholder=" "
+                          id={`proj-link-${idx}`}
+                          required
+                          className="max-md:pl-0! pl-5!"
+                        />
+                        <label htmlFor={`proj-link-${idx}`} className="absolute! max-md:left-0! left-5! top-2!">URL</label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
       <div className="w-full sm:hidden flex items-center justify-center">
         <button
           type="button"
           onClick={handleSubmit}
-          className="rotating-gradient-card new-project max-w-fit border-none text-nowrap shadow-none ring-0 outline-none"
+          className="rotating-gradient-card z-10 new-project max-w-fit border-none text-nowrap shadow-none ring-0 outline-none"
         >
           <span>
             {loading ? (

@@ -8,10 +8,10 @@ const ContactDetailDialog = ({ open, contact, onClose }) => {
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative bg-slate-900 text-white rounded-lg p-6 w-[92%] max-w-2xl shadow-lg border border-white/6">
+      <div className="relative bg-slate-900 text-white rounded-lg p-3 sm:p-6 w-[92%] max-w-2xl shadow-lg border border-white/6">
         <button
           onClick={onClose}
-          className="absolute top-3 cursor-pointer right-3 p-2 rounded text-slate-300 hover:bg-white/5"
+          className="absolute top-3 cursor-pointer right-3 p-2 rounded text-slate-300 hover:text-slate-100 bg-white/5 hover:bg-white/10"
           aria-label="Close"
         >
           <X className="w-4 h-4" />
