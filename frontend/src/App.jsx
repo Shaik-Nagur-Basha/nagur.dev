@@ -1,14 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import { useLayoutEffect, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { useLayoutEffect, useEffect, useRef } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import ErrorPage from "./pages/ErrorPage";
 import ScrollToTop from "./components/ScrollToTop";
-import AboutPage from "./pages/AboutPage";
-import FoundationsPage from "./pages/FoundationsPage";
-import ContactPage from "./pages/ContactPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import CookiesPage from "./pages/CookiesPage";
@@ -27,6 +24,48 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
 import { useProfileStore } from "./store/useProfileStore";
 
+function ScrollRestoration() {
+  const { pathname, hash } = useLocation();
+  const lastPathname = useRef(pathname);
+
+  useEffect(() => {
+    if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        const isPageTransition = lastPathname.current !== pathname;
+        lastPathname.current = pathname;
+
+        if (isPageTransition) {
+          // Scroll immediately to start movement
+          const timer1 = setTimeout(() => {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
+          
+          // Re-scroll once loading skeletons have loaded actual content and heights are stable
+          const timer2 = setTimeout(() => {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 950);
+
+          return () => {
+            clearTimeout(timer1);
+            clearTimeout(timer2);
+          };
+        } else {
+          const timer = setTimeout(() => {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 50);
+          return () => clearTimeout(timer);
+        }
+      }
+    } else {
+      lastPathname.current = pathname;
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
+
+  return null;
+}
+
 function PageHeadController() {
   const location = useLocation();
 
@@ -44,9 +83,20 @@ function PageHeadController() {
     // 2. Update Title (add sub string based on pages switch)
     let pageTitle = "";
     const path = location.pathname;
+    const hash = location.hash;
 
     if (path === "/") {
-      pageTitle = "Home";
+      if (hash === "#about") {
+        pageTitle = "About";
+      } else if (hash === "#projects") {
+        pageTitle = "Projects";
+      } else if (hash === "#skills") {
+        pageTitle = "Skills";
+      } else if (hash === "#contact") {
+        pageTitle = "Contact";
+      } else {
+        pageTitle = "Home";
+      }
     } else if (path === "/about") {
       pageTitle = "About";
     } else if (path === "/projects") {
@@ -110,15 +160,16 @@ function App() {
     <ThemeProvider>
       <Router>
         <PageHeadController />
+        <ScrollRestoration />
         <ScrollToTop />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
+          <Route path="/about" element={<Navigate to="/#about" replace />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-          <Route path="/skills" element={<FoundationsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/skills" element={<Navigate to="/#skills" replace />} />
+          <Route path="/contact" element={<Navigate to="/#contact" replace />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/cookies" element={<CookiesPage />} />

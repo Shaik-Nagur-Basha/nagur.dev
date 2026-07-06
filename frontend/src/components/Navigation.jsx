@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMotionValue, useSpring } from "framer-motion";
-import { NavLink, Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Moon,
   Sun,
@@ -22,6 +22,74 @@ function Navigation() {
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const { darkMode, toggleDarkMode } = useTheme();
   const { profile, fetchProfile } = useProfileStore();
+
+  const [activeSection, setActiveSection] = useState("home");
+  const location = useLocation();
+
+  // Scroll spy to update active section based on intersecting sections
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      return;
+    }
+
+    const sectionIds = ["home", "about", "projects", "skills", "contact"];
+    
+    const observerCallback = (entries) => {
+      const intersectingEntry = entries.find(entry => entry.isIntersecting);
+      if (intersectingEntry) {
+        setActiveSection(intersectingEntry.target.id);
+      }
+    };
+
+    const observerOptions = {
+      root: null,
+      rootMargin: "-25% 0px -55% 0px",
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        observer.observe(el);
+      }
+    });
+
+    const handleScroll = () => {
+      if (window.scrollY < 100) {
+        setActiveSection("home");
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [location.pathname]);
+
+  const isLinkActive = (linkHref) => {
+    if (linkHref.startsWith("/#")) {
+      const targetId = linkHref.split("#")[1];
+      return location.pathname === "/" && activeSection === targetId;
+    }
+    return location.pathname === linkHref;
+  };
+
+  const handleNavClick = (e, link) => {
+    if (link.href.startsWith("/#")) {
+      const targetId = link.href.split("#")[1];
+      const element = document.getElementById(targetId);
+      if (element) {
+        e.preventDefault();
+        setIsOpen(false);
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.history.pushState(null, "", link.href);
+        setActiveSection(targetId);
+      }
+    }
+  };
 
   // Scroll progress bar
   const rawProgress = useMotionValue(0);
@@ -116,10 +184,10 @@ function Navigation() {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const navLinks = [
-    { name: "About", href: "/about", icon: User },
-    { name: "Projects", href: "/projects", icon: Briefcase },
-    { name: "Skills & Education", href: "/skills", icon: Layers },
-    { name: "Contact", href: "/contact", icon: Mail },
+    { name: "About", href: "/#about", icon: User },
+    { name: "Projects", href: "/#projects", icon: Briefcase },
+    { name: "Skills & Education", href: "/#skills", icon: Layers },
+    { name: "Contact", href: "/#contact", icon: Mail },
   ];
 
   return (
@@ -168,39 +236,39 @@ function Navigation() {
               </Link>
 
               {/* Desktop Menu */}
-              <div className="hidden md:flex items-center space-x-7">
-                {navLinks.map((link) => (
-                  <NavLink
-                    key={link.name}
-                    to={link.href}
-                    className={({ isActive }) =>
-                      `nav-menu-font relative group pb-0.5 text-[13px] font-[500] tracking-[0.06em] uppercase transition-all duration-200 cursor-pointer ${
-                        isActive
+              <div className="hidden md:flex items-center space-x-7 relative">
+                {navLinks.map((link) => {
+                  const active = isLinkActive(link.href);
+                  return (
+                    <Link
+                      key={link.name}
+                      to={link.href}
+                      onClick={(e) => handleNavClick(e, link)}
+                      className={`nav-menu-font relative group pb-1.5 pt-1 text-[13px] font-[500] tracking-[0.06em] uppercase transition-all duration-200 cursor-pointer ${
+                        active
                           ? darkMode
                             ? "text-blue-400"
                             : "text-blue-600"
                           : darkMode
                             ? "text-gray-400 hover:text-blue-400"
                             : "text-gray-600 hover:text-blue-600"
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {link.name}
-                        <span
-                          className={`absolute -bottom-0.5 left-0 h-[1.5px] rounded-full transition-all duration-300 ${
-                            isActive ? "w-full" : "w-0 group-hover:w-full"
-                          } ${
+                      }`}
+                    >
+                      {link.name}
+                      {active && (
+                        <motion.div
+                          layoutId="activeIndicator"
+                          className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-full z-10 ${
                             darkMode
                               ? "bg-linear-to-r from-blue-500 to-purple-500"
                               : "bg-linear-to-r from-blue-500 to-cyan-500"
                           }`}
+                          transition={{ type: "spring", stiffness: 350, damping: 30 }}
                         />
-                      </>
-                    )}
-                  </NavLink>
-                ))}
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
 
               {/* Right Side - Theme Toggle & Mobile Menu */}
@@ -304,29 +372,45 @@ function Navigation() {
                 <div className="pl-1 pr-3 py-2 space-y-1">
                   {navLinks.map((link) => {
                     const IconComponent = link.icon;
+                    const active = isLinkActive(link.href);
                     return (
-                      <NavLink
+                      <Link
                         key={link.name}
                         to={link.href}
-                        className={({ isActive }) =>
-                          `nav-menu-font menu-item flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg text-[12.5px] font-[500] tracking-[0.05em] uppercase transition-all duration-200 border ${
-                            isActive
-                              ? darkMode
-                                ? "text-blue-300 bg-blue-600/20 border-blue-500/40 translate-x-1 shadow-lg shadow-blue-500/20"
-                                : "text-blue-700 bg-blue-400/20 border-blue-400/50 translate-x-1 shadow-lg shadow-blue-400/20"
-                              : darkMode
-                                ? "text-gray-400 border-transparent hover:bg-linear-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/40 hover:text-blue-300 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-500/20"
-                                : "text-gray-500 border-transparent hover:bg-linear-to-r hover:from-blue-400/20 hover:to-purple-400/20 hover:border-blue-400/50 hover:text-blue-700 hover:translate-x-1 hover:shadow-lg hover:shadow-blue-400/20"
-                          }`
-                        }
-                        onClick={() => setIsOpen(false)}
+                        onClick={(e) => handleNavClick(e, link)}
+                        className={`nav-menu-font menu-item relative flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-lg text-[12.5px] font-[500] tracking-[0.05em] uppercase transition-all duration-200 ${
+                          active
+                            ? darkMode
+                              ? "text-blue-300 font-semibold"
+                              : "text-blue-700 font-semibold"
+                            : darkMode
+                              ? "text-gray-400 hover:text-blue-300"
+                              : "text-gray-500 hover:text-blue-700"
+                        }`}
                       >
+                        {active && (
+                          <motion.div
+                            layoutId="activeIndicatorMobile"
+                            className={`absolute inset-0 rounded-lg border -z-10 ${
+                              darkMode
+                                ? "bg-blue-600/20 border-blue-500/30"
+                                : "bg-blue-400/20 border-blue-400/40"
+                            }`}
+                            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                          />
+                        )}
                         <IconComponent
                           size={18}
-                          className="transition-all duration-200"
+                          className={`transition-all duration-200 ${
+                            active
+                              ? darkMode
+                                ? "text-blue-300 scale-110"
+                                : "text-blue-700 scale-110"
+                              : "text-current"
+                          }`}
                         />
-                        {link.name}
-                      </NavLink>
+                        <span>{link.name}</span>
+                      </Link>
                     );
                   })}
                 </div>

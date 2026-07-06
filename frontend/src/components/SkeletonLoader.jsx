@@ -359,7 +359,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
   if (type === "hero") {
     return (
       <section
-        className={`pt-32 pb-20 px-4 min-h-screen flex items-center transition-all duration-500 relative overflow-hidden`}
+        className={`pt-32 pb-20 px-4 min-h-screen bg-pattern-subtle flex items-center transition-all duration-500 relative overflow-hidden`}
       >
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">

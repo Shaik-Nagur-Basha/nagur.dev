@@ -202,25 +202,47 @@ const ErrorPage = () => {
       box-shadow: 0 6px 12px rgba(79, 70, 229, 0.4);
     }
 
-    .btn-secondary {
-      background-color: ${darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(79, 70, 229, 0.1)"};
-      color: ${darkMode ? "#c7d2fe" : "#4f46e5"};
-      border-color: ${darkMode ? "rgba(199, 210, 254, 0.2)" : "rgba(79, 70, 229, 0.3)"};
-      box-shadow: 0 2px 8px ${darkMode ? "rgba(0, 0, 0, 0.2)" : "rgba(79, 70, 229, 0.1)"};
+    .btn-back {
+      isolation: isolate;
+      background: ${darkMode ? "rgba(15, 23, 42, 0.72)" : "rgba(255, 255, 255, 0.78)"};
+      color: ${darkMode ? "#bae6fd" : "#075985"};
+      border-color: ${darkMode ? "rgba(56, 189, 248, 0.34)" : "rgba(14, 165, 233, 0.34)"};
+      box-shadow: ${darkMode ? "0 12px 32px rgba(2, 6, 23, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.08)" : "0 12px 30px rgba(14, 165, 233, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.85)"};
+      backdrop-filter: blur(14px);
     }
-    
-    .btn-secondary:hover {
-      background-color: ${darkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(79, 70, 229, 0.15)"};
-      border-color: ${darkMode ? "rgba(199, 210, 254, 0.4)" : "rgba(79, 70, 229, 0.6)"};
+
+    .btn-back::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(56, 189, 248, 0.16) 45%, rgba(168, 85, 247, 0.14) 55%, transparent 100%);
+      transform: translateX(-105%);
+      transition: transform 0.45s ease;
+    }
+
+    .btn-back:hover {
+      color: ${darkMode ? "#f0f9ff" : "#0c4a6e"};
+      border-color: ${darkMode ? "rgba(125, 211, 252, 0.62)" : "rgba(2, 132, 199, 0.55)"};
       transform: translateY(-2px);
-      box-shadow: 0 8px 16px ${darkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(79, 70, 229, 0.2)"};
+      box-shadow: ${darkMode ? "0 18px 36px rgba(8, 47, 73, 0.42), 0 0 24px rgba(56, 189, 248, 0.12)" : "0 18px 34px rgba(14, 165, 233, 0.22), 0 0 20px rgba(14, 165, 233, 0.10)"};
     }
 
-    .btn-secondary:active {
+    .btn-back:hover::before {
+      transform: translateX(105%);
+    }
+
+    .btn-back svg {
+      transition: transform 0.3s ease;
+    }
+
+    .btn-back:hover svg {
+      transform: translateX(-4px);
+    }
+
+    .btn-back:active {
       transform: translateY(0);
-      box-shadow: 0 2px 4px ${darkMode ? "rgba(0, 0, 0, 0.1)" : "rgba(79, 70, 229, 0.1)"};
+      box-shadow: ${darkMode ? "0 8px 18px rgba(2, 6, 23, 0.28)" : "0 8px 18px rgba(14, 165, 233, 0.16)"};
     }
-
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
@@ -232,7 +254,7 @@ const ErrorPage = () => {
       {isLoading ? (
         <SkeletonLoader type="errorpage" />
       ) : (
-        <div className="error-page-container">
+        <div className="error-page-container bg-pattern-subtle">
           <style>{styles}</style>
           <Navigation />
 
@@ -256,14 +278,19 @@ const ErrorPage = () => {
                 <div className="error-actions justify-center items-center flex-wrap">
                   <button
                     onClick={() => navigate(-1)}
-                    className="error-btn btn-secondary"
+                    className="error-btn btn-back"
                   >
                     <MoveLeft size={20} className="mr-2" />
                     Go Back
                   </button>
-                  <Link to="/" className="error-btn btn-primary">
-                    <Home size={20} className="mr-2" />
-                    Take Me Home
+                  <Link
+                    to="/"
+                    className="rotating-gradient-card hero-primary border-none shadow-none ring-0 outline-none !px-8 !py-3.5"
+                  >
+                    <span>
+                      <Home size={20} />
+                      Take Me Home
+                    </span>
                   </Link>
                 </div>
               </div>

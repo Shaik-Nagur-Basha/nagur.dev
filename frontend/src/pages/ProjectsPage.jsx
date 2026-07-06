@@ -338,7 +338,7 @@ function ProjectsPage() {
         <SkeletonLoader type="projectspage" />
       ) : (
         <div
-          className={`min-h-screen flex flex-col justify-between ${
+          className={`min-h-screen flex flex-col justify-between bg-pattern-subtle ${
             darkMode
               ? "dark bg-linear-to-br from-gray-950 via-gray-900 to-purple-950"
               : "bg-linear-to-br from-blue-50 via-white to-purple-50"

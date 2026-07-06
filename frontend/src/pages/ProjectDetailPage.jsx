@@ -729,7 +729,7 @@ function ProjectDetailPage() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-between relative overflow-hidden ${
+      className={`min-h-screen flex flex-col justify-between relative overflow-hidden bg-pattern-subtle ${
         darkMode
           ? "dark bg-linear-to-br from-gray-950 via-gray-900 to-purple-950 text-gray-100"
           : "bg-linear-to-br from-blue-50 via-white to-purple-50 text-gray-800"

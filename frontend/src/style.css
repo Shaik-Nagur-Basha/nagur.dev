@@ -1068,3 +1068,77 @@
   }
 }
 
+
+/* ============================================================
+   Ultra-Professional Diagonal Diamond Crosshatch Pattern
+   Woven argyle lattice -- editorial, high-end, 2025 agency standard
+   ============================================================ */
+:root {
+  --pattern-line: rgba(15, 23, 42, 0.049);
+  --pattern-line-subtle: rgba(15, 23, 42, 0.014);
+}
+
+.dark {
+  --pattern-line: rgba(255, 255, 255, 0.029);
+  --pattern-line-subtle: rgba(255, 255, 255, 0.008);
+}
+
+/*
+  Global Background Pattern Stacking:
+  Apply to all main page containers, establishing a local stacking context (z-index: 0)
+  so that the pseudo-element ::after (z-index: -1) sits behind all content.
+  We use ::after because ::before is used by some pages (like ErrorPage)
+  for custom ambient backdrop lighting.
+*/
+.min-h-screen, .error-page-container {
+  position: relative;
+  z-index: 0;
+}
+
+/*
+  Diagonal diamond crosshatch:
+  Two sets of 1px hairlines at -45deg and +45deg, spaced 28px apart,
+  forming a continuous argyle/diamond lattice. Fixed to the viewport
+  so it stays still while content scrolls over it.
+*/
+.min-h-screen::after, .error-page-container::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      var(--pattern-line) 0px,
+      var(--pattern-line) 1px,
+      transparent 1px,
+      transparent 28px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      var(--pattern-line) 0px,
+      var(--pattern-line) 1px,
+      transparent 1px,
+      transparent 28px
+    );
+}
+
+/* Subtle pattern override for homepage, hero, error page, and admin routes */
+.bg-pattern-subtle::after {
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      var(--pattern-line-subtle) 0px,
+      var(--pattern-line-subtle) 1px,
+      transparent 1px,
+      transparent 28px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      var(--pattern-line-subtle) 0px,
+      var(--pattern-line-subtle) 1px,
+      transparent 1px,
+      transparent 28px
+    ) !important;
+}

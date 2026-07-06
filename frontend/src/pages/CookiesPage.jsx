@@ -7,7 +7,7 @@ function CookiesPage() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${
+      className={`min-h-screen flex flex-col bg-pattern-subtle ${
         darkMode
           ? "dark bg-linear-to-br from-gray-950 via-gray-900 to-purple-950 text-slate-100"
           : "bg-linear-to-br from-blue-50 via-white to-purple-50 text-slate-900"
