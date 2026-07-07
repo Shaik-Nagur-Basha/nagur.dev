@@ -2,6 +2,7 @@ import { Zap, GraduationCap, Heart, Code } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
 import SkeletonLoader from "./SkeletonLoader";
+import useScrollReveal from "../hooks/useScrollReveal";
 
 function FoundationsAndInterests() {
   const { darkMode } = useTheme();
@@ -21,6 +22,12 @@ function FoundationsAndInterests() {
       setIsLoading(false);
     }
   }, [minLoadingTime]);
+
+  // Scroll-reveal refs
+  const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.12 });
+  const [eduRef, eduVisible] = useScrollReveal({ threshold: 0.08 });
+  const [skillsRef, skillsVisible] = useScrollReveal({ threshold: 0.08 });
+  const [interestsRef, interestsVisible] = useScrollReveal({ threshold: 0.1 });
 
   const education = [
     {
@@ -118,27 +125,27 @@ function FoundationsAndInterests() {
           style={{ scrollMarginTop: "50px" }}
         >
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mt-5 mb-20">
+            <div ref={headerRef} className="text-center mt-5 mb-20">
               <span
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-xl mb-4 ${
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-xl mb-4 reveal-init ${
                   darkMode
                     ? "bg-purple-900/40 text-purple-300 border-purple-800"
                     : "bg-blue-100/60 text-blue-700 border-blue-300/60 shadow-lg shadow-blue-300/20"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 <Zap size={16} />
                 Skills & Education
               </span>
 
               <h2
-                className={`mt-6 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight ${
+                className={`mt-6 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight reveal-init stagger-1 ${
                   darkMode ? "text-white/85" : "text-black/85"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 My Background & Passions
               </h2>
 
-              <p className="mt-4 text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              <p className={`mt-4 text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto reveal-init stagger-2 ${headerVisible ? "reveal-visible" : ""}`}>
                 A blend of formal education, self-taught skills, and personal
                 interests that shape my work.
               </p>
@@ -147,7 +154,7 @@ function FoundationsAndInterests() {
             {/* Main Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Education Section (takes 1 column) */}
-              <div className="lg:col-span-1 space-y-8">
+              <div ref={eduRef} className="lg:col-span-1 space-y-8">
                 <div className="flex items-center gap-4">
                   <div
                     className={`p-3 rounded-full ${darkMode ? "bg-purple-900/40" : "bg-blue-100/60"}`}
@@ -167,7 +174,7 @@ function FoundationsAndInterests() {
                   {education.map((edu, index) => (
                     <div
                       key={index}
-                      className="pl-8 relative before:content-[''] before:w-4 before:h-4 before:bg-blue-500 before:rounded-full before:absolute before:-left-2 before:top-1.5 before:border-4 before:border-solid before:border-white dark:before:border-gray-900"
+                      className={`pl-8 relative before:content-[''] before:w-4 before:h-4 before:bg-blue-500 before:rounded-full before:absolute before:-left-2 before:top-1.5 before:border-4 before:border-solid before:border-white dark:before:border-gray-900 reveal-from-left stagger-${index + 1} ${eduVisible ? "reveal-visible" : ""}`}
                     >
                       <h4
                         className={`text-lg font-semibold ${darkMode ? "text-blue-300" : "text-blue-600"}`}
@@ -225,17 +232,16 @@ function FoundationsAndInterests() {
                 </div>
 
                 {/* Skills */}
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-16">
+                <div ref={skillsRef} className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-16">
                   {skillCategories.map((category, idx) => (
                     <div
                       key={idx}
-                      className={`group relative rounded-3xl p-px
-                    ${
-                      darkMode
-                        ? "bg-linear-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30 hover:from-blue-500 hover:to-purple-500"
-                        : "bg-linear-to-br from-indigo-200 via-purple-200 to-pink-200 hover:from-indigo-400 hover:to-pink-400"
-                    }
-                    transition-all duration-500`}
+                      className={`group relative rounded-3xl p-px reveal-init stagger-${idx + 1} ${
+                        darkMode
+                          ? "bg-linear-to-br from-blue-500/40 via-purple-500/30 to-pink-500/30 hover:from-blue-500 hover:to-purple-500"
+                          : "bg-linear-to-br from-indigo-200 via-purple-200 to-pink-200 hover:from-indigo-400 hover:to-pink-400"
+                      }
+                    transition-all duration-500 ${skillsVisible ? "reveal-visible" : ""}`}
                     >
                       <div
                         className="
@@ -300,7 +306,7 @@ function FoundationsAndInterests() {
                       Interests
                     </h3>
                   </div>
-                  <div className="flex flex-wrap gap-3 sm:gap-4">
+                <div ref={interestsRef} className="flex flex-wrap gap-3 sm:gap-4">
                     {interests.map((interest, index) => {
                       const gradients = [
                         {
@@ -334,11 +340,11 @@ function FoundationsAndInterests() {
                           key={index}
                           onMouseEnter={() => setHoveredInterestIndex(index)}
                           onMouseLeave={() => setHoveredInterestIndex(null)}
-                          className={`group cursor-pointer relative flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-3xl transition-all duration-300 transform active:scale-90 overflow-visible backdrop-blur-md ${
+                          className={`group cursor-pointer relative flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-3xl transition-all duration-300 transform active:scale-90 overflow-visible backdrop-blur-md reveal-scale stagger-${index + 1} ${
                             darkMode
                               ? `bg-linear-to-br from-gray-700/30 via-gray-800/20 to-gray-900/30 border border-gray-600/40 ${gradient.border} shadow-lg shadow-gray-900/50 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-gray-900/30`
                               : `bg-linear-to-br from-white/40 via-blue-50/30 to-white/20 border border-blue-300/50 ${gradient.border} shadow-lg shadow-blue-200/40 hover:shadow-2xl ${gradient.shadow} hover:-translate-y-1 drop-shadow-md drop-shadow-purple-200/20`
-                          }`}
+                          } ${interestsVisible ? "reveal-visible" : ""}`}
                         >
                           <div
                             className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 bg-linear-to-br ${

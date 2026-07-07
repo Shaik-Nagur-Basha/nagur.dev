@@ -5,6 +5,7 @@ import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import SkeletonLoader from "../components/SkeletonLoader";
 import API from "../api/axios";
+import useScrollReveal from "../hooks/useScrollReveal";
 import {
   ArrowLeft,
   ExternalLink,
@@ -351,6 +352,21 @@ function ProjectDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [galleryLayout, setGalleryLayout] = useState("grid"); // "grid" | "bento" | "filmstrip"
   const [expandedExploreId, setExpandedExploreId] = useState(null);
+
+  const [showcaseRef, showcaseVisible] = useScrollReveal({ threshold: 0.1 });
+  const [featuresRef, featuresVisible] = useScrollReveal({ threshold: 0.1 });
+  const [galleryRef, galleryVisible] = useScrollReveal({ threshold: 0.1 });
+  const [techStackRef, techStackVisible] = useScrollReveal({ threshold: 0.1 });
+  const [exploreRef, exploreVisible] = useScrollReveal({ threshold: 0.1 });
+
+  // Mount state for above-the-fold elements
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    if (!isLoading) {
+      const t = setTimeout(() => setMounted(true), 60);
+      return () => clearTimeout(t);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const handleViewportResize = () => {
@@ -756,7 +772,7 @@ function ProjectDetailPage() {
       ) : (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-20 lg:pb-24 relative z-10">
           {/* Navigation & Indicators Header Row */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full mb-3 sm:mb-8 gap-3">
+          <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center w-full mb-3 sm:mb-8 gap-3 reveal-init ${mounted ? "reveal-visible" : ""}`}>
             {/* Navigation Breadcrumb */}
             <Link
               to="/projects"
@@ -803,9 +819,9 @@ function ProjectDetailPage() {
           </div>
 
           {/* Split Grid Showcase */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 mb-16 items-center">
+          <div ref={showcaseRef} className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 mb-16 items-center">
             {/* Left Column: Details (Order 2 on mobile, Order 1 on Desktop) */}
-            <div className="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center">
+            <div className={`lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center reveal-from-left ${showcaseVisible ? "reveal-visible" : ""}`}>
               <h1
                 className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 ${
                   darkMode
@@ -877,7 +893,7 @@ function ProjectDetailPage() {
             </div>
 
             {/* Right Column: Video / Image Showcase (Order 1 on mobile, Order 2 on Desktop) */}
-            <div className="lg:col-span-6 order-1 lg:order-2">
+            <div className={`lg:col-span-6 order-1 lg:order-2 reveal-from-right stagger-1 ${showcaseVisible ? "reveal-visible" : ""}`}>
               {/* Ultra-modern rotating aurora border wrapper */}
               <div
                 className={`aspect-video w-full ${darkMode ? "video-card-dark" : "video-card-light"}`}
@@ -986,7 +1002,7 @@ function ProjectDetailPage() {
 
           {/* Detailed Features — Editorial Row Layout */}
           {project.featuresList && project.featuresList.length > 0 && (
-            <div className="mb-16">
+            <div ref={featuresRef} className={`mb-16 reveal-init ${featuresVisible ? "reveal-visible" : ""}`}>
               {" "}
               {/* Section header */}
               <div className="flex items-stretch gap-4 mb-7">
@@ -1170,7 +1186,7 @@ function ProjectDetailPage() {
 
           {/* Project Gallery Showcase — Ultra Modern */}
           {project.gallery && project.gallery.length > 0 && (
-            <div className="mb-16">
+            <div ref={galleryRef} className={`mb-16 reveal-init ${galleryVisible ? "reveal-visible" : ""}`}>
               {/* Section Header */}
               <div className="flex items-stretch justify-between mb-8">
                 {/* Left: vertical rule + labels */}
@@ -1567,7 +1583,7 @@ function ProjectDetailPage() {
               );
 
               return (
-                <div className="mb-16">
+                <div ref={techStackRef} className={`mb-16 reveal-init ${techStackVisible ? "reveal-visible" : ""}`}>
                   {/* ── INJECTED STYLES ── */}
                   <style>{`
                 /* Rotating conic-gradient border */
@@ -2078,7 +2094,7 @@ function ProjectDetailPage() {
             })()}
 
           {/* ── Explore More Projects — Cinematic Wide-Card Layout ── */}
-          <div>
+          <div ref={exploreRef} className={`reveal-init ${exploreVisible ? "reveal-visible" : ""}`}>
             {/* Section Header */}
             <div className="flex items-center gap-4 mb-10">
               <div

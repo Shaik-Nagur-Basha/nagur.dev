@@ -13,6 +13,7 @@ import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
 import { useProfileStore } from "../store/useProfileStore";
 import "./Contact.css";
+import useScrollReveal from "../hooks/useScrollReveal";
 
 function Contact() {
   const { darkMode } = useTheme();
@@ -94,6 +95,11 @@ function Contact() {
     }
   };
 
+  // Scroll-reveal refs
+  const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.12 });
+  const [cardsRef, cardsVisible] = useScrollReveal({ threshold: 0.08 });
+  const [formRef, formVisible] = useScrollReveal({ threshold: 0.08 });
+
   return (
     <>
       {isLoading ? (
@@ -104,8 +110,8 @@ function Contact() {
           className="py-20 px-4 transition-colors duration-300"
         >
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mt-4 mb-16">
-              <div className="inline-block mb-4">
+            <div ref={headerRef} className="text-center mt-4 mb-16">
+              <div className={`inline-block mb-4 reveal-init ${headerVisible ? "reveal-visible" : ""}`}>
                 <span
                   className={`px-4 py-2 rounded-full text-sm font-semibold border border-pink-200 backdrop-blur-sm flex items-center gap-2 ${darkMode ? "bg-pink-900/40 text-pink-300 border-pink-800" : "bg-pink-100 text-pink-600"}`}
                 >
@@ -113,11 +119,11 @@ function Contact() {
                 </span>
               </div>
               <h2
-                className={`text-3xl md:text-4xl font-bold ${darkMode ? "text-white/90" : "text-black/90"} mb-4`}
+                className={`text-3xl md:text-4xl font-bold ${darkMode ? "text-white/90" : "text-black/90"} mb-4 reveal-init stagger-1 ${headerVisible ? "reveal-visible" : ""}`}
               >
                 Let's Work Together
               </h2>
-              <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
+              <p className={`text-base md:text-lg text-gray-600 dark:text-gray-400 reveal-init stagger-2 ${headerVisible ? "reveal-visible" : ""}`}>
                 Have a project in mind? I'd love to hear from you!
               </p>
             </div>
@@ -125,7 +131,7 @@ function Contact() {
             {/* Main Grid */}
             <div className="grid justify-items-center place-self-baseline lg:grid-cols-2 gap-8 lg:gap-16 mb-8">
               {/* Contact Info Section */}
-              <div className="lg:space-y-6 lg:place-content-start max-lg:w-full max-lg:flex items-center justify-center md:gap-8 gap-4 flex-wrap lg:mt-10 lg:mr-10">
+              <div ref={cardsRef} className="lg:space-y-6 lg:place-content-start max-lg:w-full max-lg:flex items-center justify-center md:gap-8 gap-4 flex-wrap lg:mt-10 lg:mr-10">
                 {[
                   {
                     icon: Phone,
@@ -173,12 +179,11 @@ function Contact() {
                     <a
                       key={idx}
                       href={contact.link}
-                      className={`group max-w-fit contact-card block relative overflow-hidden rounded-xl p-3 pr-7 transition-all duration-500 transform active:scale-95 cursor-pointer animate-slide-in-left backdrop-blur-xl border ${
+                      className={`group max-w-fit contact-card block relative overflow-hidden rounded-xl p-3 pr-7 transition-all duration-500 transform active:scale-95 cursor-pointer backdrop-blur-xl border reveal-from-left stagger-${idx + 1} ${
                         darkMode
                           ? `${colorConfig[contact.color].dark} bg-gray-900/50 shadow-2xl shadow-${contact.color}-900/20 hover:shadow-${contact.color}-500/30`
                           : `${colorConfig[contact.color].light} bg-white/70 shadow-lg hover:shadow-xl`
-                      }`}
-                      style={{ animationDelay: `${idx * 100}ms` }}
+                      } ${cardsVisible ? "reveal-visible" : ""}`}
                     >
                       {/* Gradient overlay */}
                       <div
@@ -234,10 +239,10 @@ function Contact() {
               </div>
 
               {/* Contact Form Section */}
-              <div className="w-full max-w-2xl lg:mr-44">
+              <div ref={formRef} className="w-full max-w-2xl lg:mr-44">
                 <form
                   onSubmit={handleSubmit}
-                  className={`transition-all duration-500 animate-fade-in`}
+                  className={`transition-all duration-500 reveal-from-right ${formVisible ? "reveal-visible" : ""}`}
                 >
                   {/* Heading */}
                   <h3

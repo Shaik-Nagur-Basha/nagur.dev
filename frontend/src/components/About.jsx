@@ -3,6 +3,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useState, useEffect } from "react";
 import SkeletonLoader from "./SkeletonLoader";
 import API from "../api/axios";
+import useScrollReveal from "../hooks/useScrollReveal";
 
 // Helper to calculate years of experience from August 2024
 const getYearsOfExperience = () => {
@@ -87,6 +88,11 @@ function About() {
     }
   }, [minLoadingTime, isDataLoading]);
 
+  // Scroll-reveal refs
+  const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.15 });
+  const [contentRef, contentVisible] = useScrollReveal({ threshold: 0.1 });
+  const [statsRef, statsVisible] = useScrollReveal({ threshold: 0.1 });
+
   const highlights = [
     `${getYearsOfExperience()}+ yrs experience in MERN`,
     "Expert in React & Node.js",
@@ -118,7 +124,10 @@ function About() {
 
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="text-center mt-4 mb-16">
-              <div className="inline-block mb-4">
+              <div
+                ref={headerRef}
+                className={`inline-block mb-4 reveal-init ${headerVisible ? "reveal-visible" : ""}`}
+              >
                 <span
                   className={`px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-xl flex items-center gap-2 transition-all duration-300 ${
                     darkMode
@@ -130,31 +139,31 @@ function About() {
                 </span>
               </div>
               <h2
-                className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 transition-colors duration-300 ${
+                className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 transition-colors duration-300 reveal-init stagger-1 ${
                   darkMode ? "text-white" : "text-gray-900"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 Crafting Digital Solutions
               </h2>
               <p
-                className={`text-base md:text-lg transition-colors duration-300 line-clamp-2 ${
+                className={`text-base md:text-lg transition-colors duration-300 line-clamp-2 reveal-init stagger-2 ${
                   darkMode ? "text-gray-400" : "text-gray-600"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 Full-stack developer creating responsive, performant, and
                 user-friendly experiences
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-8 xl:gap-4 2xl:gap-16 items-start">
+            <div ref={contentRef} className="grid lg:grid-cols-2 gap-8 xl:gap-4 2xl:gap-16 items-start">
               {/* Content - Full width on mobile, left column on desktop */}
               <div className="space-y-8 order-2 lg:order-1">
                 {/* Paragraphs */}
                 <div className="space-y-6">
                   <p
-                    className={`leading-relaxed text-base sm:text-lg transition-colors duration-300 ${
+                    className={`leading-relaxed text-base sm:text-lg transition-colors duration-300 reveal-from-left ${
                       darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
+                    } ${contentVisible ? "reveal-visible" : ""}`}
                   >
                     I'm a{" "}
                     <span className="font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -172,9 +181,9 @@ function About() {
                   </p>
 
                   <p
-                    className={`leading-relaxed text-base sm:text-lg transition-colors duration-300 ${
+                    className={`leading-relaxed text-base sm:text-lg transition-colors duration-300 reveal-from-left stagger-1 ${
                       darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
+                    } ${contentVisible ? "reveal-visible" : ""}`}
                   >
                     I combine{" "}
                     <span className="font-semibold text-blue-600 dark:text-blue-400">
@@ -209,11 +218,11 @@ function About() {
                   {highlights.map((highlight, idx) => (
                     <div
                       key={idx}
-                      className={`flex items-start gap-3 p-3 rounded-lg transition-all duration-200 border ${
+                      className={`flex items-start gap-3 p-3 rounded-lg transition-all duration-200 border reveal-init stagger-${idx + 2} ${
                         darkMode
                           ? "hover:bg-gray-800/50 border-transparent"
                           : "hover:bg-blue-100/40 border-blue-300/30 hover:border-blue-300/60 hover:shadow-md hover:shadow-blue-300/20"
-                      }`}
+                      } ${contentVisible ? "reveal-visible" : ""}`}
                     >
                       <CheckCircle
                         className="text-green-500 shrink-0 mt-1 hover:scale-110 transition-transform duration-200"
@@ -233,7 +242,7 @@ function About() {
 
               {/* Stats - Full width on mobile, stacked responsively on tablet, 3-column on desktop */}
               <div className="w-full order-1 lg:order-2">
-                <div className="grid grid-cols-3 lg:grid-cols-2 gap-4 sm:gap-3 lg:gap-4">
+                <div ref={statsRef} className="grid grid-cols-3 lg:grid-cols-2 gap-4 sm:gap-3 lg:gap-4">
                   {[
                     { number: <CountUp end={projectsCount} suffix="+" />, label: "Projects", icon: TrendingUp },
                     { number: <CountUp end={getYearsOfExperience()} suffix="+" />, label: "Years", icon: Award },
@@ -243,11 +252,11 @@ function About() {
                     return (
                       <div
                         key={idx}
-                        className={`relative p-4 sm:p-5 lg:p-6 rounded-xl text-center transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border group overflow-hidden ${
+                        className={`relative p-4 sm:p-5 lg:p-6 rounded-xl text-center transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border group overflow-hidden reveal-from-right stagger-${idx + 1} ${
                           darkMode
                             ? "bg-linear-to-br from-gray-900/50 to-gray-800/50 border-gray-700/40 hover:from-blue-900/40 hover:to-purple-900/50 hover:border-purple-500/60 hover:shadow-2xl hover:shadow-purple-500/30"
                             : "bg-linear-to-br from-blue-50/80 to-purple-50/80 hover:from-blue-100/80 hover:to-purple-100/80 border-blue-200/50 hover:border-purple-300/50 hover:shadow-lg hover:shadow-blue-300/40"
-                        }`}
+                        } ${statsVisible ? "reveal-visible" : ""}`}
                       >
                         <div
                           className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${

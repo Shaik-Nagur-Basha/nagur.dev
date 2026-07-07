@@ -18,6 +18,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import useScrollReveal from "../hooks/useScrollReveal";
 
 function ProjectsPage() {
   const navigate = useNavigate();
@@ -27,6 +28,10 @@ function ProjectsPage() {
   const [ripples, setRipples] = useState({});
   const [expandedId, setExpandedId] = useState(null);
   const [videoLoadingStates, setVideoLoadingStates] = useState({});
+
+  const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.1 });
+  const [filterRef, filterVisible] = useScrollReveal({ threshold: 0.1 });
+  const [gridRef, gridVisible] = useScrollReveal({ threshold: 0.05 });
 
   useEffect(() => {
     // Minimum skeleton display time (prevents flashing)
@@ -374,22 +379,22 @@ function ProjectsPage() {
             />
 
             {/* ── Hero ── */}
-            <div className="pt-8 sm:pt-12 mx-auto relative z-20 text-center mb-6">
+            <div ref={headerRef} className="pt-8 sm:pt-12 mx-auto relative z-20 text-center mb-6">
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.22em] border backdrop-blur-md mb-3 ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.22em] border backdrop-blur-md mb-3 reveal-init ${
                   darkMode
                     ? "bg-cyan-500/10 border-cyan-400/25 text-cyan-400"
                     : "bg-cyan-500/10 border-cyan-400/30 text-cyan-600"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 <Sparkles size={9} className="animate-pulse" />
                 Portfolio
               </span>
 
               <h1
-                className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-2 transition-colors duration-300 ${
+                className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-2 transition-colors duration-300 reveal-init stagger-1 ${
                   darkMode ? "text-white" : "text-gray-900"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 All{" "}
                 <span
@@ -404,9 +409,9 @@ function ProjectsPage() {
               </h1>
 
               <p
-                className={`text-sm md:text-base max-w-md mx-auto mb-6 transition-colors duration-300 ${
+                className={`text-sm md:text-base max-w-md mx-auto mb-6 transition-colors duration-300 reveal-init stagger-2 ${
                   darkMode ? "text-white/45" : "text-black/45"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 Built with passion — from frontend finesse to backend depth
               </p>
@@ -414,7 +419,7 @@ function ProjectsPage() {
               {/* ── Search with Dropdown ── */}
               <div
                 ref={searchRef}
-                className="relative z-30 max-w-sm sm:max-w-md mx-auto mb-6"
+                className={`relative z-30 max-w-sm sm:max-w-md mx-auto mb-6 reveal-init stagger-3 ${headerVisible ? "reveal-visible" : ""}`}
               >
                 <div
                   className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-300 ${
@@ -607,7 +612,7 @@ function ProjectsPage() {
             </div>
 
             {/* ── Category Filter ── */}
-            <div className="flex flex-wrap justify-center gap-1.5 mb-8 relative z-10 max-w-3xl mx-auto px-2">
+            <div ref={filterRef} className={`flex flex-wrap justify-center gap-1.5 mb-8 relative z-10 max-w-3xl mx-auto px-2 reveal-init ${filterVisible ? "reveal-visible" : ""}`}>
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -629,7 +634,7 @@ function ProjectsPage() {
             </div>
 
             {/* Projects Grid */}
-            <div className="flex flex-wrap justify-evenly gap-8 max-[500px]:gap-4">
+            <div ref={gridRef} className={`flex flex-wrap justify-evenly gap-8 max-[500px]:gap-4 reveal-init stagger-1 ${gridVisible ? "reveal-visible" : ""}`}>
               {!isLoading && paginatedProjects.length === 0 && (
                 <div className="w-full py-24 flex flex-col items-center justify-center text-center">
                   <div

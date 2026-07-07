@@ -7,7 +7,7 @@ import {
   CheckCircle,
   Send,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./SkeletonLoader";
@@ -100,6 +100,15 @@ function Hero() {
     }
   `;
 
+  // Mount-state entrance for above-the-fold hero (no scroll trigger needed)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    if (!isLoading) {
+      const t = setTimeout(() => setMounted(true), 60);
+      return () => clearTimeout(t);
+    }
+  }, [isLoading]);
+
   return (
     <>
       {isLoading ? (
@@ -113,7 +122,7 @@ function Hero() {
           <div className="max-w-7xl mx-auto w-full relative z-10">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 sm:gap-12 items-center">
               {/* Right - Profile Image (Shows first on mobile) */}
-              <div className="flex items-center justify-center order-first xl:order-last">
+              <div className={`flex items-center justify-center order-first xl:order-last reveal-scale ${mounted ? "reveal-visible" : ""}`}>
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 group">
                   {/* Animated background blur circles */}
                   <div
@@ -217,7 +226,7 @@ function Hero() {
                 </div>
               </div>
               <div className="space-y-6 order-last xl:order-first px-4 sm:px-8 2xl:px-0">
-                <div className="inline-block">
+                <div className={`inline-block reveal-init ${mounted ? "reveal-visible" : ""}`}>
                   <span
                     className={`px-4 py-2 text-sm font-semibold rounded-full border backdrop-blur-xl transition-all duration-300 shadow-xl ${
                       darkMode
@@ -230,9 +239,9 @@ function Hero() {
                 </div>
 
                 <h1
-                  className={`text-3xl max-[400px]:text-2xl sm:text-4xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight transition-all duration-300 ${
+                  className={`text-3xl max-[400px]:text-2xl sm:text-4xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight transition-all duration-300 reveal-init stagger-1 ${
                     darkMode ? "text-white" : "text-gray-900"
-                  }`}
+                  } ${mounted ? "reveal-visible" : ""}`}
                 >
                   Hi, I'm{" "}
                   <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
@@ -241,9 +250,9 @@ function Hero() {
                 </h1>
 
                 <p
-                  className={`text-base max-[400px]:text-sm sm:text-base md:text-lg lg:text-lg leading-relaxed transition-all duration-300 ${
+                  className={`text-base max-[400px]:text-sm sm:text-base md:text-lg lg:text-lg leading-relaxed transition-all duration-300 reveal-init stagger-2 ${
                     darkMode ? "text-gray-400" : "text-gray-700"
-                  }`}
+                  } ${mounted ? "reveal-visible" : ""}`}
                 >
                   {profile?.bio ||
                     `MERN stack web developer crafting polished, full-stack web
@@ -252,7 +261,7 @@ function Hero() {
                 </p>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-row gap-3 pt-4 md:pt-6 w-fit text-nowrap">
+                <div className={`flex flex-row gap-3 pt-4 md:pt-6 w-fit text-nowrap reveal-init stagger-3 ${mounted ? "reveal-visible" : ""}`}>
                   <ButtonGradient
                     onClick={handleViewWork}
                     variant="primary"
@@ -304,7 +313,7 @@ function Hero() {
                   </ButtonGradient>
                 </div>
 
-                <div className="flex gap-3 sm:gap-4 pt-6 md:pt-8">
+                <div className={`flex gap-3 sm:gap-4 pt-6 md:pt-8 reveal-init stagger-4 ${mounted ? "reveal-visible" : ""}`}>
                   <a
                     href={profile?.socialLinks?.github || "https://github.com/Shaik-Nagur-Basha"}
                     target="_blank"

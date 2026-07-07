@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SkeletonLoader from "./SkeletonLoader";
 import { useProfileStore } from "../store/useProfileStore";
+import useScrollReveal from "../hooks/useScrollReveal";
 
 function Footer() {
   const { darkMode } = useTheme();
@@ -18,6 +19,7 @@ function Footer() {
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const { profile, fetchProfile } = useProfileStore();
   const currentYear = new Date().getFullYear();
+  const [footerRef, footerVisible] = useScrollReveal({ threshold: 0.05 });
 
   useEffect(() => {
     fetchProfile();
@@ -495,7 +497,7 @@ function Footer() {
           ></div>
           <style>{styles}</style>
 
-          <div className="footer-content">
+          <div ref={footerRef} className={`footer-content reveal-init ${footerVisible ? "reveal-visible" : ""}`}>
             {/* Brand Section */}
             <div className="w-full gap-14 max-xl:flex-col flex px-4 sm:px-8 2xl:px-0">
               <div className="flex flex-wrap gap-4 md:gap-12 xl:gap-16 justify-between xl:justify-baseline xl:w-3/5">

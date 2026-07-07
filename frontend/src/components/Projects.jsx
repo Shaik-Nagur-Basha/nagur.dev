@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "./SkeletonLoader";
 import API from "../api/axios";
+import useScrollReveal from "../hooks/useScrollReveal";
 
 function Projects() {
   const navigate = useNavigate();
@@ -21,6 +22,9 @@ function Projects() {
   const [expandedId, setExpandedId] = useState(null);
 
   const [projects, setProjects] = useState([]);
+
+  const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.15 });
+  const [gridRef, gridVisible] = useScrollReveal({ threshold: 0.1 });
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -329,35 +333,35 @@ function Projects() {
           />
 
           <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mt-4 mb-16">
+            <div ref={headerRef} className="text-center mt-4 mb-16">
               <span
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-xl mb-4 ${
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-xl mb-4 reveal-init ${
                   darkMode
                     ? "bg-purple-900/40 text-purple-300 border-purple-800"
                     : "bg-blue-100/60 text-blue-700 border-blue-300/60 shadow-lg shadow-blue-300/20"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 <Code2 size={16} />
                 Featured Work
               </span>
               <h2
-                className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 transition-colors duration-300 ${
+                className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 transition-colors duration-300 reveal-init stagger-1 ${
                   darkMode ? "text-white" : "text-gray-900"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 Showcase Projects
               </h2>
               <p
-                className={`text-base md:text-lg transition-colors duration-300 ${
+                className={`text-base md:text-lg transition-colors duration-300 reveal-init stagger-2 ${
                   darkMode ? "text-gray-400" : "text-gray-600"
-                }`}
+                } ${headerVisible ? "reveal-visible" : ""}`}
               >
                 Explore my best work and technical expertise
               </p>
             </div>
 
             {/* Projects Grid with Modern Side Navigation */}
-            <div className="relative flex items-center justify-center">
+            <div ref={gridRef} className={`relative flex items-center justify-center reveal-init stagger-1 ${gridVisible ? "reveal-visible" : ""}`}>
               {/* Left Arrow Button */}
               <button
                 onClick={() => {
