@@ -134,7 +134,83 @@ function PageHeadController() {
       pageTitle = "404 Not Found";
     }
 
-    document.title = `nagur.dev | ${pageTitle}`;
+    const fullTitle = `nagur.dev | ${pageTitle}`;
+    document.title = fullTitle;
+
+    // 3. Update Meta Description and SEO tags dynamically
+    let pageDescription = "Portfolio of Shaik Nagur Basha (nagur.dev). Full Stack Web Developer & Software Engineer specializing in React, Node.js, and modern web applications.";
+    
+    if (path === "/") {
+      if (hash === "#about") {
+        pageDescription = "Learn more about Shaik Nagur Basha, a passionate Full Stack Developer with expertise in building responsive, scalable, and premium web applications.";
+      } else if (hash === "#projects") {
+        pageDescription = "Explore my portfolio of web development and software engineering projects, showcasing clean code, rich animations, and high performance.";
+      } else if (hash === "#skills") {
+        pageDescription = "Discover the technical skills and core competencies of Shaik Nagur Basha, including React, Node.js, databases, and UI/UX design.";
+      } else if (hash === "#contact") {
+        pageDescription = "Get in touch with Shaik Nagur Basha for collaborations, job opportunities, or project requests.";
+      }
+    } else if (path === "/about") {
+      pageDescription = "Learn more about Shaik Nagur Basha, a passionate Full Stack Developer with expertise in building responsive, scalable, and premium web applications.";
+    } else if (path === "/projects") {
+      pageDescription = "Explore my portfolio of web development and software engineering projects, showcasing clean code, rich animations, and high performance.";
+    } else if (path.startsWith("/projects/")) {
+      const slug = path.split("/").pop() || "";
+      const formattedSlug = slug
+        .split("-")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      pageDescription = `Explore detailed features, technology stack, architecture, and live links for the project: ${formattedSlug || "Project Details"}.`;
+    } else if (path === "/contact") {
+      pageDescription = "Get in touch with Shaik Nagur Basha for collaborations, job opportunities, or project requests.";
+    } else if (path === "/privacy") {
+      pageDescription = "Privacy Policy for nagur.dev portfolio website. Read about how we handle user data and privacy.";
+    } else if (path === "/terms") {
+      pageDescription = "Terms of Service for nagur.dev portfolio website. Read our terms and conditions of usage.";
+    } else if (path === "/cookies") {
+      pageDescription = "Cookie Policy for nagur.dev portfolio website. Learn about the cookies we use to enhance user experience.";
+    } else if (path.startsWith("/admin")) {
+      pageDescription = "Admin panel for managing projects and inquiries on nagur.dev.";
+    }
+
+    const setMeta = (name, content, isProperty = false) => {
+      const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+      let element = document.querySelector(selector);
+      if (element) {
+        element.setAttribute("content", content);
+      } else {
+        element = document.createElement("meta");
+        if (isProperty) {
+          element.setAttribute("property", name);
+        } else {
+          element.setAttribute("name", name);
+        }
+        element.setAttribute("content", content);
+        document.head.appendChild(element);
+      }
+    };
+
+    setMeta("description", pageDescription);
+    setMeta("og:title", fullTitle, true);
+    setMeta("og:description", pageDescription, true);
+    setMeta("twitter:title", fullTitle);
+    setMeta("twitter:description", pageDescription);
+
+    // Update canonical link
+    const canonicalUrl = `https://nagur-dev.web.app${path}`;
+    let canonicalElement = document.querySelector('link[rel="canonical"]');
+    if (canonicalElement) {
+      canonicalElement.setAttribute("href", canonicalUrl);
+    } else {
+      canonicalElement = document.createElement("link");
+      canonicalElement.setAttribute("rel", "canonical");
+      canonicalElement.setAttribute("href", canonicalUrl);
+      document.head.appendChild(canonicalElement);
+    }
+
+    // Update Open Graph and Twitter URL
+    setMeta("og:url", canonicalUrl, true);
+    setMeta("twitter:url", canonicalUrl);
   }, [location]);
 
   return null;

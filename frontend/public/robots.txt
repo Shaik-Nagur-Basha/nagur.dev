@@ -1,0 +1,9 @@
+# robots.txt for nagur.dev
+# Instruct search engine crawlers on what to index
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin/*
+
+Sitemap: https://nagur-dev.web.app/sitemap.xml

@@ -43,6 +43,8 @@ app.use(
           "'self'", 
           "https://nagur-dev.onrender.com", 
           "https://www.nagur-dev.onrender.com",
+          "https://nagur-dev.web.app",
+          "https://www.nagur-dev.web.app",
           ...(process.env.NODE_ENV !== "production" ? ["http://localhost:*", "ws://localhost:*"] : [])
         ],
       },
@@ -88,6 +90,8 @@ app.use("/api/", limiter);
 const allowedOrigins = [
   "https://nagur-dev.onrender.com",
   "https://www.nagur-dev.onrender.com",
+  "https://nagur-dev.web.app",
+  "https://www.nagur-dev.web.app",
   ...(process.env.NODE_ENV !== "production" ? ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"] : [])
 ];
 
