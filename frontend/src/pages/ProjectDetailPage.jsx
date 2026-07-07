@@ -348,7 +348,7 @@ function ProjectDetailPage() {
   const navigate = useNavigate();
   const { darkMode } = useTheme();
   const [project, setProject] = useState(null);
-  const [allProjects, setAllProjects] = useState([]);
+  const [exploreProjects, setExploreProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [galleryLayout, setGalleryLayout] = useState("grid"); // "grid" | "bento" | "filmstrip"
   const [expandedExploreId, setExpandedExploreId] = useState(null);
@@ -495,7 +495,7 @@ function ProjectDetailPage() {
         transparent 100%
       );
       animation: ts-spin 5s linear infinite;
-      opacity: 0;
+      opacity: 1;
       transition: opacity 0.4s ease;
       z-index: -1;
       padding: 2px;
@@ -594,72 +594,24 @@ function ProjectDetailPage() {
       }
     };
 
-    const fetchAllProjects = async () => {
+    const fetchExploreProjects = async () => {
       try {
-        const res = await API.get("projects");
+        const res = await API.get(`projects/${slug}/explore`);
         if (active && res.data?.success) {
-          setAllProjects(res.data.data);
+          setExploreProjects(res.data.data);
         }
       } catch (error) {
-        console.error("Error fetching all projects for navigation:", error);
+        console.error("Error fetching explore projects:", error);
       }
     };
 
     fetchMainProject();
-    fetchAllProjects();
+    fetchExploreProjects();
 
     return () => {
       active = false;
     };
   }, [slug]);
-
-  const currentIndex = allProjects.findIndex(
-    (p) => p.slug === slug || p._id === slug,
-  );
-  const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
-  const nextProject =
-    currentIndex < allProjects.length - 1
-      ? allProjects[currentIndex + 1]
-      : null;
-
-  // Prioritized 3-way matching algorithm for Explore More Projects (up to 4 items)
-  const exploreProjects = (() => {
-    if (!allProjects.length) return [];
-
-    // 1. Exclude the current project
-    const otherProjects = allProjects.filter(
-      (p) => p.slug !== slug && p._id !== slug,
-    );
-
-    // 2. Sort by relevance
-    return [...otherProjects]
-      .sort((a, b) => {
-        // Rule A: Category matching is top priority
-        const aMatchesCat =
-          a.category &&
-          project?.category &&
-          a.category.toLowerCase() === project.category.toLowerCase();
-        const bMatchesCat =
-          b.category &&
-          project?.category &&
-          b.category.toLowerCase() === project.category.toLowerCase();
-
-        if (aMatchesCat && !bMatchesCat) return -1;
-        if (!aMatchesCat && bMatchesCat) return 1;
-
-        // Rule B: Featured projects are second priority
-        if (a.isFeatured && !b.isFeatured) return -1;
-        if (!a.isFeatured && b.isFeatured) return 1;
-
-        // Rule C: Sort by defined ordering rank first, then newest creation date
-        const orderA = a.order !== undefined ? a.order : 999;
-        const orderB = b.order !== undefined ? b.order : 999;
-        if (orderA !== orderB) return orderA - orderB;
-
-        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-      })
-      .slice(0, 4);
-  })();
 
   const getCategoryIcon = (category) => {
     const cat = category?.toLowerCase() || "";

@@ -395,3 +395,90 @@ export const updateProjectOrder = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get related projects for explore section (up to 4)
+// @route   GET /api/projects/:id/explore
+// @access  Public
+export const getExploreProjects = async (req, res, next) => {
+  try {
+    let currentProject;
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      currentProject = await Project.findById(req.params.id);
+    } else {
+      currentProject = await Project.findOne({ slug: req.params.id });
+    }
+
+    if (!currentProject) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const currentCategory = currentProject.category ? currentProject.category.trim() : "";
+
+    const exploreProjects = await Project.aggregate([
+      {
+        $match: {
+          status: "Published",
+          _id: { $ne: currentProject._id }
+        }
+      },
+      {
+        $addFields: {
+          categoryMatch: {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: [currentCategory, ""] },
+                  { $eq: [{ $type: "$category" }, "string"] },
+                  { $eq: [{ $toLower: "$category" }, currentCategory.toLowerCase()] }
+                ]
+              },
+              then: 1,
+              else: 0
+            }
+          },
+          isFeaturedInt: {
+            $cond: {
+              if: { $eq: ["$featured", true] },
+              then: 1,
+              else: 0
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          categoryMatch: -1,
+          isFeaturedInt: -1,
+          order: 1,
+          createdAt: -1
+        }
+      },
+      { $limit: 4 },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          slug: 1,
+          image: 1,
+          video: 1,
+          mediaType: 1,
+          description: 1,
+          skills: 1,
+          category: 1,
+          featured: 1,
+          order: 1,
+          createdAt: 1
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      count: exploreProjects.length,
+      data: exploreProjects,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

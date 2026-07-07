@@ -6,6 +6,7 @@ import {
   updateProject,
   deleteProject,
   updateProjectOrder,
+  getExploreProjects,
 } from "../controllers/projectController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 import { upload } from "../config/cloudinary.js";
@@ -18,6 +19,8 @@ router
   .route("/")
   .get(getProjects)
   .post(protect, authorize("admin"), upload.single("media"), createProject);
+
+router.get("/:id/explore", getExploreProjects);
 
 router
   .route("/:id")

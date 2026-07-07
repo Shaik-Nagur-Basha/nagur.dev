@@ -107,10 +107,10 @@ function Contact() {
       ) : (
         <section
           id="contact"
-          className="py-20 px-4 transition-colors duration-300"
+          className="scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4 transition-colors duration-300"
         >
           <div className="max-w-7xl mx-auto">
-            <div ref={headerRef} className="text-center mt-4 mb-16">
+            <div ref={headerRef} className="text-center mt-4 mb-8 md:mb-16">
               <div className={`inline-block mb-4 reveal-init ${headerVisible ? "reveal-visible" : ""}`}>
                 <span
                   className={`px-4 py-2 rounded-full text-sm font-semibold border border-pink-200 backdrop-blur-sm flex items-center gap-2 ${darkMode ? "bg-pink-900/40 text-pink-300 border-pink-800" : "bg-pink-100 text-pink-600"}`}

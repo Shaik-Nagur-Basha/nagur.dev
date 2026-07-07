@@ -12,7 +12,7 @@ function HomePage() {
 
   return (
     <div
-      className={`min-h-screen bg-pattern-subtle flex flex-col justify-between transition-colors duration-500 ${
+      className={`min-h-screen bg-pattern-home flex flex-col justify-between transition-colors duration-500 ${
         darkMode
           ? "dark bg-[#030014] text-white"
           : "bg-slate-50 text-slate-900"
@@ -21,7 +21,7 @@ function HomePage() {
       <Navigation />
       
       {/* Immersive layout with a unified backdrop for all sections */}
-      <main className="flex-grow relative overflow-hidden">
+      <main className="flex-grow relative">
         {/* Large, overlapping background ambient glows that blend seamlessly across the entire page */}
         <div className="absolute inset-0 pointer-events-none select-none z-0">
           {/* Hero glow (top-left) */}

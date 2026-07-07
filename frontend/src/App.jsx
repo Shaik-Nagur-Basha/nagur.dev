@@ -27,6 +27,14 @@ import { useProfileStore } from "./store/useProfileStore";
 function ScrollRestoration() {
   const { pathname, hash } = useLocation();
   const lastPathname = useRef(pathname);
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    const mountTimer = setTimeout(() => {
+      isInitialMount.current = false;
+    }, 1500);
+    return () => clearTimeout(mountTimer);
+  }, []);
 
   useEffect(() => {
     if (hash) {
@@ -35,7 +43,9 @@ function ScrollRestoration() {
         const isPageTransition = lastPathname.current !== pathname;
         lastPathname.current = pathname;
 
-        if (isPageTransition) {
+        const needsCorrection = isPageTransition || isInitialMount.current;
+
+        if (needsCorrection) {
           // Scroll immediately to start movement
           const timer1 = setTimeout(() => {
             element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -43,7 +53,10 @@ function ScrollRestoration() {
           
           // Re-scroll once loading skeletons have loaded actual content and heights are stable
           const timer2 = setTimeout(() => {
-            element.scrollIntoView({ behavior: "smooth", block: "start" });
+            const freshElement = document.querySelector(hash);
+            if (freshElement) {
+              freshElement.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
           }, 950);
 
           return () => {
@@ -222,7 +235,9 @@ function App() {
   
   // Initial Auth Check & Profile Fetch (runs once on initial mount)
   useEffect(() => {
-    checkAuth();
+    if (window.location.pathname.startsWith("/admin")) {
+      checkAuth();
+    }
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

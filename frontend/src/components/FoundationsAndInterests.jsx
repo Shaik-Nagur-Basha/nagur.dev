@@ -121,11 +121,10 @@ function FoundationsAndInterests() {
       ) : (
         <section
           id="skills"
-          className="py-20 px-4"
-          style={{ scrollMarginTop: "50px" }}
+          className="scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4"
         >
           <div className="max-w-7xl mx-auto">
-            <div ref={headerRef} className="text-center mt-5 mb-20">
+            <div ref={headerRef} className="text-center mt-5 mb-10 md:mb-20">
               <span
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-xl mb-4 reveal-init ${
                   darkMode

@@ -348,7 +348,7 @@ const ProjectManagement = () => {
         transparent 100%
       );
       animation: ts-spin 5s linear infinite;
-      opacity: 0;
+      opacity: 1;
       transition: opacity 0.4s ease;
       z-index: -1;
       padding: 2px;
@@ -484,11 +484,7 @@ const ProjectManagement = () => {
             {/* Search Dropdown */}
             {showDropdown && (
               <div
-                className={`absolute left-0 right-0 top-full mt-2 rounded-xl border overflow-hidden z-50 backdrop-blur-xl shadow-2xl ${
-                  darkMode
-                    ? "bg-slate-900/95 border-white/10"
-                    : "bg-slate-200/85 border-black/10"
-                }`}
+                className={`absolute bg-slate-950/95 border-white/10 left-0 right-0 top-full mt-2 rounded-xl border overflow-hidden z-50 backdrop-blur-xl shadow-2xl`}
               >
                 {dropdownResults.length === 0 ? (
                   <div
@@ -561,9 +557,7 @@ const ProjectManagement = () => {
                           {/* Info */}
                           <div className="flex-1 min-w-0">
                             <p
-                              className={`text-xs font-semibold truncate ${
-                                darkMode ? "text-white" : "text-gray-900"
-                              }`}
+                              className={`text-xs font-semibold text-white truncate tracking-wider`}
                             >
                               {p.title}
                             </p>
@@ -591,8 +585,8 @@ const ProjectManagement = () => {
                                   ? "text-amber-400/80 group-hover:text-amber-400"
                                   : "text-amber-600/80 group-hover:text-amber-500"
                                 : darkMode
-                                  ? "text-slate-500 group-hover:text-cyan-400"
-                                  : "text-slate-400 group-hover:text-cyan-600"
+                                  ? "text-cyan-400/80 group-hover:text-cyan-400"
+                                  : "text-cyan-700/80 group-hover:text-cyan-600"
                             }`}
                           />
                         </button>

@@ -119,18 +119,21 @@ const Dashboard = () => {
               >
                 <div className="flex items-center gap-2 sm:gap-4">
                   <div
-                    className={cn(
-                      "w-16 h-9 rounded-lg bg-slate-800 overflow-hidden ring-1 transition-all aspect-video shrink-0",
-                      project.featured
-                        ? "ring-amber-500/40"
-                        : "ring-cyan-500/40",
-                    )}
+                    className={`w-16 border-white/10 bg-white/5 aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300`}
                   >
-                    {project.image ? (
+                    {project.mediaType === "video" && project.video ? (
+                      <video
+                        src={project.video}
+                        preload="metadata"
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : project.image || project.thumbnail ? (
                       <img
-                        src={project.image}
+                        src={project.image || project.thumbnail}
                         alt=""
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
                       <div
@@ -204,11 +207,12 @@ const Dashboard = () => {
         <div className="space-y-6">
           <div className="glass-panel rounded-xl sm:rounded-3xl overflow-hidden">
             <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-purple-500" />
-              <h3 className="sm:text-sm text-xs font-bold uppercase tracking-widest">
-                Inbox
-              </h3></div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-purple-500" />
+                <h3 className="sm:text-sm text-xs font-bold uppercase tracking-widest">
+                  Inbox
+                </h3>
+              </div>
               <Link
                 to="/admin/contacts"
                 className="sm:text-xs text-[10px] font-bold text-purple-500 hover:text-purple-400"

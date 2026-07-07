@@ -54,7 +54,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
   // Left (order-last mobile): badge pill, h1 (2 lines), bio (3 lines), 2 CTA buttons, 3 social icons
   if (type === "hero") {
     return (
-      <section className="pt-32 md:pt-44 pb-20 px-4 min-h-screen flex items-center">
+      <section id="home" className="pt-32 md:pt-44 pb-20 px-4 min-h-screen flex items-center">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 sm:gap-12 items-center">
             {/* Avatar — order-first on mobile */}
@@ -112,7 +112,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
   // Right (order-1 lg:order-2): 3 stat cards (grid-cols-3 lg:grid-cols-2 gap-4)
   if (type === "about") {
     return (
-      <section className="py-20 px-4">
+      <section id="about" className="scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header: badge + h2 + subtitle */}
           <div className="text-center mt-4 mb-16">
@@ -197,7 +197,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
   // cards h-60 aspect-video rounded-none, "View All Projects" link at bottom
   if (type === "projects") {
     return (
-      <section className="py-20 px-4">
+      <section id="projects" className="scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Section header */}
           <div className="text-center mt-4 mb-16">
@@ -249,7 +249,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
   //                        Interests header + flex-wrap pill badges
   if (type === "foundations") {
     return (
-      <section className="py-20 px-4">
+      <section id="skills" className="scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Section header */}
           <div className="text-center mt-5 mb-20">
@@ -367,7 +367,7 @@ const SkeletonLoader = ({ type = "hero", count = 1 }) => {
   // Right: form heading (text-2xl sm:text-3xl) + name/email 2-col + textarea 5-rows + submit btn
   if (type === "contact") {
     return (
-      <section className="py-20 px-4">
+      <section id="contact" className="scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mt-4 mb-16">

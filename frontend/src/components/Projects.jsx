@@ -160,7 +160,7 @@ function Projects() {
         transparent 100%
       );
       animation: ts-spin 5s linear infinite;
-      opacity: 0;
+      opacity: 1;
       transition: opacity 0.4s ease;
       z-index: -1;
       padding: 2px;
@@ -303,7 +303,7 @@ function Projects() {
       ) : (
         <section
           id="projects"
-          className={`py-20 px-4 transition-all duration-300 relative overflow-hidden`}
+          className={`scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4 transition-all duration-300 relative overflow-hidden`}
         >
           <style>{projectCardStyle}</style>
 
@@ -333,7 +333,7 @@ function Projects() {
           />
 
           <div className="max-w-7xl mx-auto relative z-10">
-            <div ref={headerRef} className="text-center mt-4 mb-16">
+            <div ref={headerRef} className="text-center mt-4 mb-8 md:mb-16">
               <span
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-xl mb-4 reveal-init ${
                   darkMode

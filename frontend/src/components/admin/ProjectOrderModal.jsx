@@ -251,7 +251,7 @@ const ProjectOrderModal = ({ isOpen, onClose, mode = "featured" }) => {
           </div>
 
           {/* List Area */}
-          <div className="relative flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar">
+          <div className="relative flex-1 overflow-y-auto p-2 sm:p-6 custom-scrollbar">
             {fetching ? (
               <div className="py-20 flex flex-col items-center justify-center text-center">
                 <Loader2

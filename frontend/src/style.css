@@ -9,10 +9,12 @@
   html {
     scroll-behavior: smooth;
     color-scheme: light dark;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-white dark:bg-gray-950 text-gray-900 dark:text-white;
+    overflow-x: hidden;
   }
 
   /* Hide scrollbar while keeping scroll functionality */
@@ -621,6 +623,10 @@
   color: #0f172a;
 }
 
+.dark .rotating-gradient-card > span {
+  color: #ffffff !important;
+}
+
 .whiteblink-remover {
   outline: none !important;
   box-shadow: none !important;
@@ -1141,6 +1147,36 @@
       transparent 1px,
       transparent 28px
     ) !important;
+}
+
+/* Custom pattern for Home Page with increased visibility */
+.bg-pattern-home::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      var(--pattern-line) 0px,
+      var(--pattern-line) 1px,
+      transparent 1px,
+      transparent 28px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      var(--pattern-line) 0px,
+      var(--pattern-line) 1px,
+      transparent 1px,
+      transparent 28px
+    ) !important;
+  opacity: 0.6;
+}
+
+/* Disable pattern on nested min-h-screen elements to prevent double rendering */
+.min-h-screen .min-h-screen::after {
+  content: none !important;
 }
 
 /* ============================================================

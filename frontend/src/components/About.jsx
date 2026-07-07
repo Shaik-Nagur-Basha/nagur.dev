@@ -118,12 +118,12 @@ function About() {
       ) : (
         <section
           id="about"
-          className={`py-20 px-4 transition-all duration-300 relative overflow-hidden`}
+          className={`scroll-mt-16 md:scroll-mt-2 py-10 md:py-20 px-4 transition-all duration-300 relative overflow-hidden`}
         >
           <style>{overlayStyle}</style>
 
           <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mt-4 mb-16">
+            <div className="text-center mt-4 mb-8 md:mb-16">
               <div
                 ref={headerRef}
                 className={`inline-block mb-4 reveal-init ${headerVisible ? "reveal-visible" : ""}`}

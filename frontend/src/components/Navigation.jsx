@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMotionValue, useSpring } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -23,8 +23,41 @@ function Navigation() {
   const { darkMode, toggleDarkMode } = useTheme();
   const { profile, fetchProfile } = useProfileStore();
 
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      return window.location.hash.substring(1);
+    }
+    return "home";
+  });
   const location = useLocation();
+  const isProgrammaticScroll = useRef(false);
+  const scrollTimeoutRef = useRef(null);
+  const [observerTrigger, setObserverTrigger] = useState(0);
+
+  // Trigger a re-bind of the scrollspy observer 1 second after loading state finishes.
+  // This guarantees that all sections have unmounted their skeletons and mounted their real DOM nodes.
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setObserverTrigger((prev) => prev + 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
+  // If loading from another page with a hash, or clicking a link that triggers routing, pause scrollspy
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      isProgrammaticScroll.current = true;
+      const targetId = location.hash.substring(1);
+      setActiveSection(targetId);
+      
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 1200);
+    }
+  }, [location.pathname, location.hash]);
 
   // Scroll spy to update active section based on intersecting sections
   useEffect(() => {
@@ -35,6 +68,7 @@ function Navigation() {
     const sectionIds = ["home", "about", "projects", "skills", "contact"];
     
     const observerCallback = (entries) => {
+      if (isProgrammaticScroll.current) return;
       const intersectingEntry = entries.find(entry => entry.isIntersecting);
       if (intersectingEntry) {
         setActiveSection(intersectingEntry.target.id);
@@ -57,7 +91,19 @@ function Navigation() {
     });
 
     const handleScroll = () => {
-      if (window.scrollY < 100) {
+      if (isProgrammaticScroll.current) return;
+      
+      const scrollTop = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+
+      // If at the very bottom of the page, force Contact section active
+      if (scrollTop + clientHeight >= scrollHeight - 80) {
+        setActiveSection("contact");
+        return;
+      }
+
+      if (scrollTop < 100) {
         setActiveSection("home");
       }
     };
@@ -67,7 +113,7 @@ function Navigation() {
       observer.disconnect();
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [location.pathname]);
+  }, [location.pathname, isLoading, observerTrigger]);
 
   const isLinkActive = (linkHref) => {
     if (linkHref.startsWith("/#")) {
@@ -78,16 +124,40 @@ function Navigation() {
   };
 
   const handleNavClick = (e, link) => {
+    setIsOpen(false);
     if (link.href.startsWith("/#")) {
       const targetId = link.href.split("#")[1];
       const element = document.getElementById(targetId);
       if (element) {
+        // We are on the Home Page, so intercept navigation to scroll smoothly
         e.preventDefault();
-        setIsOpen(false);
+        isProgrammaticScroll.current = true;
+        setActiveSection(targetId);
         element.scrollIntoView({ behavior: "smooth", block: "start" });
         window.history.pushState(null, "", link.href);
-        setActiveSection(targetId);
+
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(() => {
+          isProgrammaticScroll.current = false;
+        }, 1000);
       }
+    }
+  };
+
+  const handleLogoClick = (e) => {
+    setIsOpen(false);
+    if (location.pathname === "/") {
+      // If already on the Home Page, prevent default and scroll smoothly to top
+      e.preventDefault();
+      isProgrammaticScroll.current = true;
+      setActiveSection("home");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.history.pushState(null, "", "/");
+
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 1000);
     }
   };
 
@@ -221,6 +291,7 @@ function Navigation() {
               {/* Logo - Clickable Link to Home */}
               <Link
                 to="/"
+                onClick={handleLogoClick}
                 className="shrink-0 flex items-center hover:opacity-80 transition-opacity duration-300 cursor-pointer group"
               >
                 <div className="relative">

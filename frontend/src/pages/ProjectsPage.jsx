@@ -219,7 +219,7 @@ function ProjectsPage() {
         transparent 100%
       );
       animation: ts-spin 5s linear infinite;
-      opacity: 0;
+      opacity: 1;
       transition: opacity 0.4s ease;
       z-index: -1;
       padding: 2px;
@@ -352,7 +352,7 @@ function ProjectsPage() {
           <Navigation />
           <style>{projectCardStyle}</style>
 
-          <section className="py-20 px-4 transition-all duration-300 relative overflow-hidden">
+          <section className="pt-24 pb-12 md:pt-28 md:pb-16 px-4 transition-all duration-300 relative overflow-hidden">
             {/* Background overlay effects */}
             <div
               className={`absolute top-0 right-0 w-96 h-96 pointer-events-none blur-3xl ${
@@ -378,259 +378,271 @@ function ProjectsPage() {
               }}
             />
 
-            {/* ── Hero ── */}
-            <div ref={headerRef} className="pt-8 sm:pt-12 mx-auto relative z-20 text-center mb-6">
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.22em] border backdrop-blur-md mb-3 reveal-init ${
-                  darkMode
-                    ? "bg-cyan-500/10 border-cyan-400/25 text-cyan-400"
-                    : "bg-cyan-500/10 border-cyan-400/30 text-cyan-600"
-                } ${headerVisible ? "reveal-visible" : ""}`}
-              >
-                <Sparkles size={9} className="animate-pulse" />
-                Portfolio
-              </span>
-
-              <h1
-                className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-2 transition-colors duration-300 reveal-init stagger-1 ${
-                  darkMode ? "text-white" : "text-gray-900"
-                } ${headerVisible ? "reveal-visible" : ""}`}
-              >
-                All{" "}
-                <span
-                  className={`text-transparent bg-clip-text ${
-                    darkMode
-                      ? "bg-gradient-to-r from-cyan-400 to-blue-500"
-                      : "bg-gradient-to-r from-cyan-500 to-blue-600"
-                  }`}
-                >
-                  Projects
-                </span>
-              </h1>
-
-              <p
-                className={`text-sm md:text-base max-w-md mx-auto mb-6 transition-colors duration-300 reveal-init stagger-2 ${
-                  darkMode ? "text-white/45" : "text-black/45"
-                } ${headerVisible ? "reveal-visible" : ""}`}
-              >
-                Built with passion — from frontend finesse to backend depth
-              </p>
-
-              {/* ── Search with Dropdown ── */}
-              <div
-                ref={searchRef}
-                className={`relative z-30 max-w-sm sm:max-w-md mx-auto mb-6 reveal-init stagger-3 ${headerVisible ? "reveal-visible" : ""}`}
-              >
-                <div
-                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-300 ${
-                    darkMode
-                      ? "bg-white/5 border-white/10 focus-within:border-cyan-400/50 shadow-lg shadow-black/20"
-                      : "bg-black/5 border-black/10 focus-within:border-cyan-500/40 shadow-lg shadow-black/5"
-                  }`}
-                >
-                  {dropdownLoading ? (
-                    <div
-                      className={`w-3.5 h-3.5 shrink-0 rounded-full border-2 animate-spin ${darkMode ? "border-white/10 border-t-cyan-400" : "border-black/10 border-t-cyan-600"}`}
-                    />
-                  ) : (
-                    <Search
-                      size={14}
-                      className={`shrink-0 transition-colors ${
-                        searchQuery
-                          ? darkMode
-                            ? "text-cyan-400"
-                            : "text-cyan-600"
-                          : darkMode
-                            ? "text-slate-500"
-                            : "text-slate-400"
-                      }`}
-                    />
-                  )}
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      if (!e.target.value.trim()) setShowDropdown(false);
-                    }}
-                    onFocus={() => {
-                      if (dropdownResults.length > 0) setShowDropdown(true);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") {
-                        setShowDropdown(false);
-                        setSearchQuery("");
-                      }
-                    }}
-                    placeholder="Search projects, skills, tech..."
-                    className={`flex-1 bg-transparent outline-none text-sm font-medium placeholder:font-normal placeholder:text-[13px] transition-colors whiteblink-remover ${
+            {/* ── Restructured Compact Header ── */}
+            <div className="max-w-7xl mx-auto relative z-20 mb-8 md:mb-12">
+              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 pb-6 border-b border-gray-200/10 dark:border-white/5">
+                
+                {/* Left Column: Title & Subtitle */}
+                <div ref={headerRef} className="text-center md:text-left max-w-xl">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.22em] border backdrop-blur-md mb-3 reveal-init ${
                       darkMode
-                        ? "text-white placeholder:text-slate-600"
-                        : "text-gray-900 placeholder:text-slate-400"
-                    }`}
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => {
-                        setSearchQuery("");
-                        setShowDropdown(false);
-                        setDropdownResults([]);
-                      }}
-                      className={`shrink-0 p-0.5 rounded-full transition-all cursor-pointer ${
+                        ? "bg-cyan-500/10 border-cyan-400/25 text-cyan-400"
+                        : "bg-cyan-500/10 border-cyan-400/30 text-cyan-600"
+                    } ${headerVisible ? "reveal-visible" : ""}`}
+                  >
+                    <Sparkles size={9} className="animate-pulse" />
+                    Portfolio
+                  </span>
+
+                  <h1
+                    className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-2 transition-colors duration-300 reveal-init stagger-1 ${
+                      darkMode ? "text-white" : "text-gray-900"
+                    } ${headerVisible ? "reveal-visible" : ""}`}
+                  >
+                    All{" "}
+                    <span
+                      className={`text-transparent bg-clip-text ${
                         darkMode
-                          ? "text-slate-500 hover:text-white hover:bg-white/10"
-                          : "text-slate-400 hover:text-gray-900 hover:bg-black/10"
+                          ? "bg-gradient-to-r from-cyan-400 to-blue-500"
+                          : "bg-gradient-to-r from-cyan-500 to-blue-600"
                       }`}
                     >
-                      <X size={12} />
-                    </button>
-                  )}
+                      Projects
+                    </span>
+                  </h1>
+
+                  <p
+                    className={`text-sm md:text-base max-w-md md:max-w-none mx-auto md:mx-0 mb-2 transition-colors duration-300 reveal-init stagger-2 ${
+                      darkMode ? "text-white/45" : "text-black/45"
+                    } ${headerVisible ? "reveal-visible" : ""}`}
+                  >
+                    Built with passion — from frontend finesse to backend depth
+                  </p>
                 </div>
 
-                {/* Dropdown */}
-                {showDropdown && (
+                {/* Right Column: Search bar and Category filters */}
+                <div className="flex flex-col gap-4 w-full md:max-w-md">
+                  {/* ── Search with Dropdown ── */}
                   <div
-                    className={`absolute left-0 right-0 top-full mt-2 rounded-xl border overflow-hidden z-50 backdrop-blur-xl shadow-2xl ${
-                      darkMode
-                        ? "bg-slate-900/95 border-white/10"
-                        : "bg-slate-200/85 border-black/10"
-                    }`}
+                    ref={searchRef}
+                    className={`relative z-30 max-w-sm sm:max-w-md md:max-w-none mx-auto md:mx-0 w-full reveal-init stagger-3 ${headerVisible ? "reveal-visible" : ""}`}
                   >
-                    {dropdownResults.length === 0 ? (
+                    <div
+                      className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-300 ${
+                        darkMode
+                          ? "bg-white/5 border-white/10 focus-within:border-cyan-400/50 shadow-lg shadow-black/20"
+                          : "bg-black/5 border-black/10 focus-within:border-cyan-500/40 shadow-lg shadow-black/5"
+                      }`}
+                    >
+                      {dropdownLoading ? (
+                        <div
+                          className={`w-3.5 h-3.5 shrink-0 rounded-full border-2 animate-spin ${darkMode ? "border-white/10 border-t-cyan-400" : "border-black/10 border-t-cyan-600"}`}
+                        />
+                      ) : (
+                        <Search
+                          size={14}
+                          className={`shrink-0 transition-colors ${
+                            searchQuery
+                              ? darkMode
+                                ? "text-cyan-400"
+                                : "text-cyan-600"
+                              : darkMode
+                                ? "text-slate-500"
+                                : "text-slate-400"
+                          }`}
+                        />
+                      )}
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          if (!e.target.value.trim()) setShowDropdown(false);
+                        }}
+                        onFocus={() => {
+                          if (dropdownResults.length > 0) setShowDropdown(true);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Escape") {
+                            setShowDropdown(false);
+                            setSearchQuery("");
+                          }
+                        }}
+                        placeholder="Search projects, skills, tech..."
+                        className={`flex-1 bg-transparent outline-none text-sm font-medium placeholder:font-normal placeholder:text-[13px] transition-colors whiteblink-remover ${
+                          darkMode
+                            ? "text-white placeholder:text-slate-600"
+                            : "text-gray-900 placeholder:text-slate-400"
+                        }`}
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => {
+                            setSearchQuery("");
+                            setShowDropdown(false);
+                            setDropdownResults([]);
+                          }}
+                          className={`shrink-0 p-0.5 rounded-full transition-all cursor-pointer ${
+                            darkMode
+                              ? "text-slate-500 hover:text-white hover:bg-white/10"
+                              : "text-slate-400 hover:text-gray-900 hover:bg-black/10"
+                          }`}
+                        >
+                          <X size={12} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Dropdown */}
+                    {showDropdown && (
                       <div
-                        className={`px-4 py-5 text-center text-xs font-medium ${
-                          darkMode ? "text-slate-500" : "text-slate-400"
+                        className={`absolute left-0 right-0 top-full mt-2 rounded-xl border overflow-hidden z-50 backdrop-blur-xl shadow-2xl ${
+                          darkMode
+                            ? "bg-slate-950/95 border-white/10"
+                            : "bg-white/95 border-black/10"
                         }`}
                       >
-                        No results for &ldquo;{searchQuery}&rdquo;
-                      </div>
-                    ) : (
-                      <ul>
-                        {dropdownResults.map((p, i) => (
-                          <li key={p._id}>
-                            <button
-                              onClick={() => {
-                                navigate(`/projects/${p.slug || p._id}`);
-                                setShowDropdown(false);
-                                setSearchQuery("");
-                              }}
-                              className={`group w-full flex items-center gap-3 pl-3.5 pr-3.5 py-2.5 text-left transition-all duration-300 ease-out cursor-pointer ${
-                                i !== dropdownResults.length - 1
-                                  ? darkMode
-                                    ? "border-b border-white/5"
-                                    : "border-b border-black/5"
-                                  : ""
-                              } ${
-                                p.featured
-                                  ? darkMode
-                                    ? "hover:bg-amber-500/[0.06] hover:pl-[18px]"
-                                    : "hover:bg-amber-500/[0.04] hover:pl-[18px]"
-                                  : darkMode
-                                    ? "hover:bg-cyan-500/[0.06] hover:pl-[18px]"
-                                    : "hover:bg-cyan-500/[0.04] hover:pl-[18px]"
-                              }`}
-                            >
-                              {/* Thumbnail */}
-                              <div
-                                className={`w-16 aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300 ${
-                                  darkMode
-                                    ? "border-white/10 bg-white/5"
-                                    : "border-black/10 bg-black/5"
-                                }`}
-                              >
-                                {p.mediaType === "video" && p.video ? (
-                                  <video
-                                    src={p.video}
-                                    preload="metadata"
-                                    muted
-                                    playsInline
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                  />
-                                ) : p.image || p.thumbnail ? (
-                                  <img
-                                    src={p.image || p.thumbnail}
-                                    alt={p.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                  />
-                                ) : (
-                                  <div
-                                    className={`w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105 ${
-                                      p.featured
-                                        ? "text-amber-400"
-                                        : "text-cyan-400"
-                                    }`}
-                                  >
-                                    <Sparkles size={14} />
-                                  </div>
-                                )}
-                              </div>
-                              {/* Info */}
-                              <div className="flex-1 min-w-0">
-                                <p
-                                  className={`text-xs font-semibold truncate ${
-                                    darkMode ? "text-white" : "text-gray-900"
+                        {dropdownResults.length === 0 ? (
+                          <div
+                            className={`px-4 py-5 text-center text-xs font-medium ${
+                              darkMode ? "text-slate-500" : "text-slate-400"
+                            }`}
+                          >
+                            No results for &ldquo;{searchQuery}&rdquo;
+                          </div>
+                        ) : (
+                          <ul>
+                            {dropdownResults.map((p, i) => (
+                              <li key={p._id}>
+                                <button
+                                  onClick={() => {
+                                    navigate(`/projects/${p.slug || p._id}`);
+                                    setShowDropdown(false);
+                                    setSearchQuery("");
+                                  }}
+                                  className={`group w-full flex items-center gap-3 pl-3.5 pr-3.5 py-2.5 text-left transition-all duration-300 ease-out cursor-pointer ${
+                                    i !== dropdownResults.length - 1
+                                      ? darkMode
+                                        ? "border-b border-white/5"
+                                        : "border-b border-black/5"
+                                      : ""
+                                  } ${
+                                    p.featured
+                                      ? darkMode
+                                        ? "hover:bg-amber-500/[0.06] hover:pl-[18px]"
+                                        : "hover:bg-amber-500/[0.04] hover:pl-[18px]"
+                                      : darkMode
+                                        ? "hover:bg-cyan-500/[0.06] hover:pl-[18px]"
+                                        : "hover:bg-cyan-500/[0.04] hover:pl-[18px]"
                                   }`}
                                 >
-                                  {p.title}
-                                </p>
-                                {p.category && (
-                                  <p
-                                    className={`text-[10px] font-medium mt-0.5 ${
-                                      p.featured
-                                        ? darkMode
-                                          ? "text-amber-400/70"
-                                          : "text-amber-600/70"
-                                        : darkMode
-                                          ? "text-cyan-400/70"
-                                          : "text-cyan-600/70"
+                                  {/* Thumbnail */}
+                                  <div
+                                    className={`w-16 aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300 ${
+                                      darkMode
+                                        ? "border-white/10 bg-white/5"
+                                        : "border-black/10 bg-black/5"
                                     }`}
                                   >
-                                    {p.category}
-                                  </p>
-                                )}
-                              </div>
-                              <ArrowUpRight
-                                size={18}
-                                className={`transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
-                                  p.featured
-                                    ? darkMode
-                                      ? "text-amber-400/80 group-hover:text-amber-400"
-                                      : "text-amber-600/80 group-hover:text-amber-500"
-                                    : darkMode
-                                      ? "text-slate-500 group-hover:text-cyan-400"
-                                      : "text-slate-400 group-hover:text-cyan-600"
-                                }`}
-                              />
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
+                                    {p.mediaType === "video" && p.video ? (
+                                      <video
+                                        src={p.video}
+                                        preload="metadata"
+                                        muted
+                                        playsInline
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                      />
+                                    ) : p.image || p.thumbnail ? (
+                                      <img
+                                        src={p.image || p.thumbnail}
+                                        alt={p.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                      />
+                                    ) : (
+                                      <div
+                                        className={`w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105 ${
+                                          p.featured
+                                            ? "text-amber-400"
+                                            : "text-cyan-400"
+                                        }`}
+                                      >
+                                        <Sparkles size={14} />
+                                      </div>
+                                    )}
+                                  </div>
+                                  {/* Info */}
+                                  <div className="flex-1 min-w-0">
+                                    <p
+                                      className={`text-xs font-semibold truncate ${
+                                        darkMode ? "text-white" : "text-gray-900"
+                                      }`}
+                                    >
+                                      {p.title}
+                                    </p>
+                                    {p.category && (
+                                      <p
+                                        className={`text-[10px] font-medium mt-0.5 ${
+                                          p.featured
+                                            ? darkMode
+                                              ? "text-amber-400/70"
+                                              : "text-amber-600/70"
+                                            : darkMode
+                                              ? "text-cyan-400/70"
+                                              : "text-cyan-600/70"
+                                        }`}
+                                      >
+                                        {p.category}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <ArrowUpRight
+                                    size={18}
+                                    className={`transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
+                                      p.featured
+                                        ? darkMode
+                                          ? "text-amber-400/80 group-hover:text-amber-400"
+                                          : "text-amber-600/80 group-hover:text-amber-500"
+                                        : darkMode
+                                          ? "text-cyan-400/80 group-hover:text-cyan-400"
+                                          : "text-cyan-700/80 group-hover:text-cyan-600"
+                                    }`}
+                                  />
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* ── Category Filter ── */}
-            <div ref={filterRef} className={`flex flex-wrap justify-center gap-1.5 mb-8 relative z-10 max-w-3xl mx-auto px-2 reveal-init ${filterVisible ? "reveal-visible" : ""}`}>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 backdrop-blur-md cursor-pointer border ${
-                    selectedCategory === cat
-                      ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-sm shadow-cyan-500/10"
-                      : darkMode
-                        ? "bg-white/5 border-white/8 text-slate-400 hover:bg-white/10 hover:text-white"
-                        : "bg-black/5 border-black/8 text-slate-600 hover:bg-black/10 hover:text-black"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+                  {/* ── Category Filter ── */}
+                  <div
+                    ref={filterRef}
+                    className={`flex flex-wrap md:justify-end gap-1.5 relative z-10 w-full reveal-init ${filterVisible ? "reveal-visible" : ""}`}
+                  >
+                    {categories.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => {
+                          setSelectedCategory(cat);
+                          setCurrentPage(1);
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 backdrop-blur-md cursor-pointer border ${
+                          selectedCategory === cat
+                            ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300 shadow-sm shadow-cyan-500/10"
+                            : darkMode
+                              ? "bg-white/5 border-white/8 text-slate-400 hover:bg-white/10 hover:text-white"
+                              : "bg-black/5 border-black/8 text-slate-600 hover:bg-black/10 hover:text-black"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Projects Grid */}

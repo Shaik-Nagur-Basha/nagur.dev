@@ -626,7 +626,7 @@ const ProjectForm = ({ project = null, onSuccess }) => {
           {/* Responsive positioning: side-by-side on md and up, stacked on mobile */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-2">
             <div className="flex items-center gap-3">
-              <div className="relative cursor-pointer">
+              <label htmlFor="featured" className="relative cursor-pointer">
                 <input
                   {...register("featured")}
                   id="featured"
@@ -647,7 +647,7 @@ const ProjectForm = ({ project = null, onSuccess }) => {
                     featuredValue ? "translate-x-4" : "translate-x-0",
                   )}
                 />
-              </div>
+              </label>
               <label
                 htmlFor="featured"
                 className="text-xs font-bold text-gray-400 uppercase tracking-widest cursor-pointer"
