@@ -81,6 +81,27 @@ function ScrollRestoration() {
 
 function PageHeadController() {
   const location = useLocation();
+  const {
+    profile,
+    activeSection,
+    setActiveSection,
+    customPageTitle,
+    customPageDescription,
+    setCustomPageTitle,
+    setCustomPageDescription,
+  } = useProfileStore();
+
+  useEffect(() => {
+    // Reset custom page metadata on route change
+    setCustomPageTitle("");
+    setCustomPageDescription("");
+  }, [location.pathname, setCustomPageTitle, setCustomPageDescription]);
+
+  useEffect(() => {
+    if (location.pathname === "/" && !location.hash) {
+      setActiveSection("home");
+    }
+  }, [location.pathname, location.hash, setActiveSection]);
 
   useEffect(() => {
     // 1. Update Favicon
@@ -94,96 +115,109 @@ function PageHeadController() {
     }
 
     // 2. Update Title (add sub string based on pages switch)
-    let pageTitle = "";
+    let pageTitle = customPageTitle || "";
     const path = location.pathname;
     const hash = location.hash;
 
-    if (path === "/") {
-      if (hash === "#about") {
+    const profileTitle = profile?.title || "nagur.dev";
+    const profileName = profile?.name || "Sk Nagur Basha";
+
+    if (!pageTitle) {
+      if (path === "/") {
+        const currentSection = activeSection || "home";
+        if (currentSection === "about") {
+          pageTitle = "About";
+        } else if (currentSection === "projects") {
+          pageTitle = "Projects";
+        } else if (currentSection === "skills") {
+          pageTitle = "Skills & Education";
+        } else if (currentSection === "contact") {
+          pageTitle = "Contact";
+        } else {
+          pageTitle = profileName;
+        }
+      } else if (path === "/about") {
         pageTitle = "About";
-      } else if (hash === "#projects") {
+      } else if (path === "/projects") {
         pageTitle = "Projects";
-      } else if (hash === "#skills") {
-        pageTitle = "Skills";
-      } else if (hash === "#contact") {
+      } else if (path.startsWith("/projects/")) {
+        const slug = path.split("/").pop() || "";
+        const formattedSlug = slug
+          .split("-")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+        pageTitle = formattedSlug || "Project Details";
+      } else if (path === "/skills") {
+        pageTitle = "Skills & Education";
+      } else if (path === "/contact") {
         pageTitle = "Contact";
+      } else if (path === "/privacy") {
+        pageTitle = "Privacy Policy";
+      } else if (path === "/terms") {
+        pageTitle = "Terms of Service";
+      } else if (path === "/cookies") {
+        pageTitle = "Cookie Policy";
+      } else if (path === "/admin") {
+        pageTitle = "Admin Dashboard";
+      } else if (path === "/admin/login") {
+        pageTitle = "Admin Login";
+      } else if (path === "/admin/projects") {
+        pageTitle = "Manage Projects";
+      } else if (path === "/admin/contacts") {
+        pageTitle = "Manage Contacts";
+      } else if (path === "/admin/security") {
+        pageTitle = "Security Settings";
+      } else if (path === "/admin/profile") {
+        pageTitle = "Manage Profile";
       } else {
-        pageTitle = "Home";
+        pageTitle = "404 Not Found";
       }
-    } else if (path === "/about") {
-      pageTitle = "About";
-    } else if (path === "/projects") {
-      pageTitle = "Projects";
-    } else if (path.startsWith("/projects/")) {
-      const slug = path.split("/").pop() || "";
-      const formattedSlug = slug
-        .split("-")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-      pageTitle = formattedSlug || "Project Details";
-    } else if (path === "/skills") {
-      pageTitle = "Skills";
-    } else if (path === "/contact") {
-      pageTitle = "Contact";
-    } else if (path === "/privacy") {
-      pageTitle = "Privacy Policy";
-    } else if (path === "/terms") {
-      pageTitle = "Terms of Service";
-    } else if (path === "/cookies") {
-      pageTitle = "Cookie Policy";
-    } else if (path === "/admin") {
-      pageTitle = "Admin Dashboard";
-    } else if (path === "/admin/login") {
-      pageTitle = "Admin Login";
-    } else if (path === "/admin/projects") {
-      pageTitle = "Manage Projects";
-    } else if (path === "/admin/contacts") {
-      pageTitle = "Manage Contacts";
-    } else if (path === "/admin/security") {
-      pageTitle = "Security Settings";
-    } else if (path === "/admin/profile") {
-      pageTitle = "Manage Profile";
-    } else {
-      pageTitle = "404 Not Found";
     }
 
-    const fullTitle = `nagur.dev | ${pageTitle}`;
+    let fullTitle = "";
+    if (path === "/" && (activeSection === "home" || !activeSection)) {
+      fullTitle = `${profileTitle} | ${profileName}`;
+    } else {
+      fullTitle = `${profileTitle} | ${pageTitle}`;
+    }
     document.title = fullTitle;
 
     // 3. Update Meta Description and SEO tags dynamically
-    let pageDescription = "Portfolio of Shaik Nagur Basha (nagur.dev). Full Stack Web Developer & Software Engineer specializing in React, Node.js, and modern web applications.";
+    let pageDescription = customPageDescription || "";
     
-    if (path === "/") {
-      if (hash === "#about") {
+    if (!pageDescription) {
+      if (path === "/") {
+        if (hash === "#about") {
+          pageDescription = "Learn more about Shaik Nagur Basha, a passionate Full Stack Developer with expertise in building responsive, scalable, and premium web applications.";
+        } else if (hash === "#projects") {
+          pageDescription = "Explore my portfolio of web development and software engineering projects, showcasing clean code, rich animations, and high performance.";
+        } else if (hash === "#skills") {
+          pageDescription = "Discover the technical skills and core competencies of Shaik Nagur Basha, including React, Node.js, databases, and UI/UX design.";
+        } else if (hash === "#contact") {
+          pageDescription = "Get in touch with Shaik Nagur Basha for collaborations, job opportunities, or project requests.";
+        }
+      } else if (path === "/about") {
         pageDescription = "Learn more about Shaik Nagur Basha, a passionate Full Stack Developer with expertise in building responsive, scalable, and premium web applications.";
-      } else if (hash === "#projects") {
+      } else if (path === "/projects") {
         pageDescription = "Explore my portfolio of web development and software engineering projects, showcasing clean code, rich animations, and high performance.";
-      } else if (hash === "#skills") {
-        pageDescription = "Discover the technical skills and core competencies of Shaik Nagur Basha, including React, Node.js, databases, and UI/UX design.";
-      } else if (hash === "#contact") {
+      } else if (path.startsWith("/projects/")) {
+        const slug = path.split("/").pop() || "";
+        const formattedSlug = slug
+          .split("-")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+        pageDescription = `Explore detailed features, technology stack, architecture, and live links for the project: ${formattedSlug || "Project Details"}.`;
+      } else if (path === "/contact") {
         pageDescription = "Get in touch with Shaik Nagur Basha for collaborations, job opportunities, or project requests.";
+      } else if (path === "/privacy") {
+        pageDescription = "Privacy Policy for nagur.dev portfolio website. Read about how we handle user data and privacy.";
+      } else if (path === "/terms") {
+        pageDescription = "Terms of Service for nagur.dev portfolio website. Read our terms and conditions of usage.";
+      } else if (path === "/cookies") {
+        pageDescription = "Cookie Policy for nagur.dev portfolio website. Learn about the cookies we use to enhance user experience.";
+      } else if (path.startsWith("/admin")) {
+        pageDescription = "Admin panel for managing projects and inquiries on nagur.dev.";
       }
-    } else if (path === "/about") {
-      pageDescription = "Learn more about Shaik Nagur Basha, a passionate Full Stack Developer with expertise in building responsive, scalable, and premium web applications.";
-    } else if (path === "/projects") {
-      pageDescription = "Explore my portfolio of web development and software engineering projects, showcasing clean code, rich animations, and high performance.";
-    } else if (path.startsWith("/projects/")) {
-      const slug = path.split("/").pop() || "";
-      const formattedSlug = slug
-        .split("-")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-      pageDescription = `Explore detailed features, technology stack, architecture, and live links for the project: ${formattedSlug || "Project Details"}.`;
-    } else if (path === "/contact") {
-      pageDescription = "Get in touch with Shaik Nagur Basha for collaborations, job opportunities, or project requests.";
-    } else if (path === "/privacy") {
-      pageDescription = "Privacy Policy for nagur.dev portfolio website. Read about how we handle user data and privacy.";
-    } else if (path === "/terms") {
-      pageDescription = "Terms of Service for nagur.dev portfolio website. Read our terms and conditions of usage.";
-    } else if (path === "/cookies") {
-      pageDescription = "Cookie Policy for nagur.dev portfolio website. Learn about the cookies we use to enhance user experience.";
-    } else if (path.startsWith("/admin")) {
-      pageDescription = "Admin panel for managing projects and inquiries on nagur.dev.";
     }
 
     const setMeta = (name, content, isProperty = false) => {
@@ -203,6 +237,7 @@ function PageHeadController() {
       }
     };
 
+    setMeta("title", fullTitle);
     setMeta("description", pageDescription);
     setMeta("og:title", fullTitle, true);
     setMeta("og:description", pageDescription, true);
@@ -224,7 +259,7 @@ function PageHeadController() {
     // Update Open Graph and Twitter URL
     setMeta("og:url", canonicalUrl, true);
     setMeta("twitter:url", canonicalUrl);
-  }, [location]);
+  }, [location, profile, activeSection, customPageTitle, customPageDescription]);
 
   return null;
 }

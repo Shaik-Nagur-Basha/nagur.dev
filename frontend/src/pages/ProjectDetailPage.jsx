@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import SkeletonLoader from "../components/SkeletonLoader";
 import API from "../api/axios";
 import useScrollReveal from "../hooks/useScrollReveal";
+import { useProfileStore } from "../store/useProfileStore";
 import {
   ArrowLeft,
   ExternalLink,
@@ -347,7 +348,18 @@ function ProjectDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { darkMode } = useTheme();
+  const { profile, setCustomPageTitle, setCustomPageDescription } = useProfileStore();
   const [project, setProject] = useState(null);
+
+  useEffect(() => {
+    if (project?.title) {
+      setCustomPageTitle(project.title);
+    }
+    if (project?.description) {
+      const cleanDesc = project.description.replace(/<[^>]*>/g, '').substring(0, 160);
+      setCustomPageDescription(cleanDesc);
+    }
+  }, [project, setCustomPageTitle, setCustomPageDescription]);
   const [exploreProjects, setExploreProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [galleryLayout, setGalleryLayout] = useState("grid"); // "grid" | "bento" | "filmstrip"

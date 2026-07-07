@@ -21,14 +21,7 @@ function Navigation() {
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const { darkMode, toggleDarkMode } = useTheme();
-  const { profile, fetchProfile } = useProfileStore();
-
-  const [activeSection, setActiveSection] = useState(() => {
-    if (typeof window !== "undefined" && window.location.hash) {
-      return window.location.hash.substring(1);
-    }
-    return "home";
-  });
+  const { profile, fetchProfile, activeSection, setActiveSection } = useProfileStore();
   const location = useLocation();
   const isProgrammaticScroll = useRef(false);
   const scrollTimeoutRef = useRef(null);
