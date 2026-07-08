@@ -64,6 +64,10 @@ const API = axios.create({
 API.interceptors.request.use(
   (config) => {
     nprogress.start();
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
