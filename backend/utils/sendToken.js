@@ -11,7 +11,7 @@ export const sendToken = (user, statusCode, res) => {
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // HTTPS only in production
-    sameSite: process.env.NODE_ENV === "production" ? "Lax" : "Lax", 
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
     path: "/",
   };
 
