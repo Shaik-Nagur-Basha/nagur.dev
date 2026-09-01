@@ -5,6 +5,7 @@ import { useAdminStore } from "../../store/useAdminStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useNavigate, Link } from "react-router-dom";
 import { cn } from "../../utils/cn";
+import ProjectMedia from "../../components/ProjectMedia";
 
 const Dashboard = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -119,21 +120,15 @@ const Dashboard = () => {
               >
                 <div className="flex items-center gap-2 sm:gap-4">
                   <div
-                    className={`w-16 border-white/10 bg-white/5 aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300`}
+                    className={`w-16 border-white/10 bg-black aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300 flex items-center justify-center`}
                   >
-                    {project.mediaType === "video" && project.video ? (
-                      <video
-                        src={project.video}
-                        preload="metadata"
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : project.image || project.thumbnail ? (
-                      <img
-                        src={project.image || project.thumbnail}
+                    {project.mediaType || project.image || project.thumbnail ? (
+                      <ProjectMedia
+                        src={project.mediaType === "video" ? project.video : (project.image || project.thumbnail)}
+                        mediaType={project.mediaType}
                         alt=""
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full"
+                        groupHoverScale={true}
                       />
                     ) : (
                       <div

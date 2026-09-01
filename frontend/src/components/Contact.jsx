@@ -66,30 +66,15 @@ function Contact() {
     setSubmitError(null);
 
     try {
-      const response = await fetch("/api/contacts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Simulate network latency for a natural user experience
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      if (response.status === 201) {
-        setSubmitted(true);
-        setFormData({ name: "", email: "", message: "" });
-        setFocusedField(null);
-
-        // Hide success message after 3 seconds
-        setTimeout(() => setSubmitted(false), 3000);
-      } else {
-        const data = await response.json();
-        setSubmitError(
-          data.error || "Failed to submit the form. Please try again.",
-        );
-      }
+      setSubmitError(
+        "Form submission is unavailable because the backend free tier is over. Please contact me through email at sknbasknba@gmail.com."
+      );
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      setSubmitError("Failed to submit the form. Please try again.");
+      setSubmitError("Form submission is unavailable because the backend free tier is over. Please contact me through email at sknbasknba@gmail.com.");
     } finally {
       setIsSubmitting(false);
     }

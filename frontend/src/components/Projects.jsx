@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "./SkeletonLoader";
 import API from "../api/axios";
 import useScrollReveal from "../hooks/useScrollReveal";
+import ProjectMedia from "./ProjectMedia";
 
 function Projects() {
   const navigate = useNavigate();
@@ -473,7 +474,7 @@ function Projects() {
                             </div>
                           )}
                           {/* Media Wrapper (handles clipping for backgrounds & overlays) */}
-                          <div className="absolute inset-0 rounded-none overflow-hidden z-0">
+                          <div className="absolute inset-0 rounded-none overflow-hidden z-0 bg-black">
                             {/* Ripple Container */}
                             <div className="absolute inset-0 overflow-hidden pointer-events-none z-25">
                               {ripples[`${project._id}`] &&
@@ -498,23 +499,12 @@ function Projects() {
                             </div>
 
                             {/* Video/Image Background */}
-                            {project.mediaType === "video" ? (
-                              <video
-                                className="absolute inset-0 w-full h-full object-fill"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                              >
-                                <source src={project.video} type="video/mp4" />
-                              </video>
-                            ) : (
-                              <img
-                                src={project.image}
-                                alt={project.title}
-                                className="absolute inset-0 w-full h-full object-cover"
-                              />
-                            )}
+                            <ProjectMedia
+                              src={project.mediaType === "video" ? project.video : project.image}
+                              mediaType={project.mediaType}
+                              alt={project.title}
+                              className="absolute inset-0 w-full h-full"
+                            />
 
                             {/* Overlay for light mode styling */}
                             <div
@@ -567,7 +557,7 @@ function Projects() {
                             {expandedId === project._id ? (
                               <div className="flex flex-col h-full space-y-4 animate-in fade-in zoom-in-95 duration-300">
                                 <p className="text-slate-300 dark:text-slate-300 font-normal font-sans text-xs tracking-normal line-clamp-4 leading-relaxed">
-                                  {project.description}
+                                  {project.shortDescription || project.description}
                                 </p>
 
                                 {/* Tags (Only 4 skills) */}
@@ -669,7 +659,7 @@ function Projects() {
                               </div>
                             ) : (
                               <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug max-[466px]:text-[10px] max-[466px]:pr-2 max-[466px]:pb-0.5 max-[466px]:line-clamp-1">
-                                {project.description}
+                                {project.shortDescription || project.description}
                               </div>
                             )}
                           </div>

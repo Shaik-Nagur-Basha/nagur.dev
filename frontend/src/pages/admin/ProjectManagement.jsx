@@ -25,6 +25,7 @@ import { toast } from "react-toastify";
 import { cn } from "../../utils/cn";
 import API from "../../api/axios";
 import { useTheme } from "../../context/ThemeContext";
+import ProjectMedia from "../../components/ProjectMedia";
 
 const ProjectManagement = () => {
   const location = useLocation();
@@ -522,29 +523,23 @@ const ProjectManagement = () => {
                         >
                           {/* Thumbnail */}
                           <div
-                            className={`w-16 aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300 ${
+                            className={`w-16 aspect-video shrink-0 shadow-sm shadow-gray-950/75 overflow-hidden border transition-all duration-300 bg-black flex items-center justify-center ${
                               darkMode
-                                ? "border-white/10 bg-white/5"
-                                : "border-black/10 bg-black/5"
+                                ? "border-white/10"
+                                : "border-black/10"
                             }`}
                           >
-                            {p.mediaType === "video" && p.video ? (
-                              <video
-                                src={p.video}
-                                preload="metadata"
-                                muted
-                                playsInline
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                            ) : p.image || p.thumbnail ? (
-                              <img
-                                src={p.image || p.thumbnail}
+                            {p.mediaType || p.image || p.thumbnail ? (
+                              <ProjectMedia
+                                src={p.mediaType === "video" ? p.video : (p.image || p.thumbnail)}
+                                mediaType={p.mediaType}
                                 alt={p.title}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                className="w-full h-full"
+                                groupHoverScale={true}
                               />
                             ) : (
                               <div
-                                className={`w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105 ${
+                                className={`w-full h-full flex items-center justify-center ${
                                   p.featured
                                     ? "text-amber-400"
                                     : "text-cyan-400"
@@ -790,24 +785,13 @@ const ProjectManagement = () => {
                     )}
 
                     {/* Media Wrapper */}
-                    <div className="absolute inset-0 rounded-none overflow-hidden z-0">
-                      {project.mediaType === "video" || project.video ? (
-                        <video
-                          className="absolute inset-0 w-full h-full object-cover"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                        >
-                          <source src={project.video} type="video/mp4" />
-                        </video>
-                      ) : (
-                        <img
-                          src={project.image || project.thumbnail}
-                          alt={project.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                      )}
+                    <div className="absolute inset-0 rounded-none overflow-hidden z-0 bg-black">
+                      <ProjectMedia
+                        src={project.mediaType === "video" || project.video ? project.video : (project.image || project.thumbnail)}
+                        mediaType={project.mediaType === "video" || project.video ? "video" : "image"}
+                        alt={project.title}
+                        className="absolute inset-0 w-full h-full"
+                      />
 
                       {/* Overlay for expanded state */}
                       <div
@@ -864,7 +848,7 @@ const ProjectManagement = () => {
                       {expandedId === project._id ? (
                         <div className="flex flex-col h-full space-y-2 animate-in fade-in zoom-in-95 duration-300">
                           <p className="text-slate-300 dark:text-slate-300 font-normal font-sans text-xs tracking-normal line-clamp-3 leading-relaxed">
-                            {project.description}
+                            {project.shortDescription || project.description}
                           </p>
 
                           <div className="flex flex-wrap gap-2 pt-0.5">
@@ -954,7 +938,7 @@ const ProjectManagement = () => {
                         </div>
                       ) : (
                         <div className="w-full text-xs font-normal font-sans text-slate-300 dark:text-slate-300 pr-3 pb-1 line-clamp-1 leading-snug max-[466px]:text-[10px] max-[466px]:pr-2 max-[466px]:pb-0.5 max-[466px]:line-clamp-1">
-                          {project.description}
+                          {project.shortDescription || project.description}
                         </div>
                       )}
                     </div>

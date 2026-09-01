@@ -7,6 +7,7 @@ import SkeletonLoader from "../components/SkeletonLoader";
 import API from "../api/axios";
 import useScrollReveal from "../hooks/useScrollReveal";
 import { useProfileStore } from "../store/useProfileStore";
+import ProjectMedia from "../components/ProjectMedia";
 import {
   ArrowLeft,
   ExternalLink,
@@ -796,11 +797,34 @@ function ProjectDetailPage() {
                 {project.title}
               </h1>
 
-              <p
-                className={`text-base sm:text-lg leading-relaxed mb-6 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
-              >
-                {project.description}
-              </p>
+              {project.description && project.description.includes("Note:") ? (
+                (() => {
+                  const parts = project.description.split("Note:");
+                  const mainDesc = parts[0].trim().replace(/(?:<br\s*\/?>\s*)+$/, '');
+                  const noteDesc = parts[1].trim();
+                  return (
+                    <div className="mb-6">
+                      <p
+                        className={`text-base sm:text-lg leading-relaxed mb-1.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                        dangerouslySetInnerHTML={{ __html: mainDesc }}
+                      />
+                      <div className={`mt-1 p-1.5 px-2.5 rounded-r border-l-[3px] text-[11px] sm:text-xs leading-relaxed ${
+                        darkMode 
+                          ? "bg-gradient-to-r from-amber-500/10 to-transparent border-amber-500/40 text-amber-200" 
+                          : "bg-gradient-to-r from-amber-50 to-transparent border-amber-500 text-amber-900"
+                      }`}>
+                        <strong className={`font-extrabold uppercase tracking-wider mr-1.5 ${darkMode ? "text-amber-400" : "text-amber-600"}`}>Note:</strong>
+                        <span className="font-sans" dangerouslySetInnerHTML={{ __html: noteDesc }} />
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <p
+                  className={`text-base sm:text-lg leading-relaxed mb-6 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                  dangerouslySetInnerHTML={{ __html: project.description }}
+                />
+              )}
 
               {/* Skills/Tags Badge List (directly below description, variant box code styling) */}
               <div className="mb-8">
@@ -909,28 +933,17 @@ function ProjectDetailPage() {
                 <div
                   className={
                     darkMode
-                      ? "video-card-dark__inner aspect-video"
-                      : "video-card-light__inner aspect-video"
+                      ? "video-card-dark__inner aspect-video bg-black flex items-center justify-center overflow-hidden"
+                      : "video-card-light__inner aspect-video bg-black flex items-center justify-center overflow-hidden"
                   }
                 >
-                  {project.mediaType === "video" ? (
-                    <video
-                      className="w-full h-full object-cover"
-                      autoPlay
-                      loop
-                      muted
-                      controls
-                      playsInline
-                    >
-                      <source src={project.video} type="video/mp4" />
-                    </video>
-                  ) : (
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
+                  <ProjectMedia
+                    src={project.mediaType === "video" ? project.video : project.image}
+                    mediaType={project.mediaType}
+                    alt={project.title}
+                    className="w-full h-full"
+                    controls={project.mediaType === "video"}
+                  />
                 </div>
               </div>
               {/* Mobile Category & Featured Badge Indicators (Below video, mobile only) */}
@@ -2141,24 +2154,13 @@ function ProjectDetailPage() {
                       )}
 
                       {/* Media Wrapper */}
-                      <div className="absolute inset-0 rounded-none overflow-hidden z-0">
-                        {item.mediaType === "video" || item.video ? (
-                          <video
-                            className="absolute inset-0 w-full h-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          >
-                            <source src={item.video} type="video/mp4" />
-                          </video>
-                        ) : (
-                          <img
-                            src={item.image}
-                            alt=""
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
-                        )}
+                      <div className="absolute inset-0 rounded-none overflow-hidden z-0 bg-black">
+                        <ProjectMedia
+                          src={item.mediaType === "video" || item.video ? item.video : item.image}
+                          mediaType={item.mediaType === "video" || item.video ? "video" : "image"}
+                          alt=""
+                          className="absolute inset-0 w-full h-full"
+                        />
                         <div
                           className={`absolute inset-0 z-10 transition-opacity duration-300 ${
                             expandedExploreId === item._id

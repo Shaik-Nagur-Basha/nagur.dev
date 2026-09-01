@@ -28,6 +28,7 @@ import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { useAdminStore } from "../../store/useAdminStore";
 import { useTheme } from "../../context/ThemeContext";
 import { toast } from "react-toastify";
+import ProjectMedia from "../ProjectMedia";
 import { cn } from "../../utils/cn";
 
 const projectSchema = z.object({
@@ -565,20 +566,14 @@ const ProjectForm = ({ project = null, onSuccess }) => {
               onChange={handleMediaChange}
             />
             {mediaPreview ? (
-              <div className="w-full h-full relative">
-                {selectedMediaType === "image" ? (
-                  <img
-                    src={mediaPreview}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <video
-                    src={mediaPreview}
-                    className="w-full h-full object-cover"
-                    muted
-                    controls
-                  />
-                )}
+              <div className="w-full h-full relative bg-black flex items-center justify-center">
+                <ProjectMedia
+                  src={mediaPreview}
+                  mediaType={selectedMediaType}
+                  alt="Project media preview"
+                  className="w-full h-full"
+                  controls={selectedMediaType === "video"}
+                />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <p className="text-[10px] font-black uppercase tracking-widest">
                     Update File

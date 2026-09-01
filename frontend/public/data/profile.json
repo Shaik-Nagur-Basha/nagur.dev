@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "data": {
+    "_id": "69fd8f5065ed90cf2e357f01",
+    "name": "Sk Nagur Basha",
+    "title": "nagur.dev",
+    "bio": "Hi, I’m a 2024 BTech graduate specializing in MERN Stack. I’ve built several deployed full-stack projects and a Windows clipboard manager desktop app. I’m looking for a junior/full-stack opportunity. Here’s my portfolio.",
+    "cv": "https://drive.google.com/uc?export=download&id=1P3IEWXQhUUf6H2VGg1VjRFOOVBrS4DfV",
+    "socialLinks": {
+      "github": "https://github.com/Shaik-Nagur-Basha",
+      "linkedin": "https://www.linkedin.com/in/nagur-basha",
+      "telegram": "https://t.me/sknba",
+      "email": "sknbasknba@gmail.com"
+    },
+    "location": "Badvel, Kadapa, Andhra Pradesh, 516227",
+    "phone": "+91 6302504034",
+    "availability": "Available for projects",
+    "createdAt": "2026-05-08T07:22:56.459Z",
+    "updatedAt": "2026-07-06T10:22:04.348Z",
+    "profilePicture": "",
+    "footerDescription": "MERN full stack web developer focused on building fast, accessible, and visually refined web experiences with modern technologies.",
+    "footerProjects": [
+      {
+        "label": "ClipMaster Pro",
+        "link": "https://github.com/Shaik-Nagur-Basha/ClipMaster-Pro/releases",
+        "_id": "6a4b81ccaac9480f2b99e949"
+      },
+      {
+        "label": "BlogByte Blog",
+        "link": "https://blogbyte-blog.web.app",
+        "_id": "6a4b81ccaac9480f2b99e947"
+      },
+      {
+        "label": "Gradient Craft",
+        "link": "https://shaik-nagur-basha.github.io/Gradient-Craft",
+        "_id": "6a4b81ccaac9480f2b99e948"
+      },
+      {
+        "label": "NeoChat",
+        "link": "https://neochat-dev.web.app",
+        "_id": "6a4b81ccaac9480f2b99e94a"
+      }
+    ]
+  }
+}
