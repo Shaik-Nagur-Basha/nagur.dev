@@ -102,9 +102,11 @@ const projectSchema = new mongoose.Schema(
 );
 
 projectSchema.pre("validate", function (next) {
-  if (!this.image && !this.video) {
-    this.invalidate("image", "Either image or video is required");
-    this.invalidate("video", "Either image or video is required");
+  if (this.mediaType === "image" && !this.image) {
+    this.invalidate("image", "Image is required for image type projects");
+  }
+  if (this.mediaType === "video" && !this.video) {
+    this.invalidate("video", "Video is required for video type projects");
   }
   next();
 });

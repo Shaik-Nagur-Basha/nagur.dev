@@ -278,7 +278,7 @@ function Navigation() {
                 : isScrolled
                   ? "bg-white/80 shadow-[0_10px_40px_rgba(0,0,0,0.06),_0_0_20px_rgba(59,130,246,0.06)]"
                   : ""
-            } backdrop-blur-2xl`}
+            } ${isScrolled ? "backdrop-blur-2xl" : ""}`}
           >
             <div className="flex justify-between items-center h-16 max-w-7xl mx-auto ">
               {/* Logo - Clickable Link to Home */}

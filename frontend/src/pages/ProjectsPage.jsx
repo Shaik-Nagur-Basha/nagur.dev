@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import useScrollReveal from "../hooks/useScrollReveal";
 import ProjectMedia from "../components/ProjectMedia";
@@ -28,6 +28,7 @@ function ProjectsPage() {
   const [minLoadingTime, setMinLoadingTime] = useState(true);
   const [ripples, setRipples] = useState({});
   const [expandedId, setExpandedId] = useState(null);
+  const [hoveredCardId, setHoveredCardId] = useState(null);
   const [videoLoadingStates, setVideoLoadingStates] = useState({});
 
   const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.1 });
@@ -139,9 +140,20 @@ function ProjectsPage() {
       inherits: false;
     }
 
+    @property --ts-angle-2 {
+      syntax: "<angle>";
+      initial-value: 180deg;
+      inherits: false;
+    }
+
     @keyframes ts-spin {
       to { --ts-angle: 360deg; }
     }
+
+    @keyframes ts-spin-2 {
+      to { --ts-angle-2: 540deg; }
+    }
+
 
     @keyframes glow-pulse {
       0%, 100% { opacity: 0.15; transform: scale(1); }
@@ -229,6 +241,30 @@ function ProjectsPage() {
       mask-composite: exclude;
       pointer-events: none;
     }
+
+    /* Second border line offset by 180 degrees */
+    .project-card-border-2 {
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: conic-gradient(
+        from var(--ts-angle-2),
+        transparent 55%,
+        var(--ts-c1, rgba(6, 182, 212, 0.8)) 75%,
+        var(--ts-c2, rgba(139, 92, 246, 0.8)) 88%,
+        transparent 100%
+      );
+      animation: ts-spin-2 5s linear infinite;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+      padding: 2px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
 
     .project-card-grid:hover .project-card-inner::after {
       opacity: 1;
@@ -548,7 +584,8 @@ function ProjectsPage() {
                                   >
                                     {p.mediaType || p.image || p.thumbnail ? (
                                       <ProjectMedia
-                                        src={p.mediaType === "video" ? p.video : (p.image || p.thumbnail)}
+                                        videoSrc={p.video}
+                                        thumbnailSrc={p.image || p.thumbnail}
                                         mediaType={p.mediaType}
                                         alt={p.title}
                                         className="w-full h-full"
@@ -689,11 +726,15 @@ function ProjectsPage() {
                   <div
                     key={project._id}
                     onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
+                    onMouseEnter={() => setHoveredCardId(project._id)}
+                    onMouseLeave={(e) => {
+                      handleMouseLeave(e);
+                      setHoveredCardId(null);
+                    }}
                     onClick={() =>
                       navigate(`/projects/${project.slug || project._id}`)
                     }
-                    className="project-card-grid relative p-2 rounded-none group h-64 aspect-video isolate z-0 cursor-pointer"
+                    className="project-card-grid relative p-2 rounded-none group w-full md:w-[440px] lg:w-[480px] h-auto aspect-video isolate z-0 cursor-pointer"
                     style={{
                       "--ts-c1": c1,
                       "--ts-c2": c2,
@@ -705,6 +746,8 @@ function ProjectsPage() {
                     <div className="project-card-inner shadow-md shadow-gray-200/70 dark:shadow-black/70 rounded-none flex flex-col relative h-full z-10">
                       {/* Extra shimmer sweep effect on hover */}
                       <div className="project-card-shine" />
+                      {/* Second border line offset by 180 degrees */}
+                      <div className="project-card-border-2" />
                       {/* Glassy Featured Hover Badge (Featured projects only, hidden when expanded) */}
                       {project.featured && expandedId !== project._id && (
                         <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[8px] font-black tracking-widest uppercase transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-neutral-950 border border-amber-300 shadow-md shadow-amber-500/30">
@@ -756,12 +799,14 @@ function ProjectsPage() {
 
                         {/* Video/Image Background */}
                         <ProjectMedia
-                          src={project.mediaType === "video" ? project.video : project.image}
+                          videoSrc={project.video}
+                          thumbnailSrc={project.image}
                           mediaType={project.mediaType}
                           alt={project.title}
                           className="absolute inset-0 w-full h-full"
                           onLoad={() => handleVideoLoaded(project._id)}
                           onLoadedData={() => handleVideoLoaded(project._id)}
+                          isHovered={hoveredCardId === project._id}
                         />
 
                         {/* Skeleton Wave Bar - Shows while video is loading */}
@@ -892,12 +937,10 @@ function ProjectsPage() {
                                 )}
                               </div>
 
-                              <button
+                              <Link
+                                to={`/projects/${project.slug || project._id}`}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  navigate(
-                                    `/projects/${project.slug || project._id}`,
-                                  );
                                 }}
                                 className={`group relative px-2.5 py-1.5 rounded-lg text-nowrap transition-all duration-300 transform active:scale-90 overflow-hidden flex items-center justify-center gap-1 text-[10px] font-medium cursor-pointer ${
                                   project.featured
@@ -915,7 +958,7 @@ function ProjectsPage() {
                                   size={12}
                                   className="transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                                 />
-                              </button>
+                              </Link>
                             </div>
                           </div>
                         ) : (

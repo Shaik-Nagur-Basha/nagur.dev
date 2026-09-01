@@ -230,15 +230,15 @@ export const createProject = async (req, res, next) => {
   try {
     req.body.createdBy = req.user.id;
 
-    // Check if media is uploaded via Multer/Cloudinary
-    if (req.file) {
-      const mediaType = req.body.mediaType;
-      if (mediaType === "image") {
-        req.body.image = req.file.path;
-        req.body.imagePublicId = req.file.filename;
-      } else if (mediaType === "video") {
-        req.body.video = req.file.path;
-        req.body.videoPublicId = req.file.filename;
+    // Check if media files are uploaded via Multer/Cloudinary fields
+    if (req.files) {
+      if (req.files.image && req.files.image[0]) {
+        req.body.image = req.files.image[0].path;
+        req.body.imagePublicId = req.files.image[0].filename;
+      }
+      if (req.files.video && req.files.video[0]) {
+        req.body.video = req.files.video[0].path;
+        req.body.videoPublicId = req.files.video[0].filename;
       }
     }
 
@@ -283,30 +283,36 @@ export const updateProject = async (req, res, next) => {
         .json({ error: "Not authorized to update this project" });
     }
 
-    // Handle media update if file exists
-    if (req.file) {
-      // Delete old media from Cloudinary
-      if (project.mediaType === "image" && project.imagePublicId) {
-        await cloudinary.uploader.destroy(project.imagePublicId);
-      } else if (project.mediaType === "video" && project.videoPublicId) {
-        await cloudinary.uploader.destroy(project.videoPublicId, {
-          resource_type: "video",
-        });
+    // Handle media update if files are uploaded
+    if (req.files) {
+      if (req.files.image && req.files.image[0]) {
+        // Delete old image from Cloudinary if it exists
+        if (project.imagePublicId) {
+          await cloudinary.uploader.destroy(project.imagePublicId);
+        }
+        req.body.image = req.files.image[0].path;
+        req.body.imagePublicId = req.files.image[0].filename;
       }
+      if (req.files.video && req.files.video[0]) {
+        // Delete old video from Cloudinary if it exists
+        if (project.videoPublicId) {
+          await cloudinary.uploader.destroy(project.videoPublicId, {
+            resource_type: "video",
+          });
+        }
+        req.body.video = req.files.video[0].path;
+        req.body.videoPublicId = req.files.video[0].filename;
+      }
+    }
 
-      // Set new media
-      const mediaType = req.body.mediaType || project.mediaType;
-      if (mediaType === "image") {
-        req.body.image = req.file.path;
-        req.body.imagePublicId = req.file.filename;
-        req.body.video = null;
-        req.body.videoPublicId = null;
-      } else if (mediaType === "video") {
-        req.body.video = req.file.path;
-        req.body.videoPublicId = req.file.filename;
-        req.body.image = null;
-        req.body.imagePublicId = null;
-      }
+    // Clean up if mediaType changed to image (delete video asset)
+    const mediaType = req.body.mediaType || project.mediaType;
+    if (mediaType === "image" && project.videoPublicId) {
+      await cloudinary.uploader.destroy(project.videoPublicId, {
+        resource_type: "video",
+      });
+      req.body.video = null;
+      req.body.videoPublicId = null;
     }
 
     project = await Project.findByIdAndUpdate(req.params.id, req.body, {

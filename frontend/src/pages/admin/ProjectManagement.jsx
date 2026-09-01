@@ -46,6 +46,7 @@ const ProjectManagement = () => {
     loading,
   } = useAdminStore();
   const [expandedId, setExpandedId] = useState(null);
+  const [hoveredCardId, setHoveredCardId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [showDraftOnly, setShowDraftOnly] = useState(false);
@@ -270,9 +271,20 @@ const ProjectManagement = () => {
       inherits: false;
     }
 
+    @property --ts-angle-2 {
+      syntax: "<angle>";
+      initial-value: 180deg;
+      inherits: false;
+    }
+
     @keyframes ts-spin {
       to { --ts-angle: 360deg; }
     }
+
+    @keyframes ts-spin-2 {
+      to { --ts-angle-2: 540deg; }
+    }
+
 
     @keyframes glow-pulse {
       0%, 100% { opacity: 0.15; transform: scale(1); }
@@ -358,6 +370,30 @@ const ProjectManagement = () => {
       mask-composite: exclude;
       pointer-events: none;
     }
+
+    /* Second border line offset by 180 degrees */
+    .project-card-border-2 {
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: conic-gradient(
+        from var(--ts-angle-2),
+        transparent 55%,
+        var(--ts-c1, rgba(6, 182, 212, 0.8)) 75%,
+        var(--ts-c2, rgba(139, 92, 246, 0.8)) 88%,
+        transparent 100%
+      );
+      animation: ts-spin-2 5s linear infinite;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+      padding: 2px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
 
     .project-card-grid:hover .project-card-inner::after {
       opacity: 1;
@@ -530,13 +566,14 @@ const ProjectManagement = () => {
                             }`}
                           >
                             {p.mediaType || p.image || p.thumbnail ? (
-                              <ProjectMedia
-                                src={p.mediaType === "video" ? p.video : (p.image || p.thumbnail)}
-                                mediaType={p.mediaType}
-                                alt={p.title}
-                                className="w-full h-full"
-                                groupHoverScale={true}
-                              />
+                               <ProjectMedia
+                                 videoSrc={p.video}
+                                 thumbnailSrc={p.image || p.thumbnail}
+                                 mediaType={p.mediaType}
+                                 alt={p.title}
+                                 className="w-full h-full"
+                                 groupHoverScale={true}
+                               />
                             ) : (
                               <div
                                 className={`w-full h-full flex items-center justify-center ${
@@ -705,17 +742,21 @@ const ProjectManagement = () => {
               className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-[500px]:gap-3"
             >
               {paginatedProjects.map((project, index) => (
-                <motion.div
-                  key={project._id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={() =>
-                    navigate(`/projects/${project.slug || project._id}`)
-                  }
-                  className="project-card-grid relative p-2 rounded-none group aspect-video isolate z-0 cursor-pointer"
+                 <motion.div
+                   key={project._id}
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ delay: index * 0.05 }}
+                   onMouseMove={handleMouseMove}
+                   onMouseEnter={() => setHoveredCardId(project._id)}
+                   onMouseLeave={(e) => {
+                     handleMouseLeave(e);
+                     setHoveredCardId(null);
+                   }}
+                   onClick={() =>
+                     navigate(`/projects/${project.slug || project._id}`)
+                   }
+                  className="project-card-grid relative p-2 rounded-none group w-full h-auto aspect-video isolate z-0 cursor-pointer"
                   style={{
                     "--ts-c1": project.featured ? "#f59e0b" : "#06b6d4",
                     "--ts-c2": project.featured ? "#ec4899" : "#3b82f6",
@@ -727,6 +768,8 @@ const ProjectManagement = () => {
                   <div className="project-card-inner shadow-md shadow-black/70 rounded-none flex flex-col relative h-full z-10">
                     {/* Extra shimmer sweep effect on hover */}
                     <div className="project-card-shine" />
+                    {/* Second border line offset by 180 degrees */}
+                    <div className="project-card-border-2" />
 
                     {/* Floating Action Controls (Top-Right, below Featured Badge if featured) */}
                     {expandedId !== project._id && (
@@ -786,12 +829,14 @@ const ProjectManagement = () => {
 
                     {/* Media Wrapper */}
                     <div className="absolute inset-0 rounded-none overflow-hidden z-0 bg-black">
-                      <ProjectMedia
-                        src={project.mediaType === "video" || project.video ? project.video : (project.image || project.thumbnail)}
-                        mediaType={project.mediaType === "video" || project.video ? "video" : "image"}
-                        alt={project.title}
-                        className="absolute inset-0 w-full h-full"
-                      />
+                       <ProjectMedia
+                         videoSrc={project.video}
+                         thumbnailSrc={project.image || project.thumbnail}
+                         mediaType={project.mediaType === "video" || project.video ? "video" : "image"}
+                         alt={project.title}
+                         className="absolute inset-0 w-full h-full"
+                         isHovered={hoveredCardId === project._id}
+                       />
 
                       {/* Overlay for expanded state */}
                       <div

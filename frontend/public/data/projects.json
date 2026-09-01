@@ -6,7 +6,7 @@
       "title": "ClipMaster Pro",
       "description": "ClipMaster Pro is a fast, production-ready desktop clipboard manager for Windows. Built with Electron, React, and TypeScript, it features instant clipboard monitoring backed by a native C# background listener. Designed with premium UI aesthetics, it offers a quick-expand detail viewer dialog, timeline categorization, keyboard navigation shortcuts, color-coded tagging, and local atomic file persistence with auto-.bak recovery for crash resilience.",
       "mediaType": "video",
-      "image": null,
+      "image": "https://res.cloudinary.com/dn2jspecc/image/upload/v1783497132/nagur.dev/images/1783497130942-01_main.png",
       "video": "https://res.cloudinary.com/dn2jspecc/video/upload/v1783497179/nagur.dev/video/1783497177804-Clipmaster%20Pro%20Demo.mp4",
       "skills": [
         "Electron",
@@ -742,7 +742,7 @@
       "shortDescription": "A next-generation MERN stack social messaging platform supporting real-time direct chats, groups, channels, and community hubs.",
       "description": "NeoChat is a real-time social messaging platform built with the MERN stack (MongoDB, Express, React, Node.js), Firebase Auth, Redux, and Cloudinary. It supports private direct messaging, public/private groups, broadcast channels, and unified community hubs. Featuring a seamless light/dark theme, dynamic skeleton loaders, search, user settings, and UPI ID payment management, NeoChat delivers a premium chat experience across all devices. Note: This project is currently in an early development phase. The frontend user interface and core backend structures are partially implemented but not yet fully functional.",
       "mediaType": "video",
-      "image": null,
+      "image": "https://res.cloudinary.com/dn2jspecc/image/upload/v1783923077/nagur.dev/images/03_home_page_dark_skeleton.png",
       "video": "https://res.cloudinary.com/dn2jspecc/video/upload/v1769023132/NeoChat_d6tcg7.mp4",
       "skills": [
         "React.js",
@@ -894,6 +894,7 @@
       ]
     },
     {
+      "_id": "69fc34ccee04cce1d499284f",
       "title": "Parsec Classic",
       "slug": "parsec-classic",
       "shortDescription": "A beautiful and powerful system utility platform featuring a file explorer, file compression, sharing, remote control, and media/document tools.",
@@ -1068,6 +1069,7 @@
       ]
     },
     {
+      "_id": "69fc34ccee04cce1d499284g",
       "title": "Parsec Modern",
       "slug": "parsec-modern",
       "shortDescription": "An all-in-one system utility platform for file management, media processing, screen capture, and secure file sharing, built as a web application.",
@@ -1213,6 +1215,7 @@
       ]
     },
     {
+      "_id": "69fc34ccee04cce1d499284h",
       "title": "Media Control Toolkit",
       "slug": "media-control-toolkit",
       "shortDescription": "A premium Manifest V3 Chrome extension offering 10x volume boost, YouTube ad forwarder, speed controls, smart scrolling, media scanning, and privacy analytics.",

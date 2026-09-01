@@ -46,7 +46,45 @@ const seedFromJson = async () => {
       process.exit(1);
     }
 
-    const projects = parsedData.data;
+    const sanitizeId = (id) => {
+      if (typeof id === 'string') {
+        if (id.length === 26 && id.startsWith('6a')) {
+          id = id.substring(2);
+        }
+        if (id.length === 24) {
+          return id.toLowerCase().split('').map(char => {
+            if (/[0-9a-f]/.test(char)) {
+              return char;
+            }
+            const code = char.charCodeAt(0);
+            if (code >= 103 && code <= 118) { // 'g' to 'v'
+              return (code - 103).toString(16);
+            }
+            return '0';
+          }).join('');
+        }
+      }
+      return id;
+    };
+
+    const sanitizeObject = (obj) => {
+      if (Array.isArray(obj)) {
+        return obj.map(sanitizeObject);
+      } else if (obj !== null && typeof obj === 'object') {
+        const newObj = {};
+        for (const key of Object.keys(obj)) {
+          if (key === '_id' || key === 'createdBy') {
+            newObj[key] = sanitizeId(obj[key]);
+          } else {
+            newObj[key] = sanitizeObject(obj[key]);
+          }
+        }
+        return newObj;
+      }
+      return obj;
+    };
+
+    const projects = sanitizeObject(parsedData.data);
     console.log(`Found ${projects.length} projects in projects.json to seed/update.`);
 
     let createdCount = 0;

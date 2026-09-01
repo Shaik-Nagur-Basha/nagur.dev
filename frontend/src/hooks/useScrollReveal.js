@@ -15,6 +15,7 @@ function useScrollReveal({
   threshold = 0.12,
   rootMargin = "0px 0px -60px 0px",
   delay = 0,
+  triggerOnce = true,
 } = {}) {
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef(null);
@@ -24,8 +25,8 @@ function useScrollReveal({
     : false;
 
   const ref = useCallback((node) => {
-    // If node is null, or already visible, or user prefers reduced motion
-    if (!node || isVisible || prefersReduced) {
+    // If node is null, or already visible and we only trigger once, or user prefers reduced motion
+    if (!node || (triggerOnce && isVisible) || prefersReduced) {
       if (prefersReduced && !isVisible) {
         setIsVisible(true);
       }
@@ -37,31 +38,36 @@ function useScrollReveal({
       observerRef.current.disconnect();
     }
 
-    // If node is already in view (e.g. above fold), trigger immediately
+    // If node is already in view (e.g. above fold) and we only trigger once, trigger immediately
     const rect = node.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
+    if (triggerOnce && rect.top < window.innerHeight && rect.bottom > 0) {
       setIsVisible(true);
       return;
     }
 
+    const thresholds = triggerOnce ? threshold : [0, threshold];
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && (triggerOnce || entry.intersectionRatio >= threshold)) {
         if (delay > 0) {
           setTimeout(() => setIsVisible(true), delay);
         } else {
           setIsVisible(true);
         }
-        observer.disconnect();
-        observerRef.current = null;
+        if (triggerOnce) {
+          observer.disconnect();
+          observerRef.current = null;
+        }
+      } else if (!triggerOnce && (!entry.isIntersecting || entry.intersectionRatio === 0)) {
+        setIsVisible(false);
       }
     }, {
-      threshold,
+      threshold: thresholds,
       rootMargin,
     });
 
     observer.observe(node);
     observerRef.current = observer;
-  }, [threshold, rootMargin, delay, isVisible, prefersReduced]);
+  }, [threshold, rootMargin, delay, triggerOnce, isVisible, prefersReduced]);
 
   return [ref, isVisible];
 }

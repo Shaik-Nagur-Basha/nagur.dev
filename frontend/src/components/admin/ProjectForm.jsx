@@ -67,10 +67,10 @@ const projectSchema = z.object({
 
 const ProjectForm = ({ project = null, onSuccess }) => {
   const { darkMode } = useTheme();
-  const [mediaFile, setMediaFile] = useState(null);
-  const [mediaPreview, setMediaPreview] = useState(
-    project?.image || project?.video || null,
-  );
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(project?.image || null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(project?.video || null);
 
   // Dynamic Array States
   const [skills, setSkills] = useState(project?.skills || []);
@@ -145,7 +145,8 @@ const ProjectForm = ({ project = null, onSuccess }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
+  const videoInputRef = useRef(null);
   const galleryInputRef = useRef(null);
   const { createProject, updateProject, loading } = useAdminStore();
 
@@ -220,25 +221,33 @@ const ProjectForm = ({ project = null, onSuccess }) => {
           id: item._id || `cat-${idx}-${Date.now()}-${Math.random()}`,
         })),
       );
-      setMediaPreview(
-        project.mediaType === "image" ? project.image : project.video,
-      );
+      setImagePreview(project.image || null);
+      setVideoPreview(project.video || null);
     }
   }, [project]);
 
-  const handleMediaChange = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (selectedMediaType === "image" && !file.type.startsWith("image/")) {
+      if (!file.type.startsWith("image/")) {
         return toast.error("Please select an image file");
       }
-      if (selectedMediaType === "video" && !file.type.startsWith("video/")) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("video/")) {
         return toast.error("Please select a video file");
       }
-
-      setMediaFile(file);
+      setVideoFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => setMediaPreview(reader.result);
+      reader.onloadend = () => setVideoPreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -343,7 +352,11 @@ const ProjectForm = ({ project = null, onSuccess }) => {
   };
 
   const onSubmit = async (data) => {
-    if (!mediaPreview && !mediaFile) return toast.error("Media is required");
+    if (selectedMediaType === "image") {
+      if (!imagePreview && !imageFile) return toast.error("Project Image is required");
+    } else if (selectedMediaType === "video") {
+      if (!videoPreview && !videoFile) return toast.error("Video file is required");
+    }
     if (skills.length === 0) return toast.error("Skills required");
 
     const formData = new FormData();
@@ -353,7 +366,8 @@ const ProjectForm = ({ project = null, onSuccess }) => {
       formData.append(key, data[key]);
     });
 
-    if (mediaFile) formData.append("media", mediaFile);
+    if (imageFile) formData.append("image", imageFile);
+    if (videoFile) formData.append("video", videoFile);
 
     // Append standard skills array
     skills.forEach((skill) => formData.append("skills[]", skill));
@@ -554,41 +568,132 @@ const ProjectForm = ({ project = null, onSuccess }) => {
             ))}
           </div>
 
-          <div
-            onClick={() => fileInputRef.current.click()}
-            className="group relative w-full aspect-video border-2 border-dashed border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all bg-white/5"
-          >
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept={selectedMediaType === "image" ? "image/*" : "video/*"}
-              onChange={handleMediaChange}
-            />
-            {mediaPreview ? (
-              <div className="w-full h-full relative bg-black flex items-center justify-center">
-                <ProjectMedia
-                  src={mediaPreview}
-                  mediaType={selectedMediaType}
-                  alt="Project media preview"
-                  className="w-full h-full"
-                  controls={selectedMediaType === "video"}
+          {selectedMediaType === "image" ? (
+            /* Image Upload Box */
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                Project Image <span className="text-red-500">*</span>
+              </label>
+              <div
+                onClick={() => imageInputRef.current.click()}
+                className="group relative w-full aspect-video border-2 border-dashed border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all bg-white/5"
+              >
+                <input
+                  type="file"
+                  ref={imageInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange}
                 />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <p className="text-[10px] font-black uppercase tracking-widest">
-                    Update File
-                  </p>
+                {imagePreview ? (
+                  <div className="w-full h-full relative bg-black flex items-center justify-center">
+                    <ProjectMedia
+                      src={imagePreview}
+                      mediaType="image"
+                      alt="Project image preview"
+                      className="w-full h-full"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <p className="text-[10px] font-black uppercase tracking-widest">
+                        Update Image
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 gap-2">
+                    <Upload className="w-6 h-6 mb-1" />
+                    <p className="text-[10px] font-black uppercase tracking-widest">
+                      Upload Image <span className="text-red-500">*</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Video and Optional Thumbnail Upload Box */
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                  Project Video <span className="text-red-500">*</span>
+                </label>
+                <div
+                  onClick={() => videoInputRef.current.click()}
+                  className="group relative w-full aspect-video border-2 border-dashed border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all bg-white/5"
+                >
+                  <input
+                    type="file"
+                    ref={videoInputRef}
+                    className="hidden"
+                    accept="video/*"
+                    onChange={handleVideoChange}
+                  />
+                  {videoPreview ? (
+                    <div className="w-full h-full relative bg-black flex items-center justify-center">
+                      <ProjectMedia
+                        src={videoPreview}
+                        mediaType="video"
+                        alt="Project video preview"
+                        className="w-full h-full"
+                        controls={true}
+                      />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-20">
+                        <p className="text-[10px] font-black uppercase tracking-widest">
+                          Update Video
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 gap-2">
+                      <Upload className="w-6 h-6 mb-1" />
+                      <p className="text-[10px] font-black uppercase tracking-widest">
+                        Upload Video <span className="text-red-500">*</span>
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 gap-2">
-                <Upload className="w-6 h-6 mb-1" />
-                <p className="text-[10px] font-black uppercase tracking-widest">
-                  Upload Hero File <span className="text-red-500">*</span>
-                </p>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                  Thumbnail Image (Optional - Fallback/Hover)
+                </label>
+                <div
+                  onClick={() => imageInputRef.current.click()}
+                  className="group relative w-full aspect-video border-2 border-dashed border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all bg-white/5"
+                >
+                  <input
+                    type="file"
+                    ref={imageInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                  {imagePreview ? (
+                    <div className="w-full h-full relative bg-black flex items-center justify-center">
+                      <ProjectMedia
+                        src={imagePreview}
+                        mediaType="image"
+                        alt="Project thumbnail preview"
+                        className="w-full h-full"
+                      />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest">
+                          Update Thumbnail
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 gap-2">
+                      <Upload className="w-6 h-6 mb-1" />
+                      <p className="text-[10px] font-black uppercase tracking-widest">
+                        Upload Thumbnail Image
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className="space-y-3">
             <div className="floating-label-group">

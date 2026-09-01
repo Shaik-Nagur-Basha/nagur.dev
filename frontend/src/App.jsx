@@ -178,7 +178,7 @@ function PageHeadController() {
     if (path === "/" && (activeSection === "home" || !activeSection)) {
       fullTitle = `${profileTitle} | ${profileName}`;
     } else {
-      fullTitle = `${profileTitle} | ${pageTitle}`;
+      fullTitle = `${pageTitle} | ${profileTitle}`;
     }
     document.title = fullTitle;
 
@@ -241,8 +241,28 @@ function PageHeadController() {
     setMeta("description", pageDescription);
     setMeta("og:title", fullTitle, true);
     setMeta("og:description", pageDescription, true);
+    setMeta("og:site_name", profileTitle || "nagur.dev", true);
     setMeta("twitter:title", fullTitle);
     setMeta("twitter:description", pageDescription);
+
+    // Update WebSite JSON-LD dynamically
+    let jsonLdElement = document.querySelector('script[type="application/ld+json"]');
+    const jsonLdContent = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://nagur-dev.web.app/#website",
+      "url": "https://nagur-dev.web.app/",
+      "name": profileTitle || "nagur.dev",
+      "alternateName": profileName ? [`${profileName} Portfolio`, "nagur.dev portfolio"] : ["Shaik Nagur Basha Portfolio", "nagur.dev portfolio"]
+    };
+    if (jsonLdElement) {
+      jsonLdElement.textContent = JSON.stringify(jsonLdContent);
+    } else {
+      jsonLdElement = document.createElement("script");
+      jsonLdElement.setAttribute("type", "application/ld+json");
+      jsonLdElement.textContent = JSON.stringify(jsonLdContent);
+      document.head.appendChild(jsonLdElement);
+    }
 
     // Update canonical link
     const canonicalUrl = `https://nagur-dev.web.app${path}`;

@@ -16,12 +16,18 @@ const getYearsOfExperience = () => {
 };
 
 // CountUp animation component
-function CountUp({ end, duration = 1200, suffix = "" }) {
+function CountUp({ end, duration = 1200, suffix = "", isVisible = true }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
+    if (!isVisible) {
+      setCount(0);
+      return;
+    }
+
     let startTime = null;
     const startValue = 0;
+    let animationFrameId;
 
     const animate = (timestamp) => {
       if (!startTime) startTime = timestamp;
@@ -39,14 +45,20 @@ function CountUp({ end, duration = 1200, suffix = "" }) {
       }
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        animationFrameId = requestAnimationFrame(animate);
       } else {
         setCount(end);
       }
     };
 
-    requestAnimationFrame(animate);
-  }, [end, duration]);
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [end, duration, isVisible]);
 
   return <>{count}{suffix}</>;
 }
@@ -91,7 +103,7 @@ function About() {
   // Scroll-reveal refs
   const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.15 });
   const [contentRef, contentVisible] = useScrollReveal({ threshold: 0.1 });
-  const [statsRef, statsVisible] = useScrollReveal({ threshold: 0.1 });
+  const [statsRef, statsVisible] = useScrollReveal({ threshold: 0.1, triggerOnce: false });
 
   const highlights = [
     `${getYearsOfExperience()}+ yrs experience in MERN`,
@@ -244,9 +256,9 @@ function About() {
               <div className="w-full order-1 lg:order-2">
                 <div ref={statsRef} className="grid grid-cols-3 lg:grid-cols-2 gap-4 sm:gap-3 lg:gap-4">
                   {[
-                    { number: <CountUp end={projectsCount} suffix="+" />, label: "Projects", icon: TrendingUp },
-                    { number: <CountUp end={getYearsOfExperience()} suffix="+" />, label: "Years", icon: Award },
-                    { number: <CountUp end={99} suffix="%" />, label: "Satisfaction", icon: Zap },
+                    { number: <CountUp end={projectsCount} suffix="+" isVisible={statsVisible} />, label: "Projects", icon: TrendingUp },
+                    { number: <CountUp end={getYearsOfExperience()} suffix="+" isVisible={statsVisible} />, label: "Years", icon: Award },
+                    { number: <CountUp end={99} suffix="%" isVisible={statsVisible} />, label: "Satisfaction", icon: Zap },
                   ].map((stat, idx) => {
                     const IconComponent = stat.icon;
                     return (
@@ -276,7 +288,10 @@ function About() {
                               size={22}
                             />
                           </div>
-                          <p className="text-xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1 group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-300">
+                          <p
+                            className="text-xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1 group-hover:from-purple-400 group-hover:to-blue-400"
+                            style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+                          >
                             {stat.number}
                           </p>
                           <p

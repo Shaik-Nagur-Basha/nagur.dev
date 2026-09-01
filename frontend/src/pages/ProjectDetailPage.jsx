@@ -359,12 +359,83 @@ function ProjectDetailPage() {
     if (project?.description) {
       const cleanDesc = project.description.replace(/<[^>]*>/g, '').substring(0, 160);
       setCustomPageDescription(cleanDesc);
+
+      // Meta tags helper for media
+      const setMetaTag = (selectorAttr, attrValue, content) => {
+        let el = document.querySelector(`meta[${selectorAttr}="${attrValue}"]`);
+        if (el) {
+          el.setAttribute("content", content);
+        } else {
+          el = document.createElement("meta");
+          el.setAttribute(selectorAttr, attrValue);
+          el.setAttribute("content", content);
+          document.head.appendChild(el);
+        }
+      };
+
+      if (project.image) {
+        setMetaTag("property", "og:image", project.image);
+        setMetaTag("name", "twitter:image", project.image);
+      }
+      if (project.video) {
+        setMetaTag("property", "og:video", project.video);
+        setMetaTag("property", "og:video:type", "video/mp4");
+      }
+
+      // Inject Project & Video Structured Data (JSON-LD)
+      let projectScript = document.getElementById("project-jsonld");
+      if (!projectScript) {
+        projectScript = document.createElement("script");
+        projectScript.id = "project-jsonld";
+        projectScript.type = "application/ld+json";
+        document.head.appendChild(projectScript);
+      }
+
+      const schemas = [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": project.title,
+          "description": cleanDesc,
+          "image": project.image || "https://nagur-dev.web.app/nagur_photo.png",
+          "url": `https://nagur-dev.web.app/projects/${project.slug || project._id}`,
+          "applicationCategory": project.category || "DeveloperApplication",
+          "operatingSystem": "Web, Windows, Cross-Platform",
+          "author": {
+            "@type": "Person",
+            "name": "Shaik Nagur Basha",
+            "url": "https://nagur-dev.web.app"
+          }
+        }
+      ];
+
+      if (project.video) {
+        schemas.push({
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          "name": `${project.title} Demo Video`,
+          "description": cleanDesc,
+          "thumbnailUrl": [project.image || "https://nagur-dev.web.app/nagur_photo.png"],
+          "contentUrl": project.video,
+          "uploadDate": project.createdAt || new Date().toISOString()
+        });
+      }
+
+      projectScript.textContent = JSON.stringify(schemas);
     }
+
+    return () => {
+      const projectScript = document.getElementById("project-jsonld");
+      if (projectScript) {
+        projectScript.remove();
+      }
+    };
   }, [project, setCustomPageTitle, setCustomPageDescription]);
   const [exploreProjects, setExploreProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [galleryLayout, setGalleryLayout] = useState("grid"); // "grid" | "bento" | "filmstrip"
   const [expandedExploreId, setExpandedExploreId] = useState(null);
+  const [hoveredCardId, setHoveredCardId] = useState(null);
 
   const [showcaseRef, showcaseVisible] = useScrollReveal({ threshold: 0.1 });
   const [featuresRef, featuresVisible] = useScrollReveal({ threshold: 0.1 });
@@ -427,9 +498,20 @@ function ProjectDetailPage() {
       inherits: false;
     }
 
+    @property --ts-angle-2 {
+      syntax: "<angle>";
+      initial-value: 180deg;
+      inherits: false;
+    }
+
     @keyframes ts-spin {
       to { --ts-angle: 360deg; }
     }
+
+    @keyframes ts-spin-2 {
+      to { --ts-angle-2: 540deg; }
+    }
+
 
     @keyframes glow-pulse {
       0%, 100% { opacity: 0.15; transform: scale(1); }
@@ -517,6 +599,30 @@ function ProjectDetailPage() {
       mask-composite: exclude;
       pointer-events: none;
     }
+
+    /* Second border line offset by 180 degrees */
+    .project-card-border-2 {
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: conic-gradient(
+        from var(--ts-angle-2),
+        transparent 55%,
+        var(--ts-c1, rgba(6, 182, 212, 0.8)) 75%,
+        var(--ts-c2, rgba(139, 92, 246, 0.8)) 88%,
+        transparent 100%
+      );
+      animation: ts-spin-2 5s linear infinite;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+      padding: 2px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
 
     .project-card-grid:hover .project-card-inner::after {
       opacity: 1;
@@ -943,6 +1049,11 @@ function ProjectDetailPage() {
                     alt={project.title}
                     className="w-full h-full"
                     controls={project.mediaType === "video"}
+                    autoPlay={project.mediaType === "video"}
+                    loop={project.mediaType === "video"}
+                    muted={project.mediaType === "video"}
+                    playsInline={project.mediaType === "video"}
+                    forceContain={true}
                   />
                 </div>
               </div>
@@ -2110,7 +2221,11 @@ function ProjectDetailPage() {
                   <div
                     key={item._id || idx}
                     onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
+                    onMouseEnter={() => setHoveredCardId(item._id)}
+                    onMouseLeave={(e) => {
+                      handleMouseLeave(e);
+                      setHoveredCardId(null);
+                    }}
                     onClick={() =>
                       navigate(`/projects/${item.slug || item._id}`)
                     }
@@ -2126,6 +2241,8 @@ function ProjectDetailPage() {
                     <div className="project-card-inner shadow-md shadow-black/70 rounded-none flex flex-col relative h-full z-10">
                       {/* Extra shimmer sweep effect on hover */}
                       <div className="project-card-shine" />
+                      {/* Second border line offset by 180 degrees */}
+                      <div className="project-card-border-2" />
 
                       {/* Glassy Featured Hover Badge */}
                       {item.featured && expandedExploreId !== item._id && (
@@ -2148,7 +2265,7 @@ function ProjectDetailPage() {
                           }`}
                         >
                           <span className="font-semibold uppercase tracking-[0.25em] max-[466px]:tracking-[0.15em]">
-                            {item.category}
+                                  {item.category}
                           </span>
                         </div>
                       )}
@@ -2156,10 +2273,12 @@ function ProjectDetailPage() {
                       {/* Media Wrapper */}
                       <div className="absolute inset-0 rounded-none overflow-hidden z-0 bg-black">
                         <ProjectMedia
-                          src={item.mediaType === "video" || item.video ? item.video : item.image}
+                          videoSrc={item.video}
+                          thumbnailSrc={item.image}
                           mediaType={item.mediaType === "video" || item.video ? "video" : "image"}
                           alt=""
                           className="absolute inset-0 w-full h-full"
+                          isHovered={hoveredCardId === item._id}
                         />
                         <div
                           className={`absolute inset-0 z-10 transition-opacity duration-300 ${

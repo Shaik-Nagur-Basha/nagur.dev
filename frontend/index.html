@@ -2,28 +2,48 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Favicons for Googlebot-Image & all platforms -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <link id="favicon" rel="icon" type="image/svg+xml" href="/logo.svg" />
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>nagur.dev | Shaik Nagur Basha - Portfolio</title>
-    <meta name="title" content="nagur.dev | Shaik Nagur Basha - Portfolio" />
+    <title>nagur.dev | Sk Nagur Basha - Portfolio</title>
+    <meta name="title" content="nagur.dev | Sk Nagur Basha - Portfolio" />
     <meta name="description" content="Portfolio of Shaik Nagur Basha (nagur.dev). Full Stack Web Developer & Software Engineer specializing in React, Node.js, and modern web applications." />
     <meta name="keywords" content="Shaik Nagur Basha, nagur.dev, MERN Stack, Full Stack Developer, Web Developer, Software Engineer, React Developer, Node.js, Portfolio" />
     <meta name="author" content="Shaik Nagur Basha" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-video-preview:-1" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://nagur-dev.web.app" />
-    <meta property="og:title" content="nagur.dev | Shaik Nagur Basha - Portfolio" />
+    <meta property="og:site_name" content="nagur.dev" />
+    <meta property="og:title" content="nagur.dev | Sk Nagur Basha - Portfolio" />
     <meta property="og:description" content="Portfolio of Shaik Nagur Basha (nagur.dev). Full Stack Web Developer & Software Engineer specializing in React, Node.js, and modern web applications." />
     <meta property="og:image" content="https://nagur-dev.web.app/nagur_photo.png" />
+
+    <!-- Google Search Site Name JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://nagur-dev.web.app/#website",
+        "url": "https://nagur-dev.web.app/",
+        "name": "nagur.dev",
+        "alternateName": ["nagur.dev portfolio", "Shaik Nagur Basha Portfolio"]
+      }
+    </script>
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://nagur-dev.web.app" />
-    <meta name="twitter:title" content="nagur.dev | Shaik Nagur Basha - Portfolio" />
+    <meta name="twitter:title" content="nagur.dev | Sk Nagur Basha - Portfolio" />
     <meta name="twitter:description" content="Portfolio of Shaik Nagur Basha (nagur.dev). Full Stack Web Developer & Software Engineer specializing in React, Node.js, and modern web applications." />
     <meta name="twitter:image" content="https://nagur-dev.web.app/nagur_photo.png" />
 
@@ -33,7 +53,37 @@
     <link href="/src/style.css" rel="stylesheet" />
   </head>
   <body>
+    <!-- Hidden H1 anchor for search engine crawlers -->
+    <h1 style="display:none">nagur.dev</h1>
+
     <div id="root"></div>
+
+                <noscript>
+      <div style="padding: 20px; font-family: sans-serif;">
+        <h2>nagur.dev | Sk Nagur Basha - Portfolio</h2>
+        <p>Full Stack Web Developer specializing in React, Node.js, and modern web applications.</p>
+        <ul>
+          <li><a href="https://nagur-dev.web.app/">Home</a></li>
+          <li><a href="https://nagur-dev.web.app/projects">All Projects</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/clipmaster-pro">ClipMaster Pro</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/blogbyte-blog">BlogByte Blog</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/gradient-craft">Gradient Craft</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/listing-hub">Listing Hub</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/storfa">Storfa</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/neochat">NeoChat</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/parsec-classic">Parsec Classic</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/parsec-modern">Parsec Modern</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/media-control-toolkit">Media Control Toolkit</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/devmatrix">DevMatrix</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/spotify-home-ui-clone">Spotify Home UI Clone</a></li>
+          <li><a href="https://nagur-dev.web.app/projects/text-in-image">Text In Image</a></li>
+          <li><a href="https://nagur-dev.web.app/privacy">Privacy Policy</a></li>
+          <li><a href="https://nagur-dev.web.app/terms">Terms of Service</a></li>
+          <li><a href="https://nagur-dev.web.app/cookies">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

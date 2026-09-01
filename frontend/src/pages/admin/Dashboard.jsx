@@ -124,7 +124,8 @@ const Dashboard = () => {
                   >
                     {project.mediaType || project.image || project.thumbnail ? (
                       <ProjectMedia
-                        src={project.mediaType === "video" ? project.video : (project.image || project.thumbnail)}
+                        videoSrc={project.video}
+                        thumbnailSrc={project.image || project.thumbnail}
                         mediaType={project.mediaType}
                         alt=""
                         className="w-full h-full"
