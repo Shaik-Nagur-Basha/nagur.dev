@@ -5,23 +5,6 @@
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
-  <style>
-    .bg-circle {
-      fill: none;
-    }
-    @media (prefers-color-scheme: dark) {
-      .bg-circle {
-        fill: #202124;
-      }
-    }
-  </style>
-  <circle
-    class="bg-circle"
-    cx="20"
-    cy="20"
-    r="15"
-  />
-
   <!-- Outer rotating circle - tech accent -->
   <circle
     cx="20"

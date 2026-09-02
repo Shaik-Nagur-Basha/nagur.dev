@@ -14,9 +14,12 @@ export const useAdminStore = create((set, get) => ({
     set({ loading: true });
     try {
       const mergedParams = { status: "all", isAdmin: "true", ...params };
-      const { data } = await API.get("projects", { params: mergedParams });
+      const { data } = await API.get("projects", {
+        params: mergedParams,
+        skipStatic: true,
+      });
       set({
-        projects: data.data,
+        projects: data.data || [],
         categories: data.categories || ["ALL"],
         totalPages: data.pagination?.totalPages || 1,
         loading: false,
@@ -89,8 +92,8 @@ export const useAdminStore = create((set, get) => ({
   fetchContacts: async () => {
     set({ loading: true });
     try {
-      const { data } = await API.get("contacts");
-      set({ contacts: data.data, loading: false });
+      const { data } = await API.get("contacts", { skipStatic: true });
+      set({ contacts: data.data || [], loading: false });
     } catch (error) {
       set({ error: error.response?.data?.error, loading: false });
     }

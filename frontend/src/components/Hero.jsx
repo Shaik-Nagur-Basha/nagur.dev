@@ -228,10 +228,10 @@ function Hero() {
               <div className="space-y-6 order-last xl:order-first px-4 sm:px-8 2xl:px-0">
                 <div className={`inline-block reveal-init ${mounted ? "reveal-visible" : ""}`}>
                   <span
-                    className={`px-4 py-2 text-sm font-semibold rounded-full border backdrop-blur-xl transition-all duration-300 shadow-xl ${
+                    className={`inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold rounded-full border backdrop-blur-xl transition-all duration-300 ${
                       darkMode
-                        ? "bg-blue-900/30 text-blue-300 border-blue-700/50 hover:bg-blue-800/40"
-                        : "bg-blue-100/60 text-blue-700 border-blue-300/60 shadow-blue-200/40 hover:bg-blue-100/80"
+                        ? "bg-white/5 text-blue-200 border-white/10 shadow-[0_0_20px_rgba(99,102,241,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/10 hover:border-white/20"
+                        : "bg-white/40 text-blue-700 border-white/60 shadow-[0_4px_24px_rgba(99,102,241,0.10),inset_0_1px_0_rgba(255,255,255,0.9)] hover:bg-white/60 hover:border-white/80"
                     }`}
                   >
                     ✨ Welcome to nagur.dev

@@ -22,8 +22,14 @@ export const useProfileStore = create((set, get) => ({
     }
     set({ loading: true, error: null });
     try {
-      const { data } = await API.get("profile");
-      set({ profile: data.data, loading: false });
+      const { data } = await API.get("profile", {
+        preferNetwork: !!force,
+      });
+      if (data?.data) {
+        set({ profile: data.data, loading: false });
+      } else {
+        set({ loading: false });
+      }
     } catch (error) {
       // Don't set error if not found (might just not be created yet)
       if (error.response?.status !== 404) {

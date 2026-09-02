@@ -16,7 +16,7 @@ export const useAuthStore = create((set) => ({
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
-      set({ user: data.user, isAuthenticated: true, loading: false });
+      set({ user: data.user, isAuthenticated: true, isCheckingAuth: false, loading: false });
       return { success: true };
     } catch (error) {
       console.error("Login store error:", error);
@@ -52,9 +52,14 @@ export const useAuthStore = create((set) => ({
   },
 
   checkAuth: async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      set({ user: null, isAuthenticated: false, isCheckingAuth: false });
+      return;
+    }
     set({ isCheckingAuth: true });
     try {
-      const { data } = await API.get("auth/me");
+      const { data } = await API.get("auth/me", { skipStatic: true });
       set({ user: data.user, isAuthenticated: true, isCheckingAuth: false });
     } catch {
       localStorage.removeItem("token");

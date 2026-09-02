@@ -119,7 +119,7 @@ const generateSitemapAndIndexHtml = () => {
 
       let noscriptContent = `    <noscript>\n`;
       noscriptContent += `      <div style="padding: 20px; font-family: sans-serif;">\n`;
-      noscriptContent += `        <h2>nagur.dev | Sk Nagur Basha - Portfolio</h2>\n`;
+      noscriptContent += `        <h2>nagur.dev | Sk Nagur Basha</h2>\n`;
       noscriptContent += `        <p>Full Stack Web Developer specializing in React, Node.js, and modern web applications.</p>\n`;
       noscriptContent += `        <ul>\n`;
       noscriptContent += `          <li><a href="https://nagur-dev.web.app/">Home</a></li>\n`;

@@ -14,6 +14,7 @@ import SkeletonLoader from "./SkeletonLoader";
 import API from "../api/axios";
 import useScrollReveal from "../hooks/useScrollReveal";
 import ProjectMedia from "./ProjectMedia";
+import { useBackendStore } from "../store/useBackendStore";
 
 function Projects() {
   const navigate = useNavigate();
@@ -136,10 +137,14 @@ function Projects() {
   const [headerRef, headerVisible] = useScrollReveal({ threshold: 0.15 });
   const [gridRef, gridVisible] = useScrollReveal({ threshold: 0.1 });
 
+  const { onBackendReady } = useBackendStore();
+
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjects = async (isLive = false) => {
       try {
-        const { data } = await API.get("/projects");
+        const { data } = await API.get("/projects", {
+          preferNetwork: isLive,
+        });
         if (data.success) {
           const sorted = [...data.data].sort((a, b) => {
             if (a.featured && !b.featured) return -1;
@@ -158,8 +163,14 @@ function Projects() {
       }
     };
 
-    fetchProjects();
-  }, []);
+    fetchProjects(false);
+
+    const unsubscribe = onBackendReady(() => {
+      fetchProjects(true);
+    });
+
+    return () => unsubscribe();
+  }, [onBackendReady]);
   const [currentPage, setCurrentPage] = useState(1);
   const [ripples, setRipples] = useState({});
 

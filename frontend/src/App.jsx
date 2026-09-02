@@ -9,6 +9,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import CookiesPage from "./pages/CookiesPage";
+import BackendWakeupToast from "./components/BackendWakeupToast";
 
 // Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -23,6 +24,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
 import { useProfileStore } from "./store/useProfileStore";
+import { useBackendStore } from "./store/useBackendStore";
 
 function ScrollRestoration() {
   const { pathname, hash } = useLocation();
@@ -177,6 +179,9 @@ function PageHeadController() {
     let fullTitle = "";
     if (path === "/" && (activeSection === "home" || !activeSection)) {
       fullTitle = `${profileTitle} | ${profileName}`;
+    } else if (path.startsWith("/projects/") && path !== "/projects") {
+      // For project detail pages, show ONLY the project title in search results and browser title
+      fullTitle = pageTitle;
     } else {
       fullTitle = `${pageTitle} | ${profileTitle}`;
     }
@@ -242,6 +247,8 @@ function PageHeadController() {
     setMeta("og:title", fullTitle, true);
     setMeta("og:description", pageDescription, true);
     setMeta("og:site_name", profileTitle || "nagur.dev", true);
+    setMeta("application-name", profileTitle || "nagur.dev");
+    setMeta("apple-mobile-web-app-title", profileTitle || "nagur.dev");
     setMeta("twitter:title", fullTitle);
     setMeta("twitter:description", pageDescription);
 
@@ -253,7 +260,7 @@ function PageHeadController() {
       "@id": "https://nagur-dev.web.app/#website",
       "url": "https://nagur-dev.web.app/",
       "name": profileTitle || "nagur.dev",
-      "alternateName": profileName ? [`${profileName} Portfolio`, "nagur.dev portfolio"] : ["Shaik Nagur Basha Portfolio", "nagur.dev portfolio"]
+      "alternateName": ["nagur.dev", `${profileName || "Shaik Nagur Basha"} Portfolio`, "nagur.dev portfolio"]
     };
     if (jsonLdElement) {
       jsonLdElement.textContent = JSON.stringify(jsonLdContent);
@@ -287,13 +294,25 @@ function PageHeadController() {
 function App() {
   const { checkAuth } = useAuthStore();
   const { fetchProfile } = useProfileStore();
+  const { checkAndWakeBackend, onBackendReady } = useBackendStore();
   
-  // Initial Auth Check & Profile Fetch (runs once on initial mount)
+  // Initial Auth Check, Profile Fetch & Backend Wakeup
   useEffect(() => {
     if (window.location.pathname.startsWith("/admin")) {
       checkAuth();
     }
-    fetchProfile();
+    // 1. Instant load from static/cached data
+    fetchProfile(false);
+
+    // 2. Trigger Render backend wake-up ping
+    checkAndWakeBackend();
+
+    // 3. Sync live profile when backend wakes up
+    const unsubscribe = onBackendReady(() => {
+      fetchProfile(true);
+    });
+
+    return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -308,6 +327,7 @@ function App() {
         <PageHeadController />
         <ScrollRestoration />
         <ScrollToTop />
+        <BackendWakeupToast />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />

@@ -38,7 +38,7 @@ const Dashboard = () => {
       <div className="flex flex-col sm:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Hey, {user.name}! 👋
+            Hey, {user?.name || "Nagur"}! 👋
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Portfolio control center overview.

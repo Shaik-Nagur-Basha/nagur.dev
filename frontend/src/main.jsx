@@ -13,13 +13,12 @@ createRoot(document.getElementById("root")).render(
       autoClose={3000}
       hideProgressBar={false}
       newestOnTop
-      closeOnClick
+      closeOnClick={false}
       rtl={false}
-      pauseOnFocusLoss
-      draggable
+      pauseOnFocusLoss={false}
+      draggable={false}
       pauseOnHover
-      theme="colored"
-      bodyClassName="whitespace-normal md:whitespace-nowrap"
+      theme="dark"
     />
   </StrictMode>,
 );

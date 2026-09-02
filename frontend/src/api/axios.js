@@ -7,12 +7,18 @@ const getApiBaseURL = () => {
   const isProd = import.meta.env.MODE === "production";
   const envUrl = import.meta.env.VITE_API_URL;
 
-  // In production, force relative path if envUrl is missing or points to localhost
-  if (isProd) {
-    if (!envUrl || envUrl.includes("localhost") || envUrl.includes("127.0.0.1")) {
-      return "/api";
+  if (envUrl) {
+    if (isProd && (envUrl.includes("localhost") || envUrl.includes("127.0.0.1"))) {
+      return "https://nagur-dev.onrender.com/api";
     }
     return envUrl;
+  }
+
+  if (isProd) {
+    if (typeof window !== "undefined" && window.location.hostname.includes("web.app")) {
+      return "https://nagur-dev.onrender.com/api";
+    }
+    return "/api";
   }
 
   return envUrl || "/api";
@@ -22,7 +28,7 @@ const getApiBaseURL = () => {
 const activeRequests = new Map();
 const defaultAdapter = axios.getAdapter(axios.defaults.adapter);
 
-// Custom static database adapter to intercept and mock API requests
+// Custom static database adapter for instant zero-latency rendering
 const staticAdapter = async (config) => {
   const url = config.url || "";
   const method = config.method?.toLowerCase() || "get";
@@ -39,7 +45,7 @@ const staticAdapter = async (config) => {
         headers: {},
         config,
       };
-    } catch (err) {
+    } catch {
       return {
         data: { success: false, error: "Failed to load profile" },
         status: 500,
@@ -152,7 +158,7 @@ const staticAdapter = async (config) => {
         headers: {},
         config,
       };
-    } catch (err) {
+    } catch {
       return {
         data: { success: false, error: "Failed to load projects" },
         status: 500,
@@ -163,53 +169,58 @@ const staticAdapter = async (config) => {
     }
   }
 
-  // 3. Auth routes
-  if (url.includes("auth/me")) {
-    return {
-      data: { success: false, error: "Authentication disabled in static mode" },
-      status: 401,
-      statusText: "Unauthorized",
-      headers: {},
-      config,
-    };
-  }
-
-  if (url.includes("auth/login")) {
-    return {
-      data: { success: false, error: "Login disabled in static mode" },
-      status: 403,
-      statusText: "Forbidden",
-      headers: {},
-      config,
-    };
-  }
-
-  if (url.includes("auth/logout")) {
-    return {
-      data: { success: true, message: "Logged out successfully" },
-      status: 200,
-      statusText: "OK",
-      headers: {},
-      config,
-    };
-  }
-
-  // Fallback to real HTTP requests if they request anything else
+  // Fallback to real HTTP requests for everything else
   return defaultAdapter(config);
 };
 
+const networkWithFallbackAdapter = async (config) => {
+  const url = config.url || "";
+  const method = config.method?.toLowerCase() || "get";
+  const isHealthCheck = url === "health" || url === "/health" || url.endsWith("/health");
+  const isAuthOrAdmin =
+    url.includes("auth/") ||
+    url.includes("contacts") ||
+    url.includes("admin") ||
+    config.params?.isAdmin;
+
+  // Non-GET, health checks, auth, admin, contacts, or explicit skipStatic always hit the real network
+  if (method !== "get" || isHealthCheck || isAuthOrAdmin || config.skipStatic) {
+    return defaultAdapter(config);
+  }
+
+  // If preferNetwork is requested, try real network first, fall back to static
+  if (config.preferNetwork) {
+    try {
+      return await defaultAdapter(config);
+    } catch (err) {
+      console.warn("Live API request failed, falling back to static adapter:", err.message);
+      return staticAdapter(config);
+    }
+  }
+
+  // Default: staticAdapter for zero-latency initial rendering
+  return staticAdapter(config);
+};
+
 const dedupeAdapter = (config) => {
-  // Only deduplicate GET requests
-  if (config.method?.toLowerCase() === "get") {
-    const url = config.url || "";
+  const method = config.method?.toLowerCase() || "get";
+  const url = config.url || "";
+  const isAuthOrAdmin =
+    url.includes("auth/") ||
+    url.includes("contacts") ||
+    url.includes("admin") ||
+    config.params?.isAdmin;
+
+  // Only deduplicate safe public GET requests (never deduplicate auth/admin or mutations)
+  if (method === "get" && !isAuthOrAdmin && !config.skipStatic) {
     const params = config.params ? JSON.stringify(config.params) : "";
-    const key = `get:${url}:${params}`;
+    const key = `get:${url}:${params}:${config.preferNetwork || false}`;
 
     if (activeRequests.has(key)) {
       return activeRequests.get(key);
     }
 
-    const promise = staticAdapter(config).then(
+    const promise = networkWithFallbackAdapter(config).then(
       (response) => {
         activeRequests.delete(key);
         return response;
@@ -224,13 +235,13 @@ const dedupeAdapter = (config) => {
     return promise;
   }
 
-  return staticAdapter(config);
+  return networkWithFallbackAdapter(config);
 };
 
 const API = axios.create({
   baseURL: getApiBaseURL(),
   withCredentials: true, // Send cookies with requests
-  timeout: 10000, // 10 seconds timeout to prevent requests from hanging indefinitely
+  timeout: 15000, // 15 seconds timeout
   adapter: dedupeAdapter,
 });
 
@@ -263,4 +274,3 @@ API.interceptors.response.use(
 );
 
 export default API;
-

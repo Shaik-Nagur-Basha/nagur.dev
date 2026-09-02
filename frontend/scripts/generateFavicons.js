@@ -79,7 +79,7 @@ function calcCrc(buf) {
   return crc ^ -1;
 }
 
-// Render Brand Favicon Artwork (Branded dark background + vector code brackets)
+// Render Brand Favicon Artwork (100% Transparent background with crisp vector brackets and nodes)
 function renderFaviconPixel(x, y, width, height) {
   // Normalize to 0..1 coordinates
   const nx = (x + 0.5) / width;
@@ -89,26 +89,7 @@ function renderFaviconPixel(x, y, width, height) {
   const dy = ny - 0.5;
   const dist = Math.sqrt(dx * dx + dy * dy);
 
-  // Background: Solid circular dark badge (#090d16) to prevent Google Search white background
-  if (dist > 0.48) {
-    return [0, 0, 0, 0]; // Transparent padding outside circle
-  }
-
-  // Base Dark Background (#090d16)
-  let r = 9;
-  let g = 13;
-  let b = 22;
-  let a = 255;
-
-  // Outer gradient accent ring (dist between 0.43 and 0.46)
-  if (dist >= 0.43 && dist <= 0.46) {
-    const ringAlpha = 0.8;
-    // Blue to purple gradient accent
-    const t = (nx + ny) / 2;
-    r = Math.round(r * (1 - ringAlpha) + (59 + t * (168 - 59)) * ringAlpha);
-    g = Math.round(g * (1 - ringAlpha) + (130 + t * (85 - 130)) * ringAlpha);
-    b = Math.round(b * (1 - ringAlpha) + (246 + t * (247 - 246)) * ringAlpha);
-  }
+  let r = 0, g = 0, b = 0, a = 0;
 
   // Helper for drawing thick anti-aliased line segments
   function distToSegment(px, py, x1, y1, x2, y2) {
@@ -119,41 +100,70 @@ function renderFaviconPixel(x, y, width, height) {
     return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
   }
 
-  // Left Angle Bracket < (stroke color #3b82f6)
-  const leftDist1 = distToSegment(nx, ny, 0.38, 0.32, 0.24, 0.5);
-  const leftDist2 = distToSegment(nx, ny, 0.24, 0.5, 0.38, 0.68);
+  // Alpha blending helper
+  function blendColor(newR, newG, newB, newA) {
+    if (newA <= 0) return;
+    const normA = newA / 255;
+    const currentNormA = a / 255;
+    const outA = normA + currentNormA * (1 - normA);
+    if (outA > 0) {
+      r = Math.round((newR * normA + r * currentNormA * (1 - normA)) / outA);
+      g = Math.round((newG * normA + g * currentNormA * (1 - normA)) / outA);
+      b = Math.round((newB * normA + b * currentNormA * (1 - normA)) / outA);
+      a = Math.round(outA * 255);
+    }
+  }
+
+  // Outer gradient accent ring (thin orbit, crisp in both dark and light modes)
+  const ringDist = Math.abs(dist - 0.44);
+  const ringWidth = 0.025;
+  if (ringDist < ringWidth) {
+    const ringCover = Math.max(0, 1 - ringDist / ringWidth);
+    const t = (nx + ny) / 2;
+    const ringR = Math.round(59 + t * (168 - 59));
+    const ringG = Math.round(130 + t * (85 - 130));
+    const ringB = Math.round(246 + t * (247 - 246));
+    blendColor(ringR, ringG, ringB, Math.round(ringCover * 180));
+  }
+
+  // Left Angle Bracket < (stroke color #2563eb / #3b82f6)
+  const leftDist1 = distToSegment(nx, ny, 0.38, 0.28, 0.20, 0.5);
+  const leftDist2 = distToSegment(nx, ny, 0.20, 0.5, 0.38, 0.72);
   const leftDist = Math.min(leftDist1, leftDist2);
-
-  const strokeWidth = 0.055;
+  const strokeWidth = 0.065;
   if (leftDist < strokeWidth) {
-    const cover = Math.min(1, (strokeWidth - leftDist) / 0.015);
-    r = Math.round(r * (1 - cover) + 59 * cover);
-    g = Math.round(g * (1 - cover) + 130 * cover);
-    b = Math.round(b * (1 - cover) + 246 * cover);
+    const cover = Math.max(0, Math.min(1, (strokeWidth - leftDist) / 0.015));
+    blendColor(37, 99, 235, Math.round(cover * 255));
   }
 
-  // Right Angle Bracket > (stroke color #a855f7)
-  const rightDist1 = distToSegment(nx, ny, 0.62, 0.32, 0.76, 0.5);
-  const rightDist2 = distToSegment(nx, ny, 0.76, 0.5, 0.62, 0.68);
+  // Right Angle Bracket > (stroke color #9333ea / #a855f7)
+  const rightDist1 = distToSegment(nx, ny, 0.62, 0.28, 0.80, 0.5);
+  const rightDist2 = distToSegment(nx, ny, 0.80, 0.5, 0.62, 0.72);
   const rightDist = Math.min(rightDist1, rightDist2);
-
   if (rightDist < strokeWidth) {
-    const cover = Math.min(1, (strokeWidth - rightDist) / 0.015);
-    r = Math.round(r * (1 - cover) + 168 * cover);
-    g = Math.round(g * (1 - cover) + 85 * cover);
-    b = Math.round(b * (1 - cover) + 247 * cover);
+    const cover = Math.max(0, Math.min(1, (strokeWidth - rightDist) / 0.015));
+    blendColor(147, 51, 234, Math.round(cover * 255));
   }
 
-  // Center dots (y = 0.38, 0.5, 0.62 at x = 0.5)
-  const dots = [0.37, 0.5, 0.63];
+  // Center connection line between brackets
+  const lineDist = distToSegment(nx, ny, 0.28, 0.5, 0.72, 0.5);
+  if (lineDist < 0.02) {
+    const cover = Math.max(0, Math.min(1, (0.02 - lineDist) / 0.008));
+    const t = (nx - 0.28) / (0.72 - 0.28);
+    const lineR = Math.round(37 + t * (147 - 37));
+    const lineG = Math.round(99 + t * (51 - 99));
+    const lineB = Math.round(235 + t * (234 - 235));
+    blendColor(lineR, lineG, lineB, Math.round(cover * 160));
+  }
+
+  // Center dots (y = 0.36, 0.5, 0.64 at x = 0.5)
+  const dots = [0.36, 0.5, 0.64];
   dots.forEach((dotY) => {
     const dotDist = Math.hypot(nx - 0.5, ny - dotY);
-    const dotRadius = 0.045;
+    const dotRadius = 0.05;
     if (dotDist < dotRadius) {
-      const cover = Math.min(1, (dotRadius - dotDist) / 0.012);
-      r = Math.round(r * (1 - cover) + 114 * cover);
-      g = Math.round(g * (1 - cover) + 107 * cover);
-      b = Math.round(b * (1 - cover) + 246 * cover);
+      const cover = Math.max(0, Math.min(1, (dotRadius - dotDist) / 0.012));
+      blendColor(114, 107, 246, Math.round(cover * 255));
     }
   });
 
@@ -168,7 +178,7 @@ const sizes = [
   { name: "apple-touch-icon.png", size: 180 },
 ];
 
-console.log("Generating PNG favicons for Googlebot-Image...");
+console.log("Generating transparent PNG favicons for Googlebot-Image & all platforms...");
 sizes.forEach(({ name, size }) => {
   const buf = createPngBuffer(size, size, renderFaviconPixel);
   fs.writeFileSync(path.join(publicDir, name), buf);

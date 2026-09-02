@@ -4,9 +4,11 @@ import { useTheme } from "../context/ThemeContext";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import SkeletonLoader from "../components/SkeletonLoader";
+import ErrorPage from "./ErrorPage";
 import API from "../api/axios";
 import useScrollReveal from "../hooks/useScrollReveal";
 import { useProfileStore } from "../store/useProfileStore";
+import { useBackendStore } from "../store/useBackendStore";
 import ProjectMedia from "../components/ProjectMedia";
 import {
   ArrowLeft,
@@ -382,6 +384,13 @@ function ProjectDetailPage() {
         setMetaTag("property", "og:video:type", "video/mp4");
       }
 
+      const siteTitle = profile?.title || "nagur.dev";
+      setMetaTag("property", "og:site_name", siteTitle);
+      setMetaTag("name", "application-name", siteTitle);
+      setMetaTag("name", "apple-mobile-web-app-title", siteTitle);
+      setMetaTag("property", "og:title", project.title);
+      setMetaTag("name", "twitter:title", project.title);
+
       // Inject Project & Video Structured Data (JSON-LD)
       let projectScript = document.getElementById("project-jsonld");
       if (!projectScript) {
@@ -391,21 +400,54 @@ function ProjectDetailPage() {
         document.head.appendChild(projectScript);
       }
 
+      const projectUrl = `https://nagur-dev.web.app/projects/${project.slug || project._id}`;
+
       const schemas = [
         {
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
           "name": project.title,
+          "headline": project.title,
           "description": cleanDesc,
           "image": project.image || "https://nagur-dev.web.app/nagur_photo.png",
-          "url": `https://nagur-dev.web.app/projects/${project.slug || project._id}`,
+          "url": projectUrl,
           "applicationCategory": project.category || "DeveloperApplication",
           "operatingSystem": "Web, Windows, Cross-Platform",
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://nagur-dev.web.app/#website",
+            "name": siteTitle,
+            "url": "https://nagur-dev.web.app/"
+          },
           "author": {
             "@type": "Person",
             "name": "Shaik Nagur Basha",
             "url": "https://nagur-dev.web.app"
           }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": siteTitle,
+              "item": "https://nagur-dev.web.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Projects",
+              "item": "https://nagur-dev.web.app/projects"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": project.title,
+              "item": projectUrl
+            }
+          ]
         }
       ];
 
@@ -694,28 +736,34 @@ function ProjectDetailPage() {
     }
   }, []);
 
+  const { onBackendReady } = useBackendStore();
+
   useEffect(() => {
     let active = true;
 
-    const fetchMainProject = async () => {
-      setIsLoading(true);
+    const fetchMainProject = async (isLive = false) => {
+      if (!isLive) setIsLoading(true);
       try {
-        const res = await API.get(`projects/${slug}`);
+        const res = await API.get(`projects/${slug}`, {
+          preferNetwork: isLive,
+        });
         if (active && res.data?.success) {
           setProject(res.data.data);
         }
       } catch (error) {
         console.error("Error fetching project details:", error);
       } finally {
-        if (active) {
+        if (active && !isLive) {
           setIsLoading(false);
         }
       }
     };
 
-    const fetchExploreProjects = async () => {
+    const fetchExploreProjects = async (isLive = false) => {
       try {
-        const res = await API.get(`projects/${slug}/explore`);
+        const res = await API.get(`projects/${slug}/explore`, {
+          preferNetwork: isLive,
+        });
         if (active && res.data?.success) {
           setExploreProjects(res.data.data);
         }
@@ -724,13 +772,21 @@ function ProjectDetailPage() {
       }
     };
 
-    fetchMainProject();
-    fetchExploreProjects();
+    fetchMainProject(false);
+    fetchExploreProjects(false);
+
+    const unsubscribe = onBackendReady(() => {
+      if (active) {
+        fetchMainProject(true);
+        fetchExploreProjects(true);
+      }
+    });
 
     return () => {
       active = false;
+      unsubscribe();
     };
-  }, [slug]);
+  }, [slug, onBackendReady]);
 
   const getCategoryIcon = (category) => {
     const cat = category?.toLowerCase() || "";
@@ -814,6 +870,10 @@ function ProjectDetailPage() {
       ? "0 0 4px 2px rgba(236,72,153,0.4)"
       : "0 0 4px 2px rgba(219,39,119,0.4)";
 
+  if (!isLoading && !project) {
+    return <ErrorPage />;
+  }
+
   return (
     <div
       className={`min-h-screen flex flex-col justify-between relative overflow-hidden bg-pattern-subtle ${
@@ -830,16 +890,6 @@ function ProjectDetailPage() {
 
       {isLoading ? (
         <SkeletonLoader type="projectdetail" />
-      ) : !project ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-6 min-h-[60vh] relative z-10">
-          <h2 className="text-2xl font-bold mb-4">Project Not Found</h2>
-          <Link
-            to="/projects"
-            className="flex items-center gap-2 text-cyan-500 hover:text-cyan-400"
-          >
-            <ArrowLeft size={16} /> Back to Projects
-          </Link>
-        </div>
       ) : (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-20 lg:pb-24 relative z-10">
           {/* Navigation & Indicators Header Row */}

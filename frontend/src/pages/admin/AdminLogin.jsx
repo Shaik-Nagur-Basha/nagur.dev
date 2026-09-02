@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -23,9 +23,10 @@ const loginSchema = z.object({
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, loading } = useAuthStore();
+  const { login, loading, isAuthenticated, isCheckingAuth, checkAuth } = useAuthStore();
   const navigate = useNavigate();
 
+  // All hooks must be called unconditionally at the top
   const {
     register,
     handleSubmit,
@@ -34,15 +35,46 @@ const AdminLogin = () => {
     resolver: zodResolver(loginSchema),
   });
 
+  // Check auth on mount so stored session is restored
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // Redirect to /admin if already authenticated
+  useEffect(() => {
+    if (!isCheckingAuth && isAuthenticated) {
+      navigate("/admin", { replace: true });
+    }
+  }, [isAuthenticated, isCheckingAuth, navigate]);
+
   const onSubmit = async (data) => {
     const result = await login(data);
     if (result.success) {
       toast.success("Welcome back, Nagur!");
-      navigate("/admin");
+      navigate("/admin", { replace: true });
     } else {
       toast.error(result.error || "Login failed");
     }
   };
+
+  // Show spinner while checking stored session
+  if (isCheckingAuth) {
+    return (
+      <div className="dark min-h-screen flex items-center justify-center bg-[#020617]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
+            Authenticating
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // If already logged in, show nothing while redirect fires via useEffect
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="dark min-h-screen bg-pattern-subtle flex items-center justify-center bg-[#020617] p-4 font-outfit">

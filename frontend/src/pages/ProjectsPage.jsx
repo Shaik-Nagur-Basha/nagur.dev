@@ -20,6 +20,7 @@ import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import useScrollReveal from "../hooks/useScrollReveal";
 import ProjectMedia from "../components/ProjectMedia";
+import { useBackendStore } from "../store/useBackendStore";
 
 function ProjectsPage() {
   const navigate = useNavigate();
@@ -70,13 +71,16 @@ function ProjectsPage() {
   const [dropdownLoading, setDropdownLoading] = useState(false);
   const searchRef = useRef(null);
 
+  const { onBackendReady } = useBackendStore();
+
   // Main grid fetch — never affected by search
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjects = async (isLive = false) => {
       setIsLoading(true);
       try {
         const { data } = await API.get("projects", {
           params: { page: currentPage, limit: 6, category: selectedCategory },
+          preferNetwork: isLive,
         });
         if (data.success) {
           setProjects(data.data);
@@ -89,8 +93,15 @@ function ProjectsPage() {
         setIsLoading(false);
       }
     };
-    fetchProjects();
-  }, [currentPage, selectedCategory]);
+
+    fetchProjects(false);
+
+    const unsubscribe = onBackendReady(() => {
+      fetchProjects(true);
+    });
+
+    return () => unsubscribe();
+  }, [currentPage, selectedCategory, onBackendReady]);
 
   // Dropdown search — debounced 350ms, top 5 results only
   useEffect(() => {
